@@ -7,7 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/tronweb@4.0.1/dist/TronWeb.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bip39@3.0.4/dist/index.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
-    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -404,12 +403,6 @@
             font-size: 13px;
         }
 
-        .chart-mini {
-            width: 100%;
-            height: 40px;
-            margin-top: 8px;
-        }
-
         .history-item {
             display: flex;
             align-items: center;
@@ -718,6 +711,16 @@
             box-shadow: 0 8px 25px rgba(38, 161, 123, 0.4);
         }
 
+        .btn-deposit {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-withdraw {
+            background: linear-gradient(135deg, #dc3545, #e83e8c);
+            color: white;
+        }
+
         .notification {
             position: fixed;
             top: 20px;
@@ -940,28 +943,121 @@
             margin-top: 10px;
         }
 
-        .tradingview-widget {
-            width: 100%;
-            height: 300px;
-            margin-top: 15px;
-            border-radius: 12px;
+        .asset-detail-header {
+            text-align: center;
+            padding: 30px 20px 20px;
+            background: rgba(30, 30, 60, 0.8);
+            border-radius: 20px 20px 0 0;
+            margin: -30px -30px 25px -30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .asset-detail-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
             overflow: hidden;
+            border: 3px solid rgba(255, 255, 255, 0.1);
         }
 
-        .tradingview-widget-container {
-            position: relative;
-            width: 100%;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
-            height: 0;
-        }
-
-        .tradingview-widget-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .asset-detail-logo img {
             width: 100%;
             height: 100%;
+            object-fit: contain;
+        }
+
+        .asset-detail-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .asset-detail-symbol {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .asset-detail-balance {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 15px 0 5px;
+        }
+
+        .asset-detail-value {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .asset-action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .asset-history-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: rgba(30, 30, 60, 0.6);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .asset-history-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+            font-size: 16px;
+        }
+
+        .asset-history-content {
+            flex: 1;
+        }
+
+        .asset-history-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .asset-history-time {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .asset-history-amount {
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(212, 175, 55, 0.2);
             border: none;
+            color: var(--gold-light);
+            padding: 8px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: rgba(212, 175, 55, 0.3);
         }
 
         @media (max-width: 480px) {
@@ -1013,176 +1109,157 @@
 </head>
 <body>
     <div class="app-container">
-        <div class="app-header">
-            <div class="logo-container">
-                <img src="https://i.ibb.co/zWyt91b3/Whats-App-Image-2026-01-20-at-17-53-17.jpg" alt="BossX Logo">
-            </div>
-            <div class="app-title">BOSSX</div>
-            <div class="app-subtitle">Professional Wallet</div>
-            <div class="network-badge">
-                <i class="fas fa-satellite-dish"></i> TRON Mainnet
-            </div>
-        </div>
-
-        <div class="main-content">
-            <!-- Account Switcher -->
-            <div class="account-switcher" id="accountSwitcher" onclick="showAccountModal()">
-                <div class="account-avatar">B</div>
-                <div class="account-info">
-                    <div class="account-name">BossX Wallet</div>
-                    <div class="account-address" id="headerAddress">T...xxxx</div>
+        <!-- Main Wallet Page -->
+        <div id="mainPage">
+            <div class="app-header">
+                <div class="logo-container">
+                    <img src="https://i.ibb.co/zWyt91b3/Whats-App-Image-2026-01-20-at-17-53-17.jpg" alt="BossX Logo">
                 </div>
-                <div class="account-balance" id="headerBalance">$1,850.00</div>
-            </div>
-
-            <!-- Portfolio Card dengan TradingView Real-Time Prices -->
-            <div class="balance-card">
-                <div class="balance-label">
-                    <i class="fas fa-chart-pie"></i> Portfolio Value
-                </div>
-                <div class="balance-amount" id="totalBalance">$0.00</div>
-                <div class="price-update" id="priceUpdate">
-                    <i class="fas fa-sync-alt fa-spin"></i> <span id="lastUpdate">Loading prices...</span>
-                </div>
-                <div class="portfolio-row">
-                    <div class="portfolio-item">
-                        <div class="portfolio-item-value bossx">
-                            <span id="bossxValue">0 BOSSX</span>
-                            <span class="price-badge" id="bossxPriceChange">-</span>
-                        </div>
-                        <div class="portfolio-item-label">BOSSX</div>
-                    </div>
-                    <div class="portfolio-item">
-                        <div class="portfolio-item-value usdt">
-                            <span id="usdtValue">0 USDT</span>
-                            <span class="price-badge" id="usdtPriceChange">-</span>
-                        </div>
-                        <div class="portfolio-item-label">USDT</div>
-                    </div>
-                </div>
-                <div class="portfolio-row">
-                    <div class="portfolio-item">
-                        <div class="portfolio-item-value btc">
-                            <span id="btcValue">0 BTC</span>
-                            <span class="price-badge" id="btcPriceChange">-</span>
-                        </div>
-                        <div class="portfolio-item-label">BTC</div>
-                    </div>
-                    <div class="portfolio-item">
-                        <div class="portfolio-item-value trx">
-                            <span id="trxValue">0 TRX</span>
-                            <span class="price-badge" id="trxPriceChange">-</span>
-                        </div>
-                        <div class="portfolio-item-label">TRX</div>
-                    </div>
+                <div class="app-title">BOSSX</div>
+                <div class="app-subtitle">Professional Wallet</div>
+                <div class="network-badge">
+                    <i class="fas fa-satellite-dish"></i> TRON Mainnet
                 </div>
             </div>
 
-            <!-- Assets List dengan TradingView Real-Time Prices -->
-            <div class="balance-card">
-                <div class="balance-label">
-                    <i class="fas fa-coins"></i> Your Assets
-                </div>
-                
-                <div class="asset-card" onclick="showAssetDetail('BOSSX')">
-                    <div class="asset-icon-container">
-                        <img src="https://i.ibb.co/zWyt91b3/Whats-App-Image-2026-01-20-at-17-53-17.jpg" alt="BOSSX" class="asset-icon">
+            <div class="main-content">
+                <!-- Account Switcher -->
+                <div class="account-switcher" id="accountSwitcher" onclick="showAccountModal()">
+                    <div class="account-avatar">B</div>
+                    <div class="account-info">
+                        <div class="account-name">BossX Wallet</div>
+                        <div class="account-address" id="headerAddress">T...xxxx</div>
                     </div>
-                    <div class="asset-info">
-                        <div class="asset-name">BossX Token</div>
-                        <div class="asset-symbol">BOSSX</div>
-                        <div class="asset-price">
-                            <i class="fas fa-chart-line"></i> 
-                            <span id="bossxPriceDisplay">$0.00</span>
-                            <span id="bossxPriceChangeSmall" class="price-badge">-</span>
+                    <div class="account-balance" id="headerBalance">$1,850.00</div>
+                </div>
+
+                <!-- Portfolio Card -->
+                <div class="balance-card">
+                    <div class="balance-label">
+                        <i class="fas fa-chart-pie"></i> Portfolio Value
+                    </div>
+                    <div class="balance-amount" id="totalBalance">$1,850.00</div>
+                    <div class="price-update" id="priceUpdate">
+                        <i class="fas fa-sync-alt"></i> <span id="lastUpdate">Updated 14:30:25</span>
+                    </div>
+                    <div class="portfolio-row">
+                        <div class="portfolio-item">
+                            <div class="portfolio-item-value bossx" id="bossxValue">1,250 BOSSX</div>
+                            <div class="portfolio-item-label">BOSSX</div>
                         </div>
-                        <div class="chart-mini" id="chartBOSSX"></div>
-                    </div>
-                    <div class="asset-balance">
-                        <div class="asset-amount" id="bossxBalanceDisplay">0.00</div>
-                        <div class="asset-value" id="bossxValueDisplay">$0.00</div>
-                    </div>
-                </div>
-
-                <div class="asset-card" onclick="showAssetDetail('USDT')">
-                    <div class="asset-icon-container">
-                        <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT" class="asset-icon">
-                    </div>
-                    <div class="asset-info">
-                        <div class="asset-name">Tether USD</div>
-                        <div class="asset-symbol">USDT (TRC20)</div>
-                        <div class="asset-price">
-                            <i class="fas fa-chart-line"></i> 
-                            <span id="usdtPriceDisplay">$1.00</span>
-                            <span id="usdtPriceChangeSmall" class="price-badge price-up">+0.00%</span>
+                        <div class="portfolio-item">
+                            <div class="portfolio-item-value usdt" id="usdtValue">500 USDT</div>
+                            <div class="portfolio-item-label">USDT</div>
                         </div>
-                        <div class="chart-mini" id="chartUSDT"></div>
                     </div>
-                    <div class="asset-balance">
-                        <div class="asset-amount" id="usdtBalanceDisplay">0.00</div>
-                        <div class="asset-value" id="usdtValueDisplay">$0.00</div>
-                    </div>
-                </div>
-
-                <div class="asset-card" onclick="showAssetDetail('BTC')">
-                    <div class="asset-icon-container">
-                        <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC" class="asset-icon">
-                    </div>
-                    <div class="asset-info">
-                        <div class="asset-name">Bitcoin</div>
-                        <div class="asset-symbol">BTC (WBTC)</div>
-                        <div class="asset-price">
-                            <i class="fas fa-chart-line"></i> 
-                            <span id="btcPriceDisplay">$0.00</span>
-                            <span id="btcPriceChangeSmall" class="price-badge">-</span>
+                    <div class="portfolio-row">
+                        <div class="portfolio-item">
+                            <div class="portfolio-item-value btc" id="btcValue">0.005 BTC</div>
+                            <div class="portfolio-item-label">BTC</div>
                         </div>
-                        <div class="chart-mini" id="chartBTC"></div>
-                    </div>
-                    <div class="asset-balance">
-                        <div class="asset-amount" id="btcBalanceDisplay">0.0000</div>
-                        <div class="asset-value" id="btcValueDisplay">$0.00</div>
-                    </div>
-                </div>
-
-                <div class="asset-card" onclick="showAssetDetail('TRX')">
-                    <div class="asset-icon-container">
-                        <img src="https://cryptologos.cc/logos/tron-trx-logo.png" alt="TRX" class="asset-icon">
-                    </div>
-                    <div class="asset-info">
-                        <div class="asset-name">TRON</div>
-                        <div class="asset-symbol">TRX</div>
-                        <div class="asset-price">
-                            <i class="fas fa-chart-line"></i> 
-                            <span id="trxPriceDisplay">$0.00</span>
-                            <span id="trxPriceChangeSmall" class="price-badge">-</span>
+                        <div class="portfolio-item">
+                            <div class="portfolio-item-value trx" id="trxValue">15.75 TRX</div>
+                            <div class="portfolio-item-label">TRX</div>
                         </div>
-                        <div class="chart-mini" id="chartTRX"></div>
-                    </div>
-                    <div class="asset-balance">
-                        <div class="asset-amount" id="trxBalanceDisplay">0.00</div>
-                        <div class="asset-value" id="trxValueDisplay">$0.00</div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Navigation Tabs -->
-            <div class="nav-tabs">
-                <div class="nav-tab active" onclick="switchTab('home')">
-                    <i class="fas fa-home"></i>
-                    <span>Home</span>
-                </div>
-                <div class="nav-tab" onclick="switchTab('swap')">
-                    <i class="fas fa-exchange-alt"></i>
-                    <span>Swap</span>
-                </div>
-                <div class="nav-tab" onclick="switchTab('history')">
-                    <i class="fas fa-history"></i>
-                    <span>History</span>
-                </div>
-            </div>
+                <!-- Assets List -->
+                <div class="balance-card">
+                    <div class="balance-label">
+                        <i class="fas fa-coins"></i> Your Assets
+                    </div>
+                    
+                    <div class="asset-card" onclick="showAssetDetailPage('BOSSX')">
+                        <div class="asset-icon-container">
+                            <img src="https://i.ibb.co/zWyt91b3/Whats-App-Image-2026-01-20-at-17-53-17.jpg" alt="BOSSX" class="asset-icon">
+                        </div>
+                        <div class="asset-info">
+                            <div class="asset-name">BossX Token</div>
+                            <div class="asset-symbol">BOSSX</div>
+                            <div class="asset-price">
+                                <i class="fas fa-chart-line"></i> 
+                                <span id="bossxPriceDisplay">$0.40</span>
+                            </div>
+                        </div>
+                        <div class="asset-balance">
+                            <div class="asset-amount">1,250.50</div>
+                            <div class="asset-value">$500.20</div>
+                        </div>
+                    </div>
 
-            <!-- Home Tab -->
-            <div id="homeTab" class="tab-content">
+                    <div class="asset-card" onclick="showAssetDetailPage('USDT')">
+                        <div class="asset-icon-container">
+                            <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT" class="asset-icon">
+                        </div>
+                        <div class="asset-info">
+                            <div class="asset-name">Tether USD</div>
+                            <div class="asset-symbol">USDT (TRC20)</div>
+                            <div class="asset-price">
+                                <i class="fas fa-chart-line"></i> 
+                                <span id="usdtPriceDisplay">$1.00</span>
+                            </div>
+                        </div>
+                        <div class="asset-balance">
+                            <div class="asset-amount">500.00</div>
+                            <div class="asset-value">$500.00</div>
+                        </div>
+                    </div>
+
+                    <div class="asset-card" onclick="showAssetDetailPage('BTC')">
+                        <div class="asset-icon-container">
+                            <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC" class="asset-icon">
+                        </div>
+                        <div class="asset-info">
+                            <div class="asset-name">Bitcoin</div>
+                            <div class="asset-symbol">BTC (WBTC)</div>
+                            <div class="asset-price">
+                                <i class="fas fa-chart-line"></i> 
+                                <span id="btcPriceDisplay">$60,000.00</span>
+                            </div>
+                        </div>
+                        <div class="asset-balance">
+                            <div class="asset-amount">0.0050</div>
+                            <div class="asset-value">$300.00</div>
+                        </div>
+                    </div>
+
+                    <div class="asset-card" onclick="showAssetDetailPage('TRX')">
+                        <div class="asset-icon-container">
+                            <img src="https://cryptologos.cc/logos/tron-trx-logo.png" alt="TRX" class="asset-icon">
+                        </div>
+                        <div class="asset-info">
+                            <div class="asset-name">TRON</div>
+                            <div class="asset-symbol">TRX</div>
+                            <div class="asset-price">
+                                <i class="fas fa-chart-line"></i> 
+                                <span id="trxPriceDisplay">$0.10</span>
+                            </div>
+                        </div>
+                        <div class="asset-balance">
+                            <div class="asset-amount">15.75</div>
+                            <div class="asset-value">$1.58</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <div class="nav-tabs">
+                    <div class="nav-tab active">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </div>
+                    <div class="nav-tab" onclick="showSwapPage()">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Swap</span>
+                    </div>
+                    <div class="nav-tab" onclick="showHistoryPage()">
+                        <i class="fas fa-history"></i>
+                        <span>History</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
                 <div class="action-buttons">
                     <div class="action-btn received" onclick="showReceiveModal()">
                         <i class="fas fa-qrcode"></i>
@@ -1192,7 +1269,7 @@
                         <i class="fas fa-paper-plane"></i>
                         <div>Send</div>
                     </div>
-                    <div class="action-btn swap" onclick="switchTab('swap')">
+                    <div class="action-btn swap" onclick="showSwapPage()">
                         <i class="fas fa-exchange-alt"></i>
                         <div>Swap</div>
                     </div>
@@ -1201,12 +1278,58 @@
                         <div>DApps</div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <div class="bottom-nav-item active">
+                    <i class="fas fa-wallet"></i>
+                    <span>Wallet</span>
+                </div>
+                <div class="bottom-nav-item" onclick="showTokenModal()">
+                    <i class="fas fa-coins"></i>
+                    <span>Tokens</span>
+                </div>
+                <div class="bottom-nav-item" onclick="showSettingsModal()">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Asset Detail Page -->
+        <div id="assetDetailPage" style="display: none;">
+            <button class="back-btn" onclick="goBackToMain()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            
+            <div class="app-header" style="padding-top: 60px;">
+                <div class="asset-detail-header">
+                    <div class="asset-detail-logo" id="assetDetailLogo">
+                        <img src="" alt="Asset Logo">
+                    </div>
+                    <div class="asset-detail-name" id="assetDetailName">Asset Name</div>
+                    <div class="asset-detail-symbol" id="assetDetailSymbol">SYMBOL</div>
+                    <div class="asset-detail-balance" id="assetDetailBalance">0.00</div>
+                    <div class="asset-detail-value" id="assetDetailValue">$0.00</div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="asset-action-buttons">
+                    <button class="btn btn-deposit" onclick="showDepositModal()">
+                        <i class="fas fa-download"></i> Deposit
+                    </button>
+                    <button class="btn btn-withdraw" onclick="showWithdrawModal()">
+                        <i class="fas fa-upload"></i> Withdraw
+                    </button>
+                </div>
 
                 <h3 style="font-size: 18px; margin: 25px 0 15px; color: var(--gold-light);">
-                    <i class="fas fa-history"></i> Recent Activity
+                    <i class="fas fa-history"></i> Transaction History
                 </h3>
                 
-                <div id="recentHistory">
+                <div id="assetHistory">
                     <div class="empty-state">
                         <i class="fas fa-history"></i>
                         <p>No transactions yet</p>
@@ -1214,13 +1337,40 @@
                 </div>
             </div>
 
-            <!-- Swap Tab -->
-            <div id="swapTab" class="tab-content" style="display: none;">
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <div class="bottom-nav-item" onclick="goBackToMain()">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </div>
+                <div class="bottom-nav-item" onclick="showSendModal()">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Send</span>
+                </div>
+                <div class="bottom-nav-item" onclick="showReceiveModal()">
+                    <i class="fas fa-qrcode"></i>
+                    <span>Receive</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Swap Page -->
+        <div id="swapPage" style="display: none;">
+            <button class="back-btn" onclick="goBackToMain()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            
+            <div class="app-header" style="padding-top: 60px;">
+                <div class="app-title">Token Swap</div>
+                <div class="app-subtitle">Exchange your tokens</div>
+            </div>
+
+            <div class="main-content">
                 <div class="swap-container">
                     <div class="swap-from">
                         <div class="swap-label">
                             <span>From</span>
-                            <span id="fromBalance">Balance: 0.00 BOSSX</span>
+                            <span id="fromBalance">Balance: 0.00</span>
                         </div>
                         <input type="number" class="swap-amount" id="fromAmount" placeholder="0.00" min="0" step="0.01">
                         <div class="swap-token-select" onclick="showTokenSelector('from')">
@@ -1241,7 +1391,7 @@
                     <div class="swap-to">
                         <div class="swap-label">
                             <span>To</span>
-                            <span id="toBalance">Balance: 0.00 USDT</span>
+                            <span id="toBalance">Balance: 0.00</span>
                         </div>
                         <input type="number" class="swap-amount" id="toAmount" placeholder="0.00" readonly>
                         <div class="swap-token-select" onclick="showTokenSelector('to')">
@@ -1256,33 +1406,39 @@
                     </div>
                 </div>
 
-                <div class="swap-settings">
-                    <div class="swap-setting-item" onclick="showSlippageModal()">
-                        <i class="fas fa-percentage"></i>
-                        <span>Slippage: <strong id="slippage">0.5%</strong></span>
-                    </div>
-                    <div class="swap-setting-item">
-                        <i class="fas fa-info-circle"></i>
-                        <span id="priceImpact">Price Impact: 0.1%</span>
-                    </div>
-                </div>
-
-                <div class="price-impact">
-                    <div class="price-impact-label">Minimum Received</div>
-                    <div class="price-impact-value" id="minReceived">0.00 USDT</div>
-                </div>
-
                 <button class="btn btn-success" id="swapBtn" onclick="executeSwap()">
-                    <i class="fas fa-exchange-alt"></i> Swap BOSSX to USDT
+                    <i class="fas fa-exchange-alt"></i> Swap Tokens
                 </button>
-
-                <div style="margin-top: 15px; padding: 12px; background: rgba(38, 161, 123, 0.1); border-radius: 12px; font-size: 13px; color: var(--text-secondary);">
-                    <i class="fas fa-info-circle"></i> Swap powered by JustSwap • Prices from TradingView
-                </div>
             </div>
 
-            <!-- History Tab -->
-            <div id="historyTab" class="tab-content" style="display: none;">
+            <div class="bottom-nav">
+                <div class="bottom-nav-item" onclick="goBackToMain()">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </div>
+                <div class="bottom-nav-item active">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Swap</span>
+                </div>
+                <div class="bottom-nav-item" onclick="showHistoryPage()">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Page -->
+        <div id="historyPage" style="display: none;">
+            <button class="back-btn" onclick="goBackToMain()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            
+            <div class="app-header" style="padding-top: 60px;">
+                <div class="app-title">Transaction History</div>
+                <div class="app-subtitle">All your transactions</div>
+            </div>
+
+            <div class="main-content">
                 <div id="fullHistory">
                     <div class="empty-state">
                         <i class="fas fa-receipt"></i>
@@ -1290,73 +1446,69 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Bottom Navigation -->
-        <div class="bottom-nav">
-            <div class="bottom-nav-item active">
-                <i class="fas fa-wallet"></i>
-                <span>Wallet</span>
-            </div>
-            <div class="bottom-nav-item" onclick="showTokenModal()">
-                <i class="fas fa-coins"></i>
-                <span>Tokens</span>
-            </div>
-            <div class="bottom-nav-item" onclick="showSettingsModal()">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
+            <div class="bottom-nav">
+                <div class="bottom-nav-item" onclick="goBackToMain()">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </div>
+                <div class="bottom-nav-item" onclick="showSwapPage()">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Swap</span>
+                </div>
+                <div class="bottom-nav-item active">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Asset Detail Modal with TradingView Chart -->
-    <div class="modal" id="assetDetailModal">
-        <div class="modal-content" style="padding: 25px;">
+    <!-- Deposit Modal -->
+    <div class="modal" id="depositModal">
+        <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title" id="assetDetailTitle">Asset Details</div>
-                <button class="modal-close" onclick="closeModal('assetDetailModal')">&times;</button>
+                <div class="modal-title"><i class="fas fa-download"></i> Deposit</div>
+                <button class="modal-close" onclick="closeModal('depositModal')">&times;</button>
             </div>
-            
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div style="display: inline-block; width: 60px; height: 60px; border-radius: 50%; overflow: hidden; margin-bottom: 15px;">
-                    <img src="" alt="Asset Logo" id="assetDetailLogo" style="width: 100%; height: 100%; object-fit: contain;">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <div id="depositQR" style="width: 240px; height: 240px; margin: 0 auto 20px; background: white; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--bg-dark);">
+                    Loading QR...
                 </div>
-                <div style="font-size: 24px; font-weight: 700; margin-bottom: 5px;" id="assetDetailName">Asset Name</div>
-                <div style="color: var(--text-secondary); font-size: 14px;" id="assetDetailSymbol">SYMBOL</div>
-            </div>
-            
-            <div style="background: rgba(30, 30, 60, 0.8); border-radius: 16px; padding: 20px; margin-bottom: 20px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-                    <span style="color: var(--text-secondary); font-size: 14px;">Current Price</span>
-                    <span style="font-size: 20px; font-weight: 700;" id="assetDetailPrice">$0.00</span>
+                <div style="color: var(--text-secondary); font-size: 14px; margin-bottom: 10px;">
+                    Scan QR code to deposit
                 </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-                    <span style="color: var(--text-secondary); font-size: 14px;">24h Change</span>
-                    <span style="font-size: 16px; font-weight: 600;" id="assetDetailChange">0.00%</span>
-                </div>
-                <div style="display: flex; justify-content: space-between;">
-                    <span style="color: var(--text-secondary); font-size: 14px;">Market Cap</span>
-                    <span style="font-size: 16px;" id="assetDetailMarketCap">-</span>
+                <div class="input-field" id="depositAddress" style="padding: 12px; font-family: 'Courier New', monospace; font-size: 13px; word-break: break-all; margin-top: 10px;">
+                    Loading...
                 </div>
             </div>
-            
-            <div style="text-align: center; margin: 20px 0;">
-                <div class="tradingview-widget-container">
-                    <iframe id="tradingViewChart" frameborder="0" scrolling="no"></iframe>
-                </div>
-                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 10px;">
-                    Data from TradingView • Updated in real-time
+            <button class="btn btn-outline" onclick="copyDepositAddress()">
+                <i class="fas fa-copy"></i> Copy Address
+            </button>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fas fa-upload"></i> Withdraw</div>
+                <button class="modal-close" onclick="closeModal('withdrawModal')">&times;</button>
+            </div>
+            <div class="input-group">
+                <label class="input-label">Withdraw Address</label>
+                <input type="text" class="input-field" id="withdrawAddress" placeholder="Enter destination address">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Amount</label>
+                <input type="number" class="input-field" id="withdrawAmount" placeholder="0.00" min="0" step="0.000001">
+                <div style="font-size: 13px; color: var(--text-secondary); margin-top: 5px;">
+                    Available: <span id="availableBalance">0.00</span>
                 </div>
             </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;">
-                <button class="btn btn-primary" onclick="showSendModal()">
-                    <i class="fas fa-paper-plane"></i> Send
-                </button>
-                <button class="btn btn-outline" onclick="showReceiveModal()">
-                    <i class="fas fa-qrcode"></i> Receive
-                </button>
-            </div>
+            <button class="btn btn-withdraw" id="withdrawBtn" onclick="executeWithdraw()">
+                <i class="fas fa-upload"></i> Withdraw
+            </button>
         </div>
     </div>
 
@@ -1369,20 +1521,11 @@
             </div>
             <div class="input-group">
                 <label class="input-label">To Address</label>
-                <input type="text" class="input-field" id="sendAddress" placeholder="Enter address (T... or 0x...)">
+                <input type="text" class="input-field" id="sendAddress" placeholder="Enter address">
             </div>
             <div class="input-group">
                 <label class="input-label">Amount</label>
                 <input type="number" class="input-field" id="sendAmount" placeholder="0.00" min="0" step="0.000001">
-            </div>
-            <div class="input-group">
-                <label class="input-label">Token</label>
-                <select class="input-field" id="sendToken">
-                    <option value="BOSSX">BOSSX</option>
-                    <option value="USDT">USDT (TRC20)</option>
-                    <option value="BTC">BTC (WBTC)</option>
-                    <option value="TRX">TRX</option>
-                </select>
             </div>
             <button class="btn btn-primary" id="sendBtn" onclick="sendTransaction()">
                 <i class="fas fa-paper-plane"></i> Send
@@ -1448,26 +1591,6 @@
         </div>
     </div>
 
-    <!-- Slippage Modal -->
-    <div class="modal" id="slippageModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title"><i class="fas fa-percentage"></i> Slippage Tolerance</div>
-                <button class="modal-close" onclick="closeModal('slippageModal')">&times;</button>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-                <button class="btn btn-outline" style="padding: 10px; font-size: 15px;" onclick="setSlippage('0.5')">0.5%</button>
-                <button class="btn btn-outline" style="padding: 10px; font-size: 15px;" onclick="setSlippage('1')">1%</button>
-                <button class="btn btn-outline" style="padding: 10px; font-size: 15px;" onclick="setSlippage('3')">3%</button>
-            </div>
-            <div class="input-group">
-                <label class="input-label">Custom</label>
-                <input type="number" class="input-field" id="customSlippage" placeholder="Enter custom slippage %" min="0" step="0.1">
-            </div>
-            <button class="btn btn-primary" onclick="applyCustomSlippage()">Apply</button>
-        </div>
-    </div>
-
     <!-- Notification -->
     <div class="notification" id="notification"></div>
 
@@ -1476,9 +1599,6 @@
         const BOSSX_CONTRACT_ADDRESS = "TLp5ViMF8A7F5HhgT34i4eqJV699UvCiYk";
         const USDT_CONTRACT_ADDRESS = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
         const WBTC_CONTRACT_ADDRESS = "TXpw8XeWYeTUd4quDskoUqeQPowRh4jY65";
-        const BOSSX_DECIMALS = 6;
-        const USDT_DECIMALS = 6;
-        const WBTC_DECIMALS = 8;
         
         const TRON_NODE = {
             fullNode: 'https://api.trongrid.io',
@@ -1486,26 +1606,12 @@
             eventServer: 'https://api.trongrid.io'
         };
 
-        // TradingView Symbols
-        const TRADINGVIEW_SYMBOLS = {
-            'BOSSX': 'BOSSXUSDT', // Custom pair
-            'BTC': 'BINANCE:BTCUSDT',
-            'TRX': 'BINANCE:TRXUSDT',
-            'USDT': 'BINANCE:USDTUSDC'
-        };
-
         let tronWeb = null;
         let currentWallet = null;
+        let currentAsset = null;
         let transactionHistory = [];
         let currentTokenSelector = 'from';
         let slippage = 0.5;
-        let priceData = {
-            BOSSX: { price: 0.4, change: 0, marketCap: 0, lastUpdate: null },
-            USDT: { price: 1.0, change: 0.01, marketCap: 83000000000, lastUpdate: null },
-            BTC: { price: 0, change: 0, marketCap: 0, lastUpdate: null },
-            TRX: { price: 0, change: 0, marketCap: 0, lastUpdate: null }
-        };
-        let charts = {};
 
         // Initialize TronWeb
         function initTronWeb(privateKey) {
@@ -1535,381 +1641,195 @@
                 }
             };
             
-            document.getElementById('headerAddress').textContent = formatAddress(address);
-            document.getElementById('receiveAddress').textContent = address;
-            generateQRCode(address);
+            // Add demo history
             addDemoHistory();
             
-            // Fetch TradingView prices
-            await fetchTradingViewPrices();
-            updatePortfolioUI();
+            // Update UI
+            document.getElementById('headerAddress').textContent = formatAddress(address);
+            document.getElementById('receiveAddress').textContent = address;
+            document.getElementById('depositAddress').textContent = address;
             
-            // Initialize mini charts
-            initMiniCharts();
-            
-            // Auto-update every 15 seconds
-            setInterval(fetchTradingViewPrices, 15000);
+            // Generate QR codes
+            generateQRCode(address, 'receiveQR');
+            generateQRCode(address, 'depositQR');
             
             showNotification('✨ Welcome to BossX Wallet Pro!', 'info');
-        }
-
-        // Fetch Real-Time Prices from Binance API (TradingView data source)
-        async function fetchTradingViewPrices() {
-            try {
-                showLoading(true, "Updating prices from TradingView...");
-                
-                // Fetch BTC and TRX from Binance API (same data as TradingView)
-                const [btcResponse, trxResponse] = await Promise.all([
-                    fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT'),
-                    fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=TRXUSDT')
-                ]);
-                
-                const btcData = await btcResponse.json();
-                const trxData = await trxData.json();
-                
-                // Update BTC
-                if (btcData) {
-                    const oldPrice = priceData.BTC.price;
-                    priceData.BTC.price = parseFloat(btcData.lastPrice);
-                    priceData.BTC.change = parseFloat(btcData.priceChangePercent);
-                    priceData.BTC.marketCap = priceData.BTC.price * 19500000; // Approx supply
-                    priceData.BTC.lastUpdate = new Date();
-                }
-                
-                // Update TRX
-                if (trxData) {
-                    const oldPrice = priceData.TRX.price;
-                    priceData.TRX.price = parseFloat(trxData.lastPrice);
-                    priceData.TRX.change = parseFloat(trxData.priceChangePercent);
-                    priceData.TRX.marketCap = priceData.TRX.price * 88000000000; // Approx supply
-                    priceData.TRX.lastUpdate = new Date();
-                }
-                
-                // BOSSX - Simulated (replace with your DEX API if available)
-                const bossxBasePrice = 0.4;
-                const randomFluctuation = (Math.random() - 0.5) * 0.05;
-                priceData.BOSSX.price = bossxBasePrice + randomFluctuation;
-                priceData.BOSSX.change = (Math.random() - 0.5) * 4;
-                priceData.BOSSX.marketCap = priceData.BOSSX.price * 100000000; // 100M supply
-                priceData.BOSSX.lastUpdate = new Date();
-                
-                // USDT - Stable
-                priceData.USDT.price = 1.00;
-                priceData.USDT.change = 0.01;
-                priceData.USDT.marketCap = 83000000000;
-                priceData.USDT.lastUpdate = new Date();
-                
-                // Update UI
-                updatePortfolioUI();
-                
-                // Update charts
-                updateCharts();
-                
-                // Update timestamp
-                const now = new Date();
-                document.getElementById('lastUpdate').innerHTML = `Updated ${now.toLocaleTimeString()}`;
-                document.querySelector('#lastUpdate i').classList.remove('fa-spin');
-                
-                showLoading(false);
-                
-            } catch (error) {
-                console.error("Error fetching TradingView prices:", error);
-                showNotification('⚠️ Failed to update prices. Using cached data.', 'error');
-                document.querySelector('#lastUpdate i').classList.remove('fa-spin');
-                showLoading(false);
-            }
-        }
-
-        // Initialize Mini Charts using Lightweight Charts
-        function initMiniCharts() {
-            const symbols = ['BOSSX', 'USDT', 'BTC', 'TRX'];
-            
-            symbols.forEach(symbol => {
-                const container = document.getElementById(`chart${symbol}`);
-                if (container) {
-                    const chart = LightweightCharts.createChart(container, {
-                        width: container.clientWidth,
-                        height: 40,
-                        layout: {
-                            backgroundColor: 'transparent',
-                            textColor: '#a0a0c0',
-                        },
-                        grid: {
-                            vertLines: { color: 'transparent' },
-                            horzLines: { color: 'transparent' },
-                        },
-                        crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
-                        priceScale: { borderColor: 'rgba(212, 175, 55, 0.1)' },
-                        timeScale: { borderColor: 'rgba(212, 175, 55, 0.1)', visible: false },
-                        handleScroll: { mouseWheel: false, pressedMouseMove: false },
-                        handleScale: { mouseWheel: false, pinch: false, axisPressedMouseMove: { time: false, price: false } }
-                    });
-                    
-                    const lineSeries = chart.addLineSeries({
-                        color: symbol === 'BOSSX' ? '#ffd700' : 
-                               symbol === 'USDT' ? '#26a17b' : 
-                               symbol === 'BTC' ? '#f7931a' : '#e03131',
-                        lineWidth: 2,
-                        priceLineVisible: false,
-                        lastValueVisible: false,
-                    });
-                    
-                    charts[symbol] = { chart, lineSeries };
-                    
-                    // Generate random data for demo
-                    generateRandomChartData(symbol);
-                }
-            });
-            
-            // Resize charts on window resize
-            window.addEventListener('resize', () => {
-                symbols.forEach(symbol => {
-                    if (charts[symbol]) {
-                        const container = document.getElementById(`chart${symbol}`);
-                        if (container) {
-                            charts[symbol].chart.resize(container.clientWidth, 40);
-                        }
-                    }
-                });
-            });
-        }
-
-        // Generate random chart data for demo
-        function generateRandomChartData(symbol) {
-            if (!charts[symbol]) return;
-            
-            const data = [];
-            const basePrice = priceData[symbol]?.price || 1;
-            const now = Date.now() / 1000;
-            
-            for (let i = 60; i >= 0; i--) {
-                const time = now - (i * 60); // 1 hour of data, 1 min intervals
-                const randomChange = (Math.random() - 0.5) * 0.02; // ±2%
-                const price = basePrice * (1 + randomChange);
-                data.push({ time, value: price });
-            }
-            
-            charts[symbol].lineSeries.setData(data);
-        }
-
-        // Update charts with new data
-        function updateCharts() {
-            Object.keys(charts).forEach(symbol => {
-                generateRandomChartData(symbol);
-            });
-        }
-
-        // Update Portfolio UI
-        function updatePortfolioUI() {
-            if (!currentWallet) return;
-            
-            const totalValue = calculateTotalValue();
-            document.getElementById('totalBalance').textContent = `$${totalValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('headerBalance').textContent = `$${totalValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            
-            updateAssetDisplay('BOSSX', currentWallet.balances.BOSSX, priceData.BOSSX.price, priceData.BOSSX.change);
-            updateAssetDisplay('USDT', currentWallet.balances.USDT, priceData.USDT.price, priceData.USDT.change);
-            updateAssetDisplay('BTC', currentWallet.balances.BTC, priceData.BTC.price, priceData.BTC.change);
-            updateAssetDisplay('TRX', currentWallet.balances.TRX, priceData.TRX.price, priceData.TRX.change);
-            
-            updateSwapRate();
-        }
-
-        // Update Asset Display
-        function updateAssetDisplay(symbol, balance, price, change) {
-            const value = balance * price;
-            
-            document.getElementById(`${symbol.toLowerCase()}Value`).textContent = `${balance.toLocaleString(undefined, {minimumFractionDigits: symbol === 'BTC' ? 4 : 2, maximumFractionDigits: symbol === 'BTC' ? 4 : 2})} ${symbol}`;
-            
-            const changeBadge = document.getElementById(`${symbol.toLowerCase()}PriceChange`);
-            const changeBadgeSmall = document.getElementById(`${symbol.toLowerCase()}PriceChangeSmall`);
-            
-            if (change >= 0) {
-                changeBadge.className = 'price-badge price-up';
-                changeBadgeSmall.className = 'price-badge price-up';
-                changeBadge.textContent = `+${change.toFixed(2)}%`;
-                changeBadgeSmall.textContent = `+${change.toFixed(2)}%`;
-            } else {
-                changeBadge.className = 'price-badge price-down';
-                changeBadgeSmall.className = 'price-badge price-down';
-                changeBadge.textContent = `${change.toFixed(2)}%`;
-                changeBadgeSmall.textContent = `${change.toFixed(2)}%`;
-            }
-            
-            if (document.getElementById(`${symbol.toLowerCase()}BalanceDisplay`)) {
-                document.getElementById(`${symbol.toLowerCase()}BalanceDisplay`).textContent = `${balance.toLocaleString(undefined, {minimumFractionDigits: symbol === 'BTC' ? 4 : 2, maximumFractionDigits: symbol === 'BTC' ? 4 : 2})}`;
-                document.getElementById(`${symbol.toLowerCase()}ValueDisplay`).textContent = `$${value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-                document.getElementById(`${symbol.toLowerCase()}PriceDisplay`).textContent = `$${price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            }
-        }
-
-        // Calculate Total Portfolio Value
-        function calculateTotalValue() {
-            return (currentWallet.balances.TRX * priceData.TRX.price) +
-                   (currentWallet.balances.BOSSX * priceData.BOSSX.price) +
-                   (currentWallet.balances.USDT * priceData.USDT.price) +
-                   (currentWallet.balances.BTC * priceData.BTC.price);
-        }
-
-        // Update Swap Rate
-        function updateSwapRate() {
-            const fromToken = document.getElementById('fromTokenOption')?.querySelector('span')?.textContent?.trim() || 'BOSSX';
-            const toToken = document.getElementById('toTokenOption')?.querySelector('span')?.textContent?.trim() || 'USDT';
-            
-            if (fromToken && toToken) {
-                const fromPrice = priceData[fromToken]?.price || 1;
-                const toPrice = priceData[toToken]?.price || 1;
-                
-                if (fromPrice > 0 && toPrice > 0) {
-                    const rate = toPrice / fromPrice;
-                    document.getElementById('swapRateDisplay').textContent = `1 ${fromToken} ≈ ${rate.toFixed(4)} ${toToken}`;
-                }
-            }
-        }
-
-        // Show Asset Detail with TradingView Chart
-        function showAssetDetail(symbol) {
-            const assetName = symbol === 'BOSSX' ? 'BossX Token' : 
-                             symbol === 'USDT' ? 'Tether USD' : 
-                             symbol === 'BTC' ? 'Bitcoin' : 'TRON';
-            
-            const assetLogo = symbol === 'BOSSX' ? 'https://i.ibb.co/zWyt91b3/Whats-App-Image-2026-01-20-at-17-53-17.jpg' :
-                            symbol === 'USDT' ? 'https://cryptologos.cc/logos/tether-usdt-logo.png' :
-                            symbol === 'BTC' ? 'https://cryptologos.cc/logos/bitcoin-btc-logo.png' :
-                            'https://cryptologos.cc/logos/tron-trx-logo.png';
-            
-            document.getElementById('assetDetailTitle').textContent = `${symbol} Details`;
-            document.getElementById('assetDetailLogo').src = assetLogo;
-            document.getElementById('assetDetailName').textContent = assetName;
-            document.getElementById('assetDetailSymbol').textContent = symbol;
-            document.getElementById('assetDetailPrice').textContent = `$${priceData[symbol].price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            
-            const changeEl = document.getElementById('assetDetailChange');
-            if (priceData[symbol].change >= 0) {
-                changeEl.textContent = `+${priceData[symbol].change.toFixed(2)}%`;
-                changeEl.style.color = '#28a745';
-            } else {
-                changeEl.textContent = `${priceData[symbol].change.toFixed(2)}%`;
-                changeEl.style.color = '#dc3545';
-            }
-            
-            document.getElementById('assetDetailMarketCap').textContent = `$${(priceData[symbol].marketCap / 1000000000).toFixed(2)}B`;
-            
-            // Set TradingView chart
-            const tradingViewSymbol = TRADINGVIEW_SYMBOLS[symbol] || `BINANCE:${symbol}USDT`;
-            const iframe = document.getElementById('tradingViewChart');
-            iframe.src = `https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22${tradingViewSymbol}%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22largeChartUrl%22%3A%22%22%7D`;
-            
-            showModal('assetDetailModal');
-        }
-
-        // Format Address
-        function formatAddress(address) {
-            return address.substring(0, 6) + '...' + address.substring(address.length - 4);
-        }
-
-        // Generate QR Code
-        function generateQRCode(address) {
-            const qrDiv = document.getElementById('receiveQR');
-            qrDiv.innerHTML = `<div style="font-size: 11px; color: #666; line-height: 1.4; padding: 10px;">
-                BOSSX WALLET<br>
-                ${formatAddress(address)}<br><br>
-                <span style="font-size: 10px; color: #999;">Scan to send</span>
-            </div>`;
         }
 
         // Add Demo History
         function addDemoHistory() {
             transactionHistory = [
                 {
+                    id: '1',
+                    type: 'deposit',
+                    asset: 'USDT',
+                    amount: 500,
+                    from: 'External',
+                    timestamp: '2026-02-09 14:23',
+                    hash: '0xdef456'
+                },
+                {
+                    id: '2',
                     type: 'swap',
-                    fromToken: 'BOSSX',
-                    toToken: 'USDT',
+                    fromAsset: 'BOSSX',
+                    toAsset: 'USDT',
                     fromAmount: 100,
                     toAmount: 40,
                     timestamp: '2026-02-10 10:15',
                     hash: '0xabc123'
                 },
                 {
-                    type: 'received',
-                    token: 'USDT',
-                    amount: 500,
-                    from: 'TQn...8891',
-                    timestamp: '2026-02-09 14:23',
-                    hash: '0xdef456'
-                },
-                {
-                    type: 'sent',
-                    token: 'TRX',
+                    id: '3',
+                    type: 'withdraw',
+                    asset: 'TRX',
                     amount: 5.5,
                     to: 'TYh...4422',
                     timestamp: '2026-02-08 09:15',
                     hash: '0xghi789'
                 },
                 {
-                    type: 'received',
-                    token: 'BTC',
+                    id: '4',
+                    type: 'deposit',
+                    asset: 'BTC',
                     amount: 0.005,
-                    from: 'TWb...3344',
+                    from: 'External',
                     timestamp: '2026-02-07 16:30',
                     hash: '0xjkl012'
+                },
+                {
+                    id: '5',
+                    type: 'send',
+                    asset: 'BOSSX',
+                    amount: 50,
+                    to: 'TQn...8891',
+                    timestamp: '2026-02-06 11:45',
+                    hash: '0x345mno'
                 }
             ];
-            
-            renderRecentHistory();
-            renderFullHistory();
         }
 
-        // Render Recent History
-        function renderRecentHistory() {
-            const container = document.getElementById('recentHistory');
-            if (transactionHistory.length === 0) {
+        // Show Asset Detail Page
+        function showAssetDetailPage(asset) {
+            currentAsset = asset;
+            
+            // Set asset data
+            const assetData = {
+                'BOSSX': {
+                    name: 'BossX Token',
+                    symbol: 'BOSSX',
+                    balance: currentWallet.balances.BOSSX,
+                    value: currentWallet.balances.BOSSX * 0.4,
+                    logo: 'https://i.ibb.co/zWyt91b3/Whats-App-Image-2026-01-20-at-17-53-17.jpg'
+                },
+                'USDT': {
+                    name: 'Tether USD',
+                    symbol: 'USDT',
+                    balance: currentWallet.balances.USDT,
+                    value: currentWallet.balances.USDT * 1.0,
+                    logo: 'https://cryptologos.cc/logos/tether-usdt-logo.png'
+                },
+                'BTC': {
+                    name: 'Bitcoin',
+                    symbol: 'BTC',
+                    balance: currentWallet.balances.BTC,
+                    value: currentWallet.balances.BTC * 60000,
+                    logo: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png'
+                },
+                'TRX': {
+                    name: 'TRON',
+                    symbol: 'TRX',
+                    balance: currentWallet.balances.TRX,
+                    value: currentWallet.balances.TRX * 0.1,
+                    logo: 'https://cryptologos.cc/logos/tron-trx-logo.png'
+                }
+            };
+            
+            const data = assetData[asset];
+            
+            document.getElementById('assetDetailLogo').querySelector('img').src = data.logo;
+            document.getElementById('assetDetailName').textContent = data.name;
+            document.getElementById('assetDetailSymbol').textContent = data.symbol;
+            document.getElementById('assetDetailBalance').textContent = `${data.balance.toLocaleString(undefined, {minimumFractionDigits: asset === 'BTC' ? 4 : 2, maximumFractionDigits: asset === 'BTC' ? 4 : 2})} ${asset}`;
+            document.getElementById('assetDetailValue').textContent = `$${data.value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            
+            // Render asset history
+            renderAssetHistory(asset);
+            
+            // Show page
+            document.getElementById('mainPage').style.display = 'none';
+            document.getElementById('assetDetailPage').style.display = 'block';
+            document.getElementById('swapPage').style.display = 'none';
+            document.getElementById('historyPage').style.display = 'none';
+        }
+
+        // Render Asset History
+        function renderAssetHistory(asset) {
+            const container = document.getElementById('assetHistory');
+            const assetHistory = transactionHistory.filter(tx => 
+                tx.asset === asset || 
+                (tx.fromAsset === asset || tx.toAsset === asset)
+            );
+            
+            if (assetHistory.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-history"></i>
-                        <p>No transactions yet</p>
+                        <p>No ${asset} transactions yet</p>
                     </div>
                 `;
                 return;
             }
             
             let html = '';
-            const recent = transactionHistory.slice(0, 4);
             
-            recent.forEach(tx => {
-                let iconClass, amountClass, title, subtitle;
+            assetHistory.slice(0, 10).forEach(tx => {
+                let iconClass, iconBg, title, subtitle, amount, amountClass;
                 
-                if (tx.type === 'swap') {
-                    iconClass = 'swap';
-                    amountClass = 'usdt';
-                    title = `Swap ${tx.fromToken} → ${tx.toToken}`;
-                    subtitle = `${tx.fromAmount} ${tx.fromToken} → ${tx.toAmount} ${tx.toToken} • ${tx.timestamp}`;
-                } else if (tx.type === 'received') {
-                    iconClass = 'received';
-                    amountClass = tx.token.toLowerCase();
-                    title = `Received ${tx.token}`;
+                if (tx.type === 'deposit') {
+                    iconClass = 'fa-download';
+                    iconBg = 'rgba(40, 167, 69, 0.15)';
+                    iconColor = '#28a745';
+                    title = `Deposit ${tx.asset}`;
                     subtitle = `From: ${tx.from} • ${tx.timestamp}`;
-                } else if (tx.type === 'sent') {
-                    iconClass = 'sent';
-                    amountClass = tx.token.toLowerCase();
-                    title = `Sent ${tx.token}`;
+                    amount = `+${tx.amount}`;
+                    amountClass = 'received';
+                } else if (tx.type === 'withdraw') {
+                    iconClass = 'fa-upload';
+                    iconBg = 'rgba(220, 53, 69, 0.15)';
+                    iconColor = '#dc3545';
+                    title = `Withdraw ${tx.asset}`;
                     subtitle = `To: ${tx.to} • ${tx.timestamp}`;
+                    amount = `-${tx.amount}`;
+                    amountClass = 'sent';
+                } else if (tx.type === 'send') {
+                    iconClass = 'fa-paper-plane';
+                    iconBg = 'rgba(220, 53, 69, 0.15)';
+                    iconColor = '#dc3545';
+                    title = `Sent ${tx.asset}`;
+                    subtitle = `To: ${tx.to} • ${tx.timestamp}`;
+                    amount = `-${tx.amount}`;
+                    amountClass = 'sent';
+                } else if (tx.type === 'swap') {
+                    iconClass = 'fa-exchange-alt';
+                    iconBg = 'rgba(38, 161, 123, 0.15)';
+                    iconColor = '#26a17b';
+                    title = `Swap ${tx.fromAsset} → ${tx.toAsset}`;
+                    subtitle = `${tx.fromAmount} ${tx.fromAsset} → ${tx.toAmount} ${tx.toAsset} • ${tx.timestamp}`;
+                    amount = tx.fromAsset === asset ? `-${tx.fromAmount}` : `+${tx.toAmount}`;
+                    amountClass = tx.fromAsset === asset ? 'sent' : 'received';
                 }
                 
                 html += `
-                    <div class="history-item">
-                        <div class="history-icon ${iconClass}">
-                            <i class="fas ${tx.type === 'received' ? 'fa-arrow-down' : 
-                                           tx.type === 'sent' ? 'fa-arrow-up' : 'fa-exchange-alt'}"></i>
+                    <div class="asset-history-item">
+                        <div class="asset-history-icon" style="background: ${iconBg}; color: ${iconColor};">
+                            <i class="fas ${iconClass}"></i>
                         </div>
-                        <div class="history-content">
-                            <div class="history-title">${title}</div>
-                            <div class="history-subtitle">${subtitle}</div>
+                        <div class="asset-history-content">
+                            <div class="asset-history-title">${title}</div>
+                            <div class="asset-history-time">${subtitle}</div>
                         </div>
-                        <div class="history-amount ${amountClass}">
-                            ${tx.type === 'swap' ? `+${tx.toAmount}` : 
-                              tx.type === 'received' ? `+${tx.amount}` : `-${tx.amount}`}
-                            ${tx.type === 'swap' ? tx.toToken : tx.token}
+                        <div class="asset-history-amount ${amountClass}">
+                            ${amount} ${tx.asset || (tx.fromAsset === asset ? tx.fromAsset : tx.toAsset)}
                         </div>
                     </div>
                 `;
@@ -1921,6 +1841,7 @@
         // Render Full History
         function renderFullHistory() {
             const container = document.getElementById('fullHistory');
+            
             if (transactionHistory.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
@@ -1934,39 +1855,53 @@
             let html = '';
             
             transactionHistory.forEach(tx => {
-                let iconClass, amountClass, title, subtitle;
+                let iconClass, iconBg, iconColor, title, subtitle, amount, amountClass;
                 
-                if (tx.type === 'swap') {
-                    iconClass = 'swap';
-                    amountClass = 'usdt';
-                    title = `Swap ${tx.fromToken} → ${tx.toToken}`;
-                    subtitle = `${tx.fromAmount} ${tx.fromToken} → ${tx.toAmount} ${tx.toToken} • ${tx.timestamp}`;
-                } else if (tx.type === 'received') {
-                    iconClass = 'received';
-                    amountClass = tx.token.toLowerCase();
-                    title = `Received ${tx.token}`;
+                if (tx.type === 'deposit') {
+                    iconClass = 'fa-download';
+                    iconBg = 'rgba(40, 167, 69, 0.15)';
+                    iconColor = '#28a745';
+                    title = `Deposit ${tx.asset}`;
                     subtitle = `From: ${tx.from} • ${tx.timestamp}`;
-                } else if (tx.type === 'sent') {
-                    iconClass = 'sent';
-                    amountClass = tx.token.toLowerCase();
-                    title = `Sent ${tx.token}`;
+                    amount = `+${tx.amount} ${tx.asset}`;
+                    amountClass = 'received';
+                } else if (tx.type === 'withdraw') {
+                    iconClass = 'fa-upload';
+                    iconBg = 'rgba(220, 53, 69, 0.15)';
+                    iconColor = '#dc3545';
+                    title = `Withdraw ${tx.asset}`;
                     subtitle = `To: ${tx.to} • ${tx.timestamp}`;
+                    amount = `-${tx.amount} ${tx.asset}`;
+                    amountClass = 'sent';
+                } else if (tx.type === 'send') {
+                    iconClass = 'fa-paper-plane';
+                    iconBg = 'rgba(220, 53, 69, 0.15)';
+                    iconColor = '#dc3545';
+                    title = `Sent ${tx.asset}`;
+                    subtitle = `To: ${tx.to} • ${tx.timestamp}`;
+                    amount = `-${tx.amount} ${tx.asset}`;
+                    amountClass = 'sent';
+                } else if (tx.type === 'swap') {
+                    iconClass = 'fa-exchange-alt';
+                    iconBg = 'rgba(38, 161, 123, 0.15)';
+                    iconColor = '#26a17b';
+                    title = `Swap ${tx.fromAsset} → ${tx.toAsset}`;
+                    subtitle = `${tx.fromAmount} ${tx.fromAsset} → ${tx.toAmount} ${tx.toAsset} • ${tx.timestamp}`;
+                    amount = `${tx.fromAmount} ${tx.fromAsset}`;
+                    amountClass = 'usdt';
                 }
                 
                 html += `
                     <div class="history-item">
-                        <div class="history-icon ${iconClass}">
-                            <i class="fas ${tx.type === 'received' ? 'fa-arrow-down' : 
-                                           tx.type === 'sent' ? 'fa-arrow-up' : 'fa-exchange-alt'}"></i>
+                        <div class="history-icon" style="background: ${iconBg}; color: ${iconColor};">
+                            <i class="fas ${iconClass}"></i>
                         </div>
                         <div class="history-content">
                             <div class="history-title">${title}</div>
                             <div class="history-subtitle">${subtitle}</div>
                         </div>
                         <div class="history-amount ${amountClass}">
-                            ${tx.type === 'swap' ? `+${tx.toAmount}` : 
-                              tx.type === 'received' ? `+${tx.amount}` : `-${tx.amount}`}
-                            ${tx.type === 'swap' ? tx.toToken : tx.token}
+                            ${amount}
                         </div>
                     </div>
                 `;
@@ -1975,42 +1910,194 @@
             container.innerHTML = html;
         }
 
-        // Switch Tabs
-        function switchTab(tab) {
-            document.getElementById('homeTab').style.display = 'none';
-            document.getElementById('swapTab').style.display = 'none';
-            document.getElementById('historyTab').style.display = 'none';
-            
-            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
-            
-            if (tab === 'home') {
-                document.getElementById('homeTab').style.display = 'block';
-                document.querySelector('.nav-tab:nth-child(1)').classList.add('active');
-            } else if (tab === 'swap') {
-                document.getElementById('swapTab').style.display = 'block';
-                document.querySelector('.nav-tab:nth-child(2)').classList.add('active');
-                updateSwapUI();
-            } else if (tab === 'history') {
-                document.getElementById('historyTab').style.display = 'block';
-                document.querySelector('.nav-tab:nth-child(3)').classList.add('active');
-                renderFullHistory();
+        // Show Swap Page
+        function showSwapPage() {
+            document.getElementById('mainPage').style.display = 'none';
+            document.getElementById('assetDetailPage').style.display = 'none';
+            document.getElementById('swapPage').style.display = 'block';
+            document.getElementById('historyPage').style.display = 'none';
+        }
+
+        // Show History Page
+        function showHistoryPage() {
+            document.getElementById('mainPage').style.display = 'none';
+            document.getElementById('assetDetailPage').style.display = 'none';
+            document.getElementById('swapPage').style.display = 'none';
+            document.getElementById('historyPage').style.display = 'block';
+            renderFullHistory();
+        }
+
+        // Go Back to Main
+        function goBackToMain() {
+            document.getElementById('mainPage').style.display = 'block';
+            document.getElementById('assetDetailPage').style.display = 'none';
+            document.getElementById('swapPage').style.display = 'none';
+            document.getElementById('historyPage').style.display = 'none';
+        }
+
+        // Show Deposit Modal
+        function showDepositModal() {
+            if (currentWallet) {
+                document.getElementById('depositAddress').textContent = currentWallet.address;
+                generateQRCode(currentWallet.address, 'depositQR');
+                showModal('depositModal');
             }
         }
 
-        // Update Swap UI
-        function updateSwapUI() {
-            const fromTokenSpan = document.getElementById('fromTokenOption')?.querySelector('span');
-            const toTokenSpan = document.getElementById('toTokenOption')?.querySelector('span');
+        // Show Withdraw Modal
+        function showWithdrawModal() {
+            if (currentAsset && currentWallet) {
+                const balance = currentWallet.balances[currentAsset];
+                document.getElementById('availableBalance').textContent = `${balance.toLocaleString(undefined, {minimumFractionDigits: currentAsset === 'BTC' ? 4 : 2, maximumFractionDigits: currentAsset === 'BTC' ? 4 : 2})} ${currentAsset}`;
+                showModal('withdrawModal');
+            }
+        }
+
+        // Execute Withdraw
+        function executeWithdraw() {
+            const address = document.getElementById('withdrawAddress').value.trim();
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
             
-            if (!fromTokenSpan || !toTokenSpan) return;
+            if (!address || !amount) {
+                showNotification('⚠️ Please fill all fields', 'error');
+                return;
+            }
             
-            const fromToken = fromTokenSpan.textContent.trim();
-            const toToken = toTokenSpan.textContent.trim();
+            if (amount <= 0) {
+                showNotification('⚠️ Amount must be greater than 0', 'error');
+                return;
+            }
             
-            document.getElementById('fromBalance').textContent = `Balance: ${currentWallet.balances[fromToken] || 0} ${fromToken}`;
-            document.getElementById('toBalance').textContent = `Balance: ${currentWallet.balances[toToken] || 0} ${toToken}`;
-            document.getElementById('swapBtn').innerHTML = `<i class="fas fa-exchange-alt"></i> Swap ${fromToken} to ${toToken}`;
-            updateSwapRate();
+            if (amount > currentWallet.balances[currentAsset]) {
+                showNotification(`❌ Insufficient ${currentAsset} balance`, 'error');
+                return;
+            }
+            
+            document.getElementById('withdrawBtn').innerHTML = `<span class="loading"></span> Withdrawing...`;
+            document.getElementById('withdrawBtn').disabled = true;
+            
+            setTimeout(() => {
+                // Update balance
+                currentWallet.balances[currentAsset] -= amount;
+                
+                // Add to history
+                transactionHistory.unshift({
+                    id: Date.now().toString(),
+                    type: 'withdraw',
+                    asset: currentAsset,
+                    amount: amount,
+                    to: formatAddress(address),
+                    timestamp: new Date().toLocaleString(),
+                    hash: '0x' + Math.random().toString(16).substr(2, 24)
+                });
+                
+                // Update UI
+                renderAssetHistory(currentAsset);
+                
+                closeModal('withdrawModal');
+                document.getElementById('withdrawBtn').innerHTML = `<i class="fas fa-upload"></i> Withdraw`;
+                document.getElementById('withdrawBtn').disabled = false;
+                document.getElementById('withdrawAddress').value = '';
+                document.getElementById('withdrawAmount').value = '';
+                
+                showNotification(`✅ Successfully withdrew ${amount} ${currentAsset}!`, 'success');
+            }, 1500);
+        }
+
+        // Show Send Modal
+        function showSendModal() {
+            showModal('sendModal');
+        }
+
+        // Show Receive Modal
+        function showReceiveModal() {
+            if (currentWallet) {
+                document.getElementById('receiveAddress').textContent = currentWallet.address;
+                generateQRCode(currentWallet.address, 'receiveQR');
+                showModal('receiveModal');
+            }
+        }
+
+        // Send Transaction
+        function sendTransaction() {
+            const address = document.getElementById('sendAddress').value.trim();
+            const amount = parseFloat(document.getElementById('sendAmount').value);
+            
+            if (!address || !amount) {
+                showNotification('⚠️ Please fill all fields', 'error');
+                return;
+            }
+            
+            if (amount <= 0) {
+                showNotification('⚠️ Amount must be greater than 0', 'error');
+                return;
+            }
+            
+            if (amount > currentWallet.balances[currentAsset || 'TRX']) {
+                showNotification(`❌ Insufficient balance`, 'error');
+                return;
+            }
+            
+            document.getElementById('sendBtn').innerHTML = `<span class="loading"></span> Sending...`;
+            document.getElementById('sendBtn').disabled = true;
+            
+            setTimeout(() => {
+                const asset = currentAsset || 'TRX';
+                currentWallet.balances[asset] -= amount;
+                
+                transactionHistory.unshift({
+                    id: Date.now().toString(),
+                    type: 'send',
+                    asset: asset,
+                    amount: amount,
+                    to: formatAddress(address),
+                    timestamp: new Date().toLocaleString(),
+                    hash: '0x' + Math.random().toString(16).substr(2, 24)
+                });
+                
+                if (currentAsset) {
+                    renderAssetHistory(currentAsset);
+                }
+                
+                closeModal('sendModal');
+                document.getElementById('sendBtn').innerHTML = `<i class="fas fa-paper-plane"></i> Send`;
+                document.getElementById('sendBtn').disabled = false;
+                document.getElementById('sendAddress').value = '';
+                document.getElementById('sendAmount').value = '';
+                
+                showNotification(`✅ Successfully sent ${amount} ${asset}!`, 'success');
+            }, 1500);
+        }
+
+        // Copy Address
+        function copyAddress() {
+            const address = document.getElementById('receiveAddress').textContent;
+            navigator.clipboard.writeText(address).then(() => {
+                showNotification('📋 Address copied to clipboard!', 'success');
+            });
+        }
+
+        // Copy Deposit Address
+        function copyDepositAddress() {
+            const address = document.getElementById('depositAddress').textContent;
+            navigator.clipboard.writeText(address).then(() => {
+                showNotification('📋 Address copied to clipboard!', 'success');
+            });
+        }
+
+        // Generate QR Code
+        function generateQRCode(address, elementId) {
+            const qrDiv = document.getElementById(elementId);
+            qrDiv.innerHTML = `<div style="font-size: 10px; color: #666; line-height: 1.3; padding: 10px;">
+                ${currentAsset || 'BOSSX'} WALLET<br>
+                ${formatAddress(address)}<br><br>
+                <span style="font-size: 9px; color: #999;">Scan to send</span>
+            </div>`;
+        }
+
+        // Format Address
+        function formatAddress(address) {
+            return address.substring(0, 6) + '...' + address.substring(address.length - 4);
         }
 
         // Show Token Selector
@@ -2052,92 +2139,45 @@
             calculateSwap();
         }
 
+        // Update Swap UI
+        function updateSwapUI() {
+            const fromToken = document.getElementById('fromTokenOption').querySelector('span').textContent.trim();
+            const toToken = document.getElementById('toTokenOption').querySelector('span').textContent.trim();
+            
+            document.getElementById('fromBalance').textContent = `Balance: ${currentWallet.balances[fromToken] || 0} ${fromToken}`;
+            document.getElementById('toBalance').textContent = `Balance: ${currentWallet.balances[toToken] || 0} ${toToken}`;
+            document.getElementById('swapBtn').innerHTML = `<i class="fas fa-exchange-alt"></i> Swap ${fromToken} to ${toToken}`;
+        }
+
         // Calculate Swap
         function calculateSwap() {
             const fromAmount = parseFloat(document.getElementById('fromAmount').value) || 0;
-            const fromTokenSpan = document.getElementById('fromTokenOption').querySelector('span');
-            const toTokenSpan = document.getElementById('toTokenOption').querySelector('span');
-            
-            if (!fromTokenSpan || !toTokenSpan) return;
-            
-            const fromToken = fromTokenSpan.textContent.trim();
-            const toToken = toTokenSpan.textContent.trim();
+            const fromToken = document.getElementById('fromTokenOption').querySelector('span').textContent.trim();
+            const toToken = document.getElementById('toTokenOption').querySelector('span').textContent.trim();
             
             if (fromAmount <= 0) {
                 document.getElementById('toAmount').value = '';
-                document.getElementById('minReceived').textContent = '0.00 ' + toToken;
                 return;
             }
             
-            const fromPrice = priceData[fromToken]?.price || 1;
-            const toPrice = priceData[toToken]?.price || 1;
+            // Simple rate calculation
+            let rate = 0;
+            if (fromToken === 'BOSSX' && toToken === 'USDT') rate = 0.4;
+            else if (fromToken === 'USDT' && toToken === 'BOSSX') rate = 2.5;
+            else if (fromToken === 'TRX' && toToken === 'USDT') rate = 0.1;
+            else if (fromToken === 'USDT' && toToken === 'TRX') rate = 10;
+            else rate = 1;
             
-            if (fromPrice <= 0 || toPrice <= 0) {
-                showNotification('⚠️ Price data not available', 'error');
-                return;
-            }
-            
-            const fromValueUSD = fromAmount * fromPrice;
-            const toAmount = fromValueUSD / toPrice;
-            const minReceived = toAmount * (1 - slippage / 100);
-            
+            const toAmount = fromAmount * rate;
             document.getElementById('toAmount').value = toAmount.toFixed(6);
-            document.getElementById('minReceived').textContent = `${minReceived.toFixed(6)} ${toToken}`;
-            document.getElementById('priceImpact').textContent = `Price Impact: ${calculatePriceImpact(fromAmount, fromToken, toToken).toFixed(2)}%`;
-        }
-
-        // Calculate Price Impact
-        function calculatePriceImpact(amount, fromToken, toToken) {
-            if (amount > 1000 && (fromToken === 'BOSSX' || toToken === 'BOSSX')) {
-                return 1.5;
-            } else if (amount > 500) {
-                return 0.8;
-            } else if (amount > 100) {
-                return 0.3;
-            }
-            return 0.1;
-        }
-
-        // Show Slippage Modal
-        function showSlippageModal() {
-            document.getElementById('customSlippage').value = slippage;
-            showModal('slippageModal');
-        }
-
-        // Set Slippage
-        function setSlippage(value) {
-            slippage = parseFloat(value);
-            document.getElementById('slippage').textContent = `${slippage}%`;
-            closeModal('slippageModal');
-            calculateSwap();
-        }
-
-        // Apply Custom Slippage
-        function applyCustomSlippage() {
-            const custom = parseFloat(document.getElementById('customSlippage').value);
-            if (custom >= 0 && custom <= 50) {
-                slippage = custom;
-                document.getElementById('slippage').textContent = `${slippage}%`;
-                closeModal('slippageModal');
-                calculateSwap();
-            } else {
-                showNotification('⚠️ Slippage must be between 0-50%', 'error');
-            }
+            document.getElementById('swapRateDisplay').textContent = `1 ${fromToken} ≈ ${rate} ${toToken}`;
         }
 
         // Execute Swap
-        async function executeSwap() {
+        function executeSwap() {
             const fromAmount = parseFloat(document.getElementById('fromAmount').value);
-            const fromTokenSpan = document.getElementById('fromTokenOption').querySelector('span');
-            const toTokenSpan = document.getElementById('toTokenOption').querySelector('span');
-            
-            if (!fromTokenSpan || !toTokenSpan) {
-                showNotification('⚠️ Please select tokens', 'error');
-                return;
-            }
-            
-            const fromToken = fromTokenSpan.textContent.trim();
-            const toToken = toTokenSpan.textContent.trim();
+            const fromToken = document.getElementById('fromTokenOption').querySelector('span').textContent.trim();
+            const toToken = document.getElementById('toTokenOption').querySelector('span').textContent.trim();
             
             if (!fromAmount || fromAmount <= 0) {
                 showNotification('⚠️ Please enter amount to swap', 'error');
@@ -2158,19 +2198,16 @@
                 currentWallet.balances[fromToken] -= fromAmount;
                 currentWallet.balances[toToken] = (currentWallet.balances[toToken] || 0) + toAmount;
                 
-                updatePortfolioUI();
-                
                 transactionHistory.unshift({
+                    id: Date.now().toString(),
                     type: 'swap',
-                    fromToken: fromToken,
-                    toToken: toToken,
+                    fromAsset: fromToken,
+                    toAsset: toToken,
                     fromAmount: fromAmount,
                     toAmount: toAmount,
                     timestamp: new Date().toLocaleString(),
                     hash: '0x' + Math.random().toString(16).substr(2, 24)
                 });
-                
-                renderRecentHistory();
                 
                 document.getElementById('fromAmount').value = '';
                 document.getElementById('toAmount').value = '';
@@ -2191,23 +2228,6 @@
             document.getElementById(id).style.display = 'none';
         }
 
-        function showSendModal(token = null) {
-            if (token) {
-                document.getElementById('sendToken').value = token;
-            }
-            showModal('sendModal');
-        }
-
-        function showReceiveModal() {
-            if (currentWallet) {
-                document.getElementById('receiveAddress').textContent = currentWallet.address;
-                generateQRCode(currentWallet.address);
-                showModal('receiveModal');
-            } else {
-                showNotification('⚠️ Please create or import a wallet first', 'error');
-            }
-        }
-
         function showTokenModal() {
             showNotification('🪙 Token management coming soon!', 'info');
         }
@@ -2222,93 +2242,6 @@
 
         function showDAppBrowser() {
             showNotification('🌐 DApp browser coming soon!', 'info');
-        }
-
-        // Send Transaction
-        async function sendTransaction() {
-            const address = document.getElementById('sendAddress').value.trim();
-            const amount = document.getElementById('sendAmount').value.trim();
-            const token = document.getElementById('sendToken').value;
-            
-            if (!address || !amount) {
-                showNotification('⚠️ Please fill all fields', 'error');
-                return;
-            }
-            
-            if (!tronWeb.isAddress(address)) {
-                showNotification('❌ Invalid TRON address (must start with T)', 'error');
-                return;
-            }
-            
-            if (parseFloat(amount) <= 0) {
-                showNotification('⚠️ Amount must be greater than 0', 'error');
-                return;
-            }
-            
-            if (parseFloat(amount) > currentWallet.balances[token]) {
-                showNotification(`❌ Insufficient ${token} balance`, 'error');
-                return;
-            }
-            
-            document.getElementById('sendBtn').innerHTML = `<span class="loading"></span> Sending...`;
-            document.getElementById('sendBtn').disabled = true;
-            
-            setTimeout(() => {
-                currentWallet.balances[token] -= parseFloat(amount);
-                updatePortfolioUI();
-                
-                transactionHistory.unshift({
-                    type: 'sent',
-                    token: token,
-                    amount: parseFloat(amount),
-                    to: formatAddress(address),
-                    timestamp: new Date().toLocaleString(),
-                    hash: '0x' + Math.random().toString(16).substr(2, 24)
-                });
-                
-                renderRecentHistory();
-                
-                closeModal('sendModal');
-                document.getElementById('sendBtn').innerHTML = `<i class="fas fa-paper-plane"></i> Send`;
-                document.getElementById('sendBtn').disabled = false;
-                document.getElementById('sendAddress').value = '';
-                document.getElementById('sendAmount').value = '';
-                
-                showNotification(`✅ Successfully sent ${amount} ${token}!`, 'success');
-            }, 1500);
-        }
-
-        // Copy Address
-        function copyAddress() {
-            const address = document.getElementById('receiveAddress').textContent;
-            navigator.clipboard.writeText(address).then(() => {
-                showNotification('📋 Address copied to clipboard!', 'success');
-            });
-        }
-
-        // Show Loading
-        function showLoading(show, message = "Loading...") {
-            const loadingEl = document.createElement('div');
-            loadingEl.id = 'tempLoading';
-            loadingEl.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(0, 0, 0, 0.8);
-                color: white;
-                padding: 15px 30px;
-                border-radius: 10px;
-                z-index: 9999;
-                display: ${show ? 'block' : 'none'};
-            `;
-            loadingEl.innerHTML = `<i class="fas fa-sync-alt fa-spin"></i> ${message}`;
-            
-            if (show && !document.getElementById('tempLoading')) {
-                document.body.appendChild(loadingEl);
-            } else if (!show && document.getElementById('tempLoading')) {
-                document.getElementById('tempLoading').remove();
-            }
         }
 
         // Notification
@@ -2327,6 +2260,7 @@
             initTronWeb(null);
             await createDemoWallet();
             
+            // Add event listener for swap amount input
             document.getElementById('fromAmount').addEventListener('input', calculateSwap);
         });
     </script>
