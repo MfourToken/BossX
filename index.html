@@ -21,6 +21,8 @@
             --success: #28a745;
             --warning: #ffc107;
             --danger: #dc3545;
+            --usdt-color: #26a17b;
+            --btc-color: #f7931a;
         }
 
         * {
@@ -165,7 +167,7 @@
             z-index: 1;
         }
 
-        .balance-row {
+        .portfolio-row {
             display: flex;
             justify-content: space-between;
             margin-top: 15px;
@@ -173,22 +175,26 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .balance-item {
+        .portfolio-item {
             text-align: center;
             flex: 1;
         }
 
-        .balance-item-value {
+        .portfolio-item-value {
             font-size: 18px;
             font-weight: 700;
-            color: var(--gold-light);
             margin-bottom: 5px;
         }
 
-        .balance-item-label {
+        .portfolio-item-label {
             font-size: 12px;
             color: var(--text-secondary);
         }
+
+        .portfolio-item-value.bossx { color: var(--gold-light); }
+        .portfolio-item-value.usdt { color: var(--usdt-color); }
+        .portfolio-item-value.btc { color: var(--btc-color); }
+        .portfolio-item-value.trx { color: #e03131; }
 
         .nav-tabs {
             display: flex;
@@ -260,6 +266,15 @@
             display: block;
         }
 
+        .action-btn.swap {
+            background: linear-gradient(135deg, var(--usdt-color), #1e8466);
+            border-color: rgba(38, 161, 123, 0.4);
+        }
+
+        .action-btn.swap i {
+            color: white;
+        }
+
         .action-btn.received {
             background: rgba(40, 80, 40, 0.8);
             border-color: rgba(40, 167, 69, 0.3);
@@ -276,6 +291,76 @@
 
         .action-btn.sent i {
             color: #dc3545;
+        }
+
+        .asset-card {
+            background: rgba(30, 30, 60, 0.7);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.3s;
+        }
+
+        .asset-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .asset-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .asset-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .asset-icon.bossx { background: rgba(212, 175, 55, 0.2); color: var(--gold-light); }
+        .asset-icon.usdt { background: rgba(38, 161, 123, 0.2); color: var(--usdt-color); }
+        .asset-icon.btc { background: rgba(247, 147, 26, 0.2); color: var(--btc-color); }
+        .asset-icon.trx { background: rgba(224, 49, 49, 0.2); color: #e03131; }
+
+        .asset-info {
+            flex: 1;
+        }
+
+        .asset-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .asset-symbol {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .asset-balance {
+            text-align: right;
+        }
+
+        .asset-amount {
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 3px;
+        }
+
+        .asset-value {
+            color: var(--text-secondary);
+            font-size: 13px;
         }
 
         .history-item {
@@ -315,6 +400,11 @@
             color: #28a745;
         }
 
+        .history-icon.swap {
+            background: rgba(38, 161, 123, 0.15);
+            color: var(--usdt-color);
+        }
+
         .history-icon.contract {
             background: rgba(212, 175, 55, 0.15);
             color: var(--gold-light);
@@ -340,17 +430,11 @@
             font-size: 16px;
         }
 
-        .history-amount.sent {
-            color: #dc3545;
-        }
-
-        .history-amount.received {
-            color: #28a745;
-        }
-
-        .history-amount.bossx {
-            color: var(--gold-light);
-        }
+        .history-amount.sent { color: #dc3545; }
+        .history-amount.received { color: #28a745; }
+        .history-amount.bossx { color: var(--gold-light); }
+        .history-amount.usdt { color: var(--usdt-color); }
+        .history-amount.btc { color: var(--btc-color); }
 
         .account-switcher {
             display: flex;
@@ -498,6 +582,9 @@
             font-weight: 500;
             color: var(--text-secondary);
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .input-field {
@@ -573,6 +660,17 @@
             box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
         }
 
+        .btn-success {
+            background: linear-gradient(135deg, var(--usdt-color), #1e8466);
+            color: white;
+            box-shadow: 0 6px 20px rgba(38, 161, 123, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(38, 161, 123, 0.4);
+        }
+
         .notification {
             position: fixed;
             top: 20px;
@@ -642,39 +740,140 @@
             color: var(--text-secondary);
         }
 
-        .nft-item {
+        .swap-container {
             background: rgba(30, 30, 60, 0.7);
-            border-radius: 16px;
-            overflow: hidden;
-            margin-bottom: 15px;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
             border: 1px solid var(--border-color);
         }
 
-        .nft-image {
+        .swap-from, .swap-to {
+            margin-bottom: 20px;
+        }
+
+        .swap-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .swap-amount {
             width: 100%;
-            height: 120px;
-            background: linear-gradient(135deg, #1e3a8a, #0f172a);
+            padding: 18px;
+            background: rgba(20, 20, 40, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-size: 24px;
+            font-weight: 700;
+            text-align: right;
+            outline: none;
+        }
+
+        .swap-amount:focus {
+            border-color: var(--gold-light);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        }
+
+        .swap-token-select {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+            padding: 12px;
+            background: rgba(40, 40, 80, 0.5);
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .swap-token-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .swap-token-option:hover {
+            background: rgba(212, 175, 55, 0.15);
+        }
+
+        .swap-token-option.active {
+            background: rgba(212, 175, 55, 0.25);
+            border: 1px solid var(--gold-light);
+        }
+
+        .swap-token-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--gold-light);
             font-weight: 700;
-            font-size: 24px;
+            font-size: 14px;
         }
 
-        .nft-info {
-            padding: 15px;
-        }
+        .swap-token-icon.bossx { background: rgba(212, 175, 55, 0.2); color: var(--gold-light); }
+        .swap-token-icon.usdt { background: rgba(38, 161, 123, 0.2); color: var(--usdt-color); }
+        .swap-token-icon.trx { background: rgba(224, 49, 49, 0.2); color: #e03131; }
 
-        .nft-name {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .nft-id {
+        .swap-rate {
+            text-align: center;
             color: var(--text-secondary);
+            font-size: 14px;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .swap-rate::before {
+            content: '⇅';
+            display: block;
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: var(--gold-light);
+        }
+
+        .swap-settings {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
             font-size: 13px;
-            font-family: 'Courier New', monospace;
+        }
+
+        .swap-setting-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .swap-setting-item:hover {
+            color: var(--gold-light);
+        }
+
+        .price-impact {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            background: rgba(38, 161, 123, 0.1);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .price-impact-label {
+            color: var(--text-secondary);
+        }
+
+        .price-impact-value {
+            font-weight: 600;
+            color: var(--usdt-color);
         }
 
         .empty-state {
@@ -692,50 +891,6 @@
         .empty-state p {
             font-size: 15px;
             margin-top: 10px;
-        }
-
-        .pin-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .pin-btn {
-            width: 100%;
-            height: 60px;
-            background: rgba(30, 30, 60, 0.8);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            color: var(--text-primary);
-            font-size: 24px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .pin-btn:hover {
-            background: rgba(50, 50, 100, 0.9);
-            transform: scale(1.05);
-        }
-
-        .pin-display {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin: 25px 0;
-        }
-
-        .pin-dot {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: background 0.3s;
-        }
-
-        .pin-dot.active {
-            background: var(--gold-light);
         }
 
         @media (max-width: 480px) {
@@ -796,45 +951,97 @@
                     <div class="account-name">BossX Wallet</div>
                     <div class="account-address" id="headerAddress">T...xxxx</div>
                 </div>
-                <div class="account-balance" id="headerBalance">0 BOSSX</div>
+                <div class="account-balance" id="headerBalance">$1,850.00</div>
             </div>
 
-            <!-- Balance Card -->
+            <!-- Portfolio Card -->
             <div class="balance-card">
                 <div class="balance-label">
-                    <i class="fas fa-coins"></i> Total Balance
+                    <i class="fas fa-chart-pie"></i> Portfolio Value
                 </div>
-                <div class="balance-amount" id="totalBalance">0.00</div>
-                <div class="balance-row">
-                    <div class="balance-item">
-                        <div class="balance-item-value" id="trxValue">0 TRX</div>
-                        <div class="balance-item-label">TRX</div>
+                <div class="balance-amount" id="totalBalance">$1,850.00</div>
+                <div class="portfolio-row">
+                    <div class="portfolio-item">
+                        <div class="portfolio-item-value bossx" id="bossxValue">1,250 BOSSX</div>
+                        <div class="portfolio-item-label">BOSSX</div>
                     </div>
-                    <div class="balance-item">
-                        <div class="balance-item-value" id="bossxValue">0 BOSSX</div>
-                        <div class="balance-item-label">BOSSX</div>
+                    <div class="portfolio-item">
+                        <div class="portfolio-item-value usdt" id="usdtValue">500 USDT</div>
+                        <div class="portfolio-item-label">USDT</div>
+                    </div>
+                </div>
+                <div class="portfolio-row">
+                    <div class="portfolio-item">
+                        <div class="portfolio-item-value btc" id="btcValue">0.005 BTC</div>
+                        <div class="portfolio-item-label">BTC</div>
+                    </div>
+                    <div class="portfolio-item">
+                        <div class="portfolio-item-value trx" id="trxValue">15.75 TRX</div>
+                        <div class="portfolio-item-label">TRX</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Resources -->
-            <div class="balance-card" style="margin-bottom: 25px;">
+            <!-- Assets List -->
+            <div class="balance-card">
                 <div class="balance-label">
-                    <i class="fas fa-bolt"></i> Resources
+                    <i class="fas fa-coins"></i> Your Assets
                 </div>
-                <div class="resource-label">
-                    <span>Bandwidth</span>
-                    <span id="bandwidthUsed">0/10000</span>
+                
+                <div class="asset-card" onclick="showSendModal('BOSSX')">
+                    <div class="asset-header">
+                        <div class="asset-icon bossx">B</div>
+                        <div class="asset-info">
+                            <div class="asset-name">BossX Token</div>
+                            <div class="asset-symbol">BOSSX</div>
+                        </div>
+                        <div class="asset-balance">
+                            <div class="asset-amount">1,250.50</div>
+                            <div class="asset-value">$1,250.50</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="resource-bar">
-                    <div class="resource-fill" id="bandwidthBar" style="width: 0%"></div>
+
+                <div class="asset-card" onclick="showSendModal('USDT')">
+                    <div class="asset-header">
+                        <div class="asset-icon usdt">U</div>
+                        <div class="asset-info">
+                            <div class="asset-name">Tether USD</div>
+                            <div class="asset-symbol">USDT (TRC20)</div>
+                        </div>
+                        <div class="asset-balance">
+                            <div class="asset-amount">500.00</div>
+                            <div class="asset-value">$500.00</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="resource-label" style="margin-top: 10px;">
-                    <span>Energy</span>
-                    <span id="energyUsed">0/5000</span>
+
+                <div class="asset-card" onclick="showSendModal('BTC')">
+                    <div class="asset-header">
+                        <div class="asset-icon btc">₿</div>
+                        <div class="asset-info">
+                            <div class="asset-name">Bitcoin</div>
+                            <div class="asset-symbol">BTC (WBTC)</div>
+                        </div>
+                        <div class="asset-balance">
+                            <div class="asset-amount">0.0050</div>
+                            <div class="asset-value">$300.00</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="resource-bar">
-                    <div class="resource-fill" id="energyBar" style="width: 0%"></div>
+
+                <div class="asset-card" onclick="showSendModal('TRX')">
+                    <div class="asset-header">
+                        <div class="asset-icon trx">T</div>
+                        <div class="asset-info">
+                            <div class="asset-name">TRON</div>
+                            <div class="asset-symbol">TRX</div>
+                        </div>
+                        <div class="asset-balance">
+                            <div class="asset-amount">15.75</div>
+                            <div class="asset-value">$15.75</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -844,13 +1051,13 @@
                     <i class="fas fa-home"></i>
                     <span>Home</span>
                 </div>
+                <div class="nav-tab" onclick="switchTab('swap')">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Swap</span>
+                </div>
                 <div class="nav-tab" onclick="switchTab('history')">
                     <i class="fas fa-history"></i>
                     <span>History</span>
-                </div>
-                <div class="nav-tab" onclick="switchTab('nft')">
-                    <i class="fas fa-gem"></i>
-                    <span>NFT</span>
                 </div>
             </div>
 
@@ -865,9 +1072,9 @@
                         <i class="fas fa-paper-plane"></i>
                         <div>Send</div>
                     </div>
-                    <div class="action-btn" onclick="showFreezeModal()">
-                        <i class="fas fa-snowflake"></i>
-                        <div>Freeze</div>
+                    <div class="action-btn swap" onclick="switchTab('swap')">
+                        <i class="fas fa-exchange-alt"></i>
+                        <div>Swap</div>
                     </div>
                     <div class="action-btn" onclick="showDAppBrowser()">
                         <i class="fas fa-globe"></i>
@@ -876,7 +1083,7 @@
                 </div>
 
                 <h3 style="font-size: 18px; margin: 25px 0 15px; color: var(--gold-light);">
-                    <i class="fas fa-exchange-alt"></i> Recent Transactions
+                    <i class="fas fa-history"></i> Recent Activity
                 </h3>
                 
                 <div id="recentHistory">
@@ -887,6 +1094,69 @@
                 </div>
             </div>
 
+            <!-- Swap Tab -->
+            <div id="swapTab" class="tab-content" style="display: none;">
+                <div class="swap-container">
+                    <div class="swap-from">
+                        <div class="swap-label">
+                            <span>From</span>
+                            <span id="fromBalance">Balance: 1,250.50 BOSSX</span>
+                        </div>
+                        <input type="number" class="swap-amount" id="fromAmount" placeholder="0.00" min="0" step="0.01">
+                        <div class="swap-token-select" onclick="showTokenSelector('from')">
+                            <div class="swap-token-option active" id="fromTokenOption">
+                                <div class="swap-token-icon bossx">B</div>
+                                <span>BOSSX</span>
+                            </div>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+
+                    <div class="swap-rate">
+                        <div>1 BOSSX ≈ 0.4 USDT</div>
+                    </div>
+
+                    <div class="swap-to">
+                        <div class="swap-label">
+                            <span>To</span>
+                            <span id="toBalance">Balance: 500.00 USDT</span>
+                        </div>
+                        <input type="number" class="swap-amount" id="toAmount" placeholder="0.00" readonly>
+                        <div class="swap-token-select" onclick="showTokenSelector('to')">
+                            <div class="swap-token-option" id="toTokenOption">
+                                <div class="swap-token-icon usdt">U</div>
+                                <span>USDT</span>
+                            </div>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="swap-settings">
+                    <div class="swap-setting-item" onclick="showSlippageModal()">
+                        <i class="fas fa-percentage"></i>
+                        <span>Slippage: <strong id="slippage">0.5%</strong></span>
+                    </div>
+                    <div class="swap-setting-item">
+                        <i class="fas fa-info-circle"></i>
+                        <span id="priceImpact">Price Impact: 0.1%</span>
+                    </div>
+                </div>
+
+                <div class="price-impact">
+                    <div class="price-impact-label">Minimum Received</div>
+                    <div class="price-impact-value" id="minReceived">199.00 USDT</div>
+                </div>
+
+                <button class="btn btn-success" id="swapBtn" onclick="executeSwap()">
+                    <i class="fas fa-exchange-alt"></i> Swap BOSSX to USDT
+                </button>
+
+                <div style="margin-top: 15px; padding: 12px; background: rgba(38, 161, 123, 0.1); border-radius: 12px; font-size: 13px; color: var(--text-secondary);">
+                    <i class="fas fa-info-circle"></i> Swap powered by JustSwap • Liquidity may vary
+                </div>
+            </div>
+
             <!-- History Tab -->
             <div id="historyTab" class="tab-content" style="display: none;">
                 <div id="fullHistory">
@@ -894,17 +1164,6 @@
                         <i class="fas fa-receipt"></i>
                         <p>Your transaction history will appear here</p>
                     </div>
-                </div>
-            </div>
-
-            <!-- NFT Tab -->
-            <div id="nftTab" class="tab-content" style="display: none;">
-                <div class="empty-state">
-                    <i class="fas fa-images"></i>
-                    <p>No NFTs found in this wallet</p>
-                    <p style="font-size: 13px; margin-top: 5px; color: var(--text-secondary);">
-                        Supports TRC721 & TRC1155 tokens
-                    </p>
                 </div>
             </div>
         </div>
@@ -935,7 +1194,7 @@
             </div>
             <div class="input-group">
                 <label class="input-label">To Address</label>
-                <input type="text" class="input-field" id="sendAddress" placeholder="Enter TRON address (T...)">
+                <input type="text" class="input-field" id="sendAddress" placeholder="Enter address (T... or 0x...)">
             </div>
             <div class="input-group">
                 <label class="input-label">Amount</label>
@@ -944,8 +1203,10 @@
             <div class="input-group">
                 <label class="input-label">Token</label>
                 <select class="input-field" id="sendToken">
+                    <option value="BOSSX">BOSSX</option>
+                    <option value="USDT">USDT (TRC20)</option>
+                    <option value="BTC">BTC (WBTC)</option>
                     <option value="TRX">TRX</option>
-                    <option value="BOSSX" selected>BOSSX</option>
                 </select>
             </div>
             <button class="btn btn-primary" id="sendBtn" onclick="sendTransaction()">
@@ -976,39 +1237,51 @@
         </div>
     </div>
 
-    <!-- PIN Modal -->
-    <div class="modal" id="pinModal">
-        <div class="modal-content" style="padding: 30px 25px;">
-            <div style="text-align: center; margin-bottom: 25px;">
-                <div class="app-title" style="font-size: 26px; margin-bottom: 5px;">BOSSX</div>
-                <div style="color: var(--text-secondary); font-size: 15px;">Enter your PIN</div>
+    <!-- Token Selector Modal -->
+    <div class="modal" id="tokenSelectorModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="tokenSelectorTitle">Select Token</div>
+                <button class="modal-close" onclick="closeModal('tokenSelectorModal')">&times;</button>
             </div>
-            
-            <div class="pin-display" id="pinDisplay">
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="swap-token-option" onclick="selectToken('BOSSX', 'from')">
+                    <div class="swap-token-icon bossx">B</div>
+                    <span>BOSSX</span>
+                </div>
+                <div class="swap-token-option" onclick="selectToken('USDT', 'from')">
+                    <div class="swap-token-icon usdt">U</div>
+                    <span>USDT</span>
+                </div>
+                <div class="swap-token-option" onclick="selectToken('TRX', 'from')">
+                    <div class="swap-token-icon trx">T</div>
+                    <span>TRX</span>
+                </div>
+                <div class="swap-token-option" onclick="selectToken('BTC', 'from')">
+                    <div class="swap-token-icon btc">₿</div>
+                    <span>BTC</span>
+                </div>
             </div>
-            
-            <div class="pin-container">
-                <button class="pin-btn" onclick="enterPin('1')">1</button>
-                <button class="pin-btn" onclick="enterPin('2')">2</button>
-                <button class="pin-btn" onclick="enterPin('3')">3</button>
-                <button class="pin-btn" onclick="enterPin('4')">4</button>
-                <button class="pin-btn" onclick="enterPin('5')">5</button>
-                <button class="pin-btn" onclick="enterPin('6')">6</button>
-                <button class="pin-btn" onclick="enterPin('7')">7</button>
-                <button class="pin-btn" onclick="enterPin('8')">8</button>
-                <button class="pin-btn" onclick="enterPin('9')">9</button>
-                <button class="pin-btn" style="opacity: 0; cursor: default;"></button>
-                <button class="pin-btn" onclick="enterPin('0')">0</button>
-                <button class="pin-btn" onclick="deletePin()">
-                    <i class="fas fa-backspace"></i>
-                </button>
+        </div>
+    </div>
+
+    <!-- Slippage Modal -->
+    <div class="modal" id="slippageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fas fa-percentage"></i> Slippage Tolerance</div>
+                <button class="modal-close" onclick="closeModal('slippageModal')">&times;</button>
             </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                <button class="btn btn-outline" style="padding: 10px; font-size: 15px;" onclick="setSlippage('0.5')">0.5%</button>
+                <button class="btn btn-outline" style="padding: 10px; font-size: 15px;" onclick="setSlippage('1')">1%</button>
+                <button class="btn btn-outline" style="padding: 10px; font-size: 15px;" onclick="setSlippage('3')">3%</button>
+            </div>
+            <div class="input-group">
+                <label class="input-label">Custom</label>
+                <input type="number" class="input-field" id="customSlippage" placeholder="Enter custom slippage %" min="0" step="0.1">
+            </div>
+            <button class="btn btn-primary" onclick="applyCustomSlippage()">Apply</button>
         </div>
     </div>
 
@@ -1018,7 +1291,12 @@
     <script>
         // ===== CONFIGURASI =====
         const BOSSX_CONTRACT_ADDRESS = "TLp5ViMF8A7F5HhgT34i4eqJV699UvCiYk";
+        const USDT_CONTRACT_ADDRESS = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"; // USDT TRC20
+        const WBTC_CONTRACT_ADDRESS = "TXpw8XeWYeTUd4quDskoUqeQPowRh4jY65"; // WBTC TRC20 (Wrapped Bitcoin)
         const BOSSX_DECIMALS = 6;
+        const USDT_DECIMALS = 6;
+        const WBTC_DECIMALS = 8;
+        
         const TRON_NODE = {
             fullNode: 'https://api.trongrid.io',
             solidityNode: 'https://api.trongrid.io',
@@ -1028,9 +1306,8 @@
         let tronWeb = null;
         let currentWallet = null;
         let transactionHistory = [];
-        let pin = '';
-        let pinAttempts = 0;
-        const MAX_PIN_ATTEMPTS = 5;
+        let currentTokenSelector = 'from';
+        let slippage = 0.5; // Default 0.5%
 
         // Initialize TronWeb
         function initTronWeb(privateKey) {
@@ -1043,9 +1320,8 @@
             }
         }
 
-        // Create demo wallet for demo purposes
+        // Create demo wallet
         async function createDemoWallet() {
-            // Generate random private key for demo
             const privateKey = TronWeb.utils.bytes.toHex(TronWeb.utils.bytes.random(32));
             const address = tronWeb.address.fromPrivateKey(privateKey);
             
@@ -1053,33 +1329,45 @@
                 address, 
                 privateKey,
                 name: "BossX Wallet",
-                balanceTRX: 15.75,
-                balanceBOSSX: 1250.50
+                balances: {
+                    TRX: 15.75,
+                    BOSSX: 1250.50,
+                    USDT: 500.00,
+                    BTC: 0.005
+                },
+                prices: {
+                    TRX: 0.10,
+                    BOSSX: 1.00,
+                    USDT: 1.00,
+                    BTC: 60000
+                }
             };
             
             // Update UI
             document.getElementById('headerAddress').textContent = formatAddress(address);
-            document.getElementById('headerBalance').textContent = `${currentWallet.balanceBOSSX.toFixed(2)} BOSSX`;
-            document.getElementById('totalBalance').textContent = '$1,250.00';
-            document.getElementById('trxValue').textContent = `${currentWallet.balanceTRX.toFixed(2)} TRX`;
-            document.getElementById('bossxValue').textContent = `${currentWallet.balanceBOSSX.toFixed(2)} BOSSX`;
+            document.getElementById('headerBalance').textContent = `$${calculateTotalValue().toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('totalBalance').textContent = `$${calculateTotalValue().toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('trxValue').textContent = `${currentWallet.balances.TRX.toFixed(2)} TRX`;
+            document.getElementById('bossxValue').textContent = `${currentWallet.balances.BOSSX.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} BOSSX`;
+            document.getElementById('usdtValue').textContent = `${currentWallet.balances.USDT.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} USDT`;
+            document.getElementById('btcValue').textContent = `${currentWallet.balances.BTC.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4})} BTC`;
             document.getElementById('receiveAddress').textContent = address;
             
             // Generate QR
             generateQRCode(address);
             
-            // Simulate resources
-            updateResources(3500, 10000, 1200, 5000);
-            
             // Add demo history
             addDemoHistory();
             
-            // Show PIN setup after first use
-            if (!localStorage.getItem('bossx_pin_set')) {
-                setTimeout(() => {
-                    showNotification('✨ Welcome to BossX Wallet Pro!', 'info');
-                }, 1000);
-            }
+            showNotification('✨ Welcome to BossX Wallet Pro!', 'info');
+        }
+
+        // Calculate Total Portfolio Value
+        function calculateTotalValue() {
+            return (currentWallet.balances.TRX * currentWallet.prices.TRX) +
+                   (currentWallet.balances.BOSSX * currentWallet.prices.BOSSX) +
+                   (currentWallet.balances.USDT * currentWallet.prices.USDT) +
+                   (currentWallet.balances.BTC * currentWallet.prices.BTC);
         }
 
         // Format Address
@@ -1087,37 +1375,35 @@
             return address.substring(0, 6) + '...' + address.substring(address.length - 4);
         }
 
-        // Generate QR Code (simple text-based for demo)
+        // Generate QR Code
         function generateQRCode(address) {
             const qrDiv = document.getElementById('receiveQR');
-            qrDiv.innerHTML = `<div style="font-size: 12px; color: #666; line-height: 1.4;">
+            qrDiv.innerHTML = `<div style="font-size: 11px; color: #666; line-height: 1.4; padding: 10px;">
                 BOSSX WALLET<br>
                 ${formatAddress(address)}<br><br>
-                Scan to send BOSSX/TRX
+                <span style="font-size: 10px; color: #999;">Scan to send</span>
             </div>`;
-        }
-
-        // Update Resources
-        function updateResources(bandwidthUsed, bandwidthTotal, energyUsed, energyTotal) {
-            const bwPercent = (bandwidthUsed / bandwidthTotal) * 100;
-            const enPercent = (energyUsed / energyTotal) * 100;
-            
-            document.getElementById('bandwidthUsed').textContent = `${bandwidthUsed.toLocaleString()}/${bandwidthTotal.toLocaleString()}`;
-            document.getElementById('energyUsed').textContent = `${energyUsed.toLocaleString()}/${energyTotal.toLocaleString()}`;
-            document.getElementById('bandwidthBar').style.width = `${bwPercent}%`;
-            document.getElementById('energyBar').style.width = `${enPercent}%`;
         }
 
         // Add Demo History
         function addDemoHistory() {
             transactionHistory = [
                 {
+                    type: 'swap',
+                    fromToken: 'BOSSX',
+                    toToken: 'USDT',
+                    fromAmount: 100,
+                    toAmount: 40,
+                    timestamp: '2026-02-10 10:15',
+                    hash: '0xabc123'
+                },
+                {
                     type: 'received',
-                    token: 'BOSSX',
-                    amount: 1000,
+                    token: 'USDT',
+                    amount: 500,
                     from: 'TQn...8891',
                     timestamp: '2026-02-09 14:23',
-                    hash: '0xabc123'
+                    hash: '0xdef456'
                 },
                 {
                     type: 'sent',
@@ -1125,15 +1411,15 @@
                     amount: 5.5,
                     to: 'TYh...4422',
                     timestamp: '2026-02-08 09:15',
-                    hash: '0xdef456'
+                    hash: '0xghi789'
                 },
                 {
-                    type: 'contract',
-                    token: 'BOSSX',
-                    amount: 250.50,
-                    action: 'Swap',
-                    timestamp: '2026-02-07 18:42',
-                    hash: '0xghi789'
+                    type: 'received',
+                    token: 'BTC',
+                    amount: 0.005,
+                    from: 'TWb...3344',
+                    timestamp: '2026-02-07 16:30',
+                    hash: '0xjkl012'
                 }
             ];
             
@@ -1155,34 +1441,42 @@
             }
             
             let html = '';
-            const recent = transactionHistory.slice(0, 3);
+            const recent = transactionHistory.slice(0, 4);
             
             recent.forEach(tx => {
-                const iconClass = tx.type === 'received' ? 'received' : 
-                                 tx.type === 'sent' ? 'sent' : 'contract';
-                const amountClass = tx.type === 'received' ? 'received' : 
-                                   tx.type === 'sent' ? 'sent' : 'bossx';
-                const amountSign = tx.type === 'received' ? '+' : '-';
+                let iconClass, amountClass, title, subtitle;
+                
+                if (tx.type === 'swap') {
+                    iconClass = 'swap';
+                    amountClass = 'usdt';
+                    title = `Swap ${tx.fromToken} → ${tx.toToken}`;
+                    subtitle = `${tx.fromAmount} ${tx.fromToken} → ${tx.toAmount} ${tx.toToken} • ${tx.timestamp}`;
+                } else if (tx.type === 'received') {
+                    iconClass = 'received';
+                    amountClass = tx.token.toLowerCase();
+                    title = `Received ${tx.token}`;
+                    subtitle = `From: ${tx.from} • ${tx.timestamp}`;
+                } else if (tx.type === 'sent') {
+                    iconClass = 'sent';
+                    amountClass = tx.token.toLowerCase();
+                    title = `Sent ${tx.token}`;
+                    subtitle = `To: ${tx.to} • ${tx.timestamp}`;
+                }
                 
                 html += `
                     <div class="history-item">
                         <div class="history-icon ${iconClass}">
                             <i class="fas ${tx.type === 'received' ? 'fa-arrow-down' : 
-                                           tx.type === 'sent' ? 'fa-arrow-up' : 'fa-file-contract'}"></i>
+                                           tx.type === 'sent' ? 'fa-arrow-up' : 'fa-exchange-alt'}"></i>
                         </div>
                         <div class="history-content">
-                            <div class="history-title">
-                                ${tx.type === 'received' ? 'Received' : 
-                                  tx.type === 'sent' ? 'Sent' : tx.action}
-                            </div>
-                            <div class="history-subtitle">
-                                ${tx.type === 'received' ? `From: ${tx.from}` : 
-                                  tx.type === 'sent' ? `To: ${tx.to}` : 'Contract Interaction'}
-                                &nbsp;•&nbsp; ${tx.timestamp}
-                            </div>
+                            <div class="history-title">${title}</div>
+                            <div class="history-subtitle">${subtitle}</div>
                         </div>
                         <div class="history-amount ${amountClass}">
-                            ${amountSign}${tx.amount.toLocaleString()} ${tx.token}
+                            ${tx.type === 'swap' ? `+${tx.toAmount}` : 
+                              tx.type === 'received' ? `+${tx.amount}` : `-${tx.amount}`}
+                            ${tx.type === 'swap' ? tx.toToken : tx.token}
                         </div>
                     </div>
                 `;
@@ -1207,31 +1501,39 @@
             let html = '';
             
             transactionHistory.forEach(tx => {
-                const iconClass = tx.type === 'received' ? 'received' : 
-                                 tx.type === 'sent' ? 'sent' : 'contract';
-                const amountClass = tx.type === 'received' ? 'received' : 
-                                   tx.type === 'sent' ? 'sent' : 'bossx';
-                const amountSign = tx.type === 'received' ? '+' : '-';
+                let iconClass, amountClass, title, subtitle;
+                
+                if (tx.type === 'swap') {
+                    iconClass = 'swap';
+                    amountClass = 'usdt';
+                    title = `Swap ${tx.fromToken} → ${tx.toToken}`;
+                    subtitle = `${tx.fromAmount} ${tx.fromToken} → ${tx.toAmount} ${tx.toToken} • ${tx.timestamp}`;
+                } else if (tx.type === 'received') {
+                    iconClass = 'received';
+                    amountClass = tx.token.toLowerCase();
+                    title = `Received ${tx.token}`;
+                    subtitle = `From: ${tx.from} • ${tx.timestamp}`;
+                } else if (tx.type === 'sent') {
+                    iconClass = 'sent';
+                    amountClass = tx.token.toLowerCase();
+                    title = `Sent ${tx.token}`;
+                    subtitle = `To: ${tx.to} • ${tx.timestamp}`;
+                }
                 
                 html += `
                     <div class="history-item">
                         <div class="history-icon ${iconClass}">
                             <i class="fas ${tx.type === 'received' ? 'fa-arrow-down' : 
-                                           tx.type === 'sent' ? 'fa-arrow-up' : 'fa-file-contract'}"></i>
+                                           tx.type === 'sent' ? 'fa-arrow-up' : 'fa-exchange-alt'}"></i>
                         </div>
                         <div class="history-content">
-                            <div class="history-title">
-                                ${tx.type === 'received' ? 'Received' : 
-                                  tx.type === 'sent' ? 'Sent' : tx.action}
-                            </div>
-                            <div class="history-subtitle">
-                                ${tx.type === 'received' ? `From: ${tx.from}` : 
-                                  tx.type === 'sent' ? `To: ${tx.to}` : 'Contract Interaction'}
-                                &nbsp;•&nbsp; ${tx.timestamp}
-                            </div>
+                            <div class="history-title">${title}</div>
+                            <div class="history-subtitle">${subtitle}</div>
                         </div>
                         <div class="history-amount ${amountClass}">
-                            ${amountSign}${tx.amount.toLocaleString()} ${tx.token}
+                            ${tx.type === 'swap' ? `+${tx.toAmount}` : 
+                              tx.type === 'received' ? `+${tx.amount}` : `-${tx.amount}`}
+                            ${tx.type === 'swap' ? tx.toToken : tx.token}
                         </div>
                     </div>
                 `;
@@ -1243,22 +1545,198 @@
         // Switch Tabs
         function switchTab(tab) {
             document.getElementById('homeTab').style.display = 'none';
+            document.getElementById('swapTab').style.display = 'none';
             document.getElementById('historyTab').style.display = 'none';
-            document.getElementById('nftTab').style.display = 'none';
             
             document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
             
             if (tab === 'home') {
                 document.getElementById('homeTab').style.display = 'block';
                 document.querySelector('.nav-tab:nth-child(1)').classList.add('active');
+            } else if (tab === 'swap') {
+                document.getElementById('swapTab').style.display = 'block';
+                document.querySelector('.nav-tab:nth-child(2)').classList.add('active');
+                updateSwapUI();
             } else if (tab === 'history') {
                 document.getElementById('historyTab').style.display = 'block';
-                document.querySelector('.nav-tab:nth-child(2)').classList.add('active');
-                renderFullHistory();
-            } else if (tab === 'nft') {
-                document.getElementById('nftTab').style.display = 'block';
                 document.querySelector('.nav-tab:nth-child(3)').classList.add('active');
+                renderFullHistory();
             }
+        }
+
+        // Update Swap UI
+        function updateSwapUI() {
+            const fromToken = document.getElementById('fromTokenOption').textContent.trim();
+            const toToken = document.getElementById('toTokenOption').textContent.trim();
+            
+            // Update balances
+            document.getElementById('fromBalance').textContent = `Balance: ${currentWallet.balances[fromToken] || 0} ${fromToken}`;
+            document.getElementById('toBalance').textContent = `Balance: ${currentWallet.balances[toToken] || 0} ${toToken}`;
+            
+            // Update button text
+            document.getElementById('swapBtn').innerHTML = `<i class="fas fa-exchange-alt"></i> Swap ${fromToken} to ${toToken}`;
+        }
+
+        // Show Token Selector
+        function showTokenSelector(type) {
+            currentTokenSelector = type;
+            document.getElementById('tokenSelectorTitle').textContent = `Select ${type === 'from' ? 'From' : 'To'} Token`;
+            showModal('tokenSelectorModal');
+        }
+
+        // Select Token
+        function selectToken(token, type) {
+            const optionDiv = type === 'from' ? document.getElementById('fromTokenOption') : document.getElementById('toTokenOption');
+            
+            // Clear active class from all options
+            document.querySelectorAll('.swap-token-option').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Set selected token
+            optionDiv.innerHTML = `
+                <div class="swap-token-icon ${token.toLowerCase()}">${token === 'BTC' ? '₿' : token.charAt(0)}</div>
+                <span>${token}</span>
+            `;
+            optionDiv.classList.add('active');
+            
+            closeModal('tokenSelectorModal');
+            updateSwapUI();
+            calculateSwap();
+        }
+
+        // Calculate Swap
+        function calculateSwap() {
+            const fromAmount = parseFloat(document.getElementById('fromAmount').value) || 0;
+            const fromToken = document.getElementById('fromTokenOption').textContent.trim();
+            const toToken = document.getElementById('toTokenOption').textContent.trim();
+            
+            if (fromAmount <= 0) {
+                document.getElementById('toAmount').value = '';
+                document.getElementById('minReceived').textContent = '0.00 ' + toToken;
+                return;
+            }
+            
+            // Simple price calculation (in production, use real DEX API)
+            let rate = 0;
+            
+            if (fromToken === 'BOSSX' && toToken === 'USDT') {
+                rate = 0.4; // 1 BOSSX = 0.4 USDT
+            } else if (fromToken === 'USDT' && toToken === 'BOSSX') {
+                rate = 2.5; // 1 USDT = 2.5 BOSSX
+            } else if (fromToken === 'TRX' && toToken === 'USDT') {
+                rate = 0.1; // 1 TRX = 0.1 USDT
+            } else if (fromToken === 'USDT' && toToken === 'TRX') {
+                rate = 10; // 1 USDT = 10 TRX
+            } else {
+                rate = 1; // Default rate
+            }
+            
+            const toAmount = fromAmount * rate;
+            const minReceived = toAmount * (1 - slippage / 100);
+            
+            document.getElementById('toAmount').value = toAmount.toFixed(6);
+            document.getElementById('minReceived').textContent = `${minReceived.toFixed(6)} ${toToken}`;
+            document.getElementById('priceImpact').textContent = `Price Impact: ${calculatePriceImpact(fromAmount, fromToken, toToken).toFixed(2)}%`;
+        }
+
+        // Calculate Price Impact
+        function calculatePriceImpact(amount, fromToken, toToken) {
+            // Simple simulation - in production use real liquidity data
+            if (amount > 1000 && (fromToken === 'BOSSX' || toToken === 'BOSSX')) {
+                return 1.5;
+            } else if (amount > 500) {
+                return 0.8;
+            } else if (amount > 100) {
+                return 0.3;
+            }
+            return 0.1;
+        }
+
+        // Show Slippage Modal
+        function showSlippageModal() {
+            document.getElementById('customSlippage').value = slippage;
+            showModal('slippageModal');
+        }
+
+        // Set Slippage
+        function setSlippage(value) {
+            slippage = parseFloat(value);
+            document.getElementById('slippage').textContent = `${slippage}%`;
+            closeModal('slippageModal');
+            calculateSwap();
+        }
+
+        // Apply Custom Slippage
+        function applyCustomSlippage() {
+            const custom = parseFloat(document.getElementById('customSlippage').value);
+            if (custom >= 0 && custom <= 50) {
+                slippage = custom;
+                document.getElementById('slippage').textContent = `${slippage}%`;
+                closeModal('slippageModal');
+                calculateSwap();
+            } else {
+                showNotification('⚠️ Slippage must be between 0-50%', 'error');
+            }
+        }
+
+        // Execute Swap
+        async function executeSwap() {
+            const fromAmount = parseFloat(document.getElementById('fromAmount').value);
+            const fromToken = document.getElementById('fromTokenOption').textContent.trim();
+            const toToken = document.getElementById('toTokenOption').textContent.trim();
+            
+            if (!fromAmount || fromAmount <= 0) {
+                showNotification('⚠️ Please enter amount to swap', 'error');
+                return;
+            }
+            
+            if (fromAmount > currentWallet.balances[fromToken]) {
+                showNotification(`❌ Insufficient ${fromToken} balance`, 'error');
+                return;
+            }
+            
+            document.getElementById('swapBtn').innerHTML = `<span class="loading"></span> Swapping...`;
+            document.getElementById('swapBtn').disabled = true;
+            
+            // Simulate swap
+            setTimeout(() => {
+                const toAmount = parseFloat(document.getElementById('toAmount').value);
+                
+                // Update balances
+                currentWallet.balances[fromToken] -= fromAmount;
+                currentWallet.balances[toToken] = (currentWallet.balances[toToken] || 0) + toAmount;
+                
+                // Update UI
+                document.getElementById('bossxValue').textContent = `${currentWallet.balances.BOSSX.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} BOSSX`;
+                document.getElementById('usdtValue').textContent = `${currentWallet.balances.USDT.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} USDT`;
+                document.getElementById('trxValue').textContent = `${currentWallet.balances.TRX.toFixed(2)} TRX`;
+                document.getElementById('btcValue').textContent = `${currentWallet.balances.BTC.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4})} BTC`;
+                document.getElementById('totalBalance').textContent = `$${calculateTotalValue().toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                document.getElementById('headerBalance').textContent = `$${calculateTotalValue().toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                
+                // Add to history
+                transactionHistory.unshift({
+                    type: 'swap',
+                    fromToken: fromToken,
+                    toToken: toToken,
+                    fromAmount: fromAmount,
+                    toAmount: toAmount,
+                    timestamp: new Date().toLocaleString(),
+                    hash: '0x' + Math.random().toString(16).substr(2, 24)
+                });
+                
+                renderRecentHistory();
+                
+                // Reset form
+                document.getElementById('fromAmount').value = '';
+                document.getElementById('toAmount').value = '';
+                
+                document.getElementById('swapBtn').innerHTML = `<i class="fas fa-exchange-alt"></i> Swap ${fromToken} to ${toToken}`;
+                document.getElementById('swapBtn').disabled = false;
+                
+                showNotification(`✅ Successfully swapped ${fromAmount.toFixed(2)} ${fromToken} → ${toAmount.toFixed(2)} ${toToken}!`, 'success');
+            }, 1500);
         }
 
         // Show Modals
@@ -1270,7 +1748,10 @@
             document.getElementById(id).style.display = 'none';
         }
 
-        function showSendModal() {
+        function showSendModal(token = null) {
+            if (token) {
+                document.getElementById('sendToken').value = token;
+            }
             showModal('sendModal');
         }
 
@@ -1282,10 +1763,6 @@
             } else {
                 showNotification('⚠️ Please create or import a wallet first', 'error');
             }
-        }
-
-        function showFreezeModal() {
-            showNotification('❄️ Freeze feature coming soon in next update!', 'info');
         }
 
         function showTokenModal() {
@@ -1325,11 +1802,32 @@
                 return;
             }
             
-            // Simulate transaction
+            if (parseFloat(amount) > currentWallet.balances[token]) {
+                showNotification(`❌ Insufficient ${token} balance`, 'error');
+                return;
+            }
+            
             document.getElementById('sendBtn').innerHTML = `<span class="loading"></span> Sending...`;
             document.getElementById('sendBtn').disabled = true;
             
             setTimeout(() => {
+                // Update balance
+                currentWallet.balances[token] -= parseFloat(amount);
+                
+                // Update UI
+                if (token === 'TRX') {
+                    document.getElementById('trxValue').textContent = `${currentWallet.balances.TRX.toFixed(2)} TRX`;
+                } else if (token === 'BOSSX') {
+                    document.getElementById('bossxValue').textContent = `${currentWallet.balances.BOSSX.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} BOSSX`;
+                } else if (token === 'USDT') {
+                    document.getElementById('usdtValue').textContent = `${currentWallet.balances.USDT.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} USDT`;
+                } else if (token === 'BTC') {
+                    document.getElementById('btcValue').textContent = `${currentWallet.balances.BTC.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4})} BTC`;
+                }
+                
+                document.getElementById('totalBalance').textContent = `$${calculateTotalValue().toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                document.getElementById('headerBalance').textContent = `$${calculateTotalValue().toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                
                 // Add to history
                 transactionHistory.unshift({
                     type: 'sent',
@@ -1339,15 +1837,6 @@
                     timestamp: new Date().toLocaleString(),
                     hash: '0x' + Math.random().toString(16).substr(2, 24)
                 });
-                
-                // Update balances
-                if (token === 'TRX') {
-                    currentWallet.balanceTRX -= parseFloat(amount);
-                    document.getElementById('trxValue').textContent = `${currentWallet.balanceTRX.toFixed(2)} TRX`;
-                } else {
-                    currentWallet.balanceBOSSX -= parseFloat(amount);
-                    document.getElementById('bossxValue').textContent = `${currentWallet.balanceBOSSX.toFixed(2)} BOSSX`;
-                }
                 
                 renderRecentHistory();
                 
@@ -1369,54 +1858,6 @@
             });
         }
 
-        // PIN Functions
-        function enterPin(digit) {
-            if (pin.length < 6) {
-                pin += digit;
-                updatePinDisplay();
-                
-                if (pin.length === 6) {
-                    verifyPin();
-                }
-            }
-        }
-
-        function deletePin() {
-            pin = pin.slice(0, -1);
-            updatePinDisplay();
-        }
-
-        function updatePinDisplay() {
-            const dots = document.querySelectorAll('#pinDisplay .pin-dot');
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index < pin.length);
-            });
-        }
-
-        function verifyPin() {
-            // For demo: accept any 6-digit PIN
-            if (pin.length === 6) {
-                closeModal('pinModal');
-                pin = '';
-                updatePinDisplay();
-                showNotification('🔓 Wallet unlocked!', 'success');
-            } else {
-                pinAttempts++;
-                if (pinAttempts >= MAX_PIN_ATTEMPTS) {
-                    showNotification('❌ Too many failed attempts. Please try again later.', 'error');
-                    setTimeout(() => {
-                        pinAttempts = 0;
-                        pin = '';
-                        updatePinDisplay();
-                    }, 5000);
-                } else {
-                    showNotification(`❌ Wrong PIN. ${MAX_PIN_ATTEMPTS - pinAttempts} attempts left.`, 'error');
-                    pin = '';
-                    updatePinDisplay();
-                }
-            }
-        }
-
         // Notification
         function showNotification(message, type) {
             const notification = document.getElementById('notification');
@@ -1430,19 +1871,11 @@
 
         // Initialize App
         window.addEventListener('load', async () => {
-            // Initialize TronWeb without private key first
             initTronWeb(null);
-            
-            // Create demo wallet
             await createDemoWallet();
             
-            // Show PIN lock after 10 seconds for demo
-            setTimeout(() => {
-                showModal('pinModal');
-            }, 10000);
-            
-            // Show welcome notification
-            showNotification('✨ Welcome to BossX Wallet Pro!', 'info');
+            // Add event listener for swap amount input
+            document.getElementById('fromAmount').addEventListener('input', calculateSwap);
         });
     </script>
 </body>
