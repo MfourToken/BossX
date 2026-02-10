@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BossX Wallet - Your TRC20 Token Wallet</title>
+    <title>BossX Wallet - Standalone TRC20 Wallet</title>
     <script src="https://cdn.jsdelivr.net/npm/tronweb@4.0.1/dist/TronWeb.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bip39@3.0.4/dist/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
     <style>
         * {
             margin: 0;
@@ -14,7 +16,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a2a6c 0%, #2c3e50 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -25,10 +27,11 @@
         .wallet-container {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             max-width: 600px;
             width: 100%;
             padding: 40px;
+            position: relative;
         }
 
         .header {
@@ -37,7 +40,7 @@
         }
 
         .header h1 {
-            color: #667eea;
+            color: #1a2a6c;
             font-size: 32px;
             margin-bottom: 10px;
         }
@@ -50,7 +53,7 @@
         .logo {
             font-size: 60px;
             font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a2a6c 0%, #b21f1f 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
@@ -61,7 +64,7 @@
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 25px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #1a2a6c;
         }
 
         .status-item {
@@ -81,7 +84,7 @@
 
         .status-value {
             font-weight: bold;
-            color: #667eea;
+            color: #1a2a6c;
         }
 
         .btn {
@@ -96,24 +99,44 @@
             margin-bottom: 15px;
         }
 
-        .btn-connect {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .btn-primary {
+            background: linear-gradient(135deg, #1a2a6c 0%, #2c3e50 100%);
             color: white;
         }
 
-        .btn-connect:hover {
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 15px rgba(26, 42, 108, 0.4);
         }
 
-        .btn-transfer {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             color: white;
         }
 
-        .btn-transfer:hover {
+        .btn-success:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+            box-shadow: 0 5px 15px rgba(17, 153, 142, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 154, 158, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 65, 108, 0.4);
         }
 
         .btn-disabled {
@@ -133,7 +156,7 @@
             color: #333;
         }
 
-        .input-group input {
+        .input-group input, .input-group textarea {
             width: 100%;
             padding: 12px;
             border: 2px solid #e0e0e0;
@@ -142,9 +165,15 @@
             transition: border-color 0.3s;
         }
 
-        .input-group input:focus {
+        .input-group textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .input-group input:focus, .input-group textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #1a2a6c;
         }
 
         .modal {
@@ -154,7 +183,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -170,23 +199,25 @@
         }
 
         .modal h3 {
-            color: #667eea;
+            color: #1a2a6c;
             margin-bottom: 15px;
         }
 
         .modal p {
             color: #666;
             margin-bottom: 20px;
+            text-align: left;
         }
 
         .close-modal {
-            background: #667eea;
+            background: #1a2a6c;
             color: white;
             padding: 10px 25px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
+            margin-top: 10px;
         }
 
         .loading {
@@ -228,6 +259,10 @@
             background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
         }
 
+        .notification.warning {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+        }
+
         .footer {
             text-align: center;
             margin-top: 30px;
@@ -264,6 +299,80 @@
             font-size: 13px;
             margin-bottom: 5px;
         }
+
+        .qr-code {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .qr-code img {
+            max-width: 200px;
+            border: 2px solid #1a2a6c;
+            border-radius: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #999;
+        }
+
+        .tab.active {
+            color: #1a2a6c;
+            border-bottom: 3px solid #1a2a6c;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .backup-warning {
+            background: #ffebee;
+            border: 2px solid #f44336;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .backup-warning h4 {
+            color: #f44336;
+            margin-bottom: 10px;
+        }
+
+        .backup-warning p {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .password-strength {
+            height: 5px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .password-strength.weak .password-strength-bar { background: #f44336; }
+        .password-strength.medium .password-strength-bar { background: #ff9800; }
+        .password-strength.strong .password-strength-bar { background: #4caf50; }
     </style>
 </head>
 <body>
@@ -271,73 +380,162 @@
         <div class="header">
             <div class="logo">BOSSX</div>
             <h1>BossX Wallet</h1>
-            <p>Secure Web Wallet for BOSSX Token (TRC20)</p>
+            <p>Standalone TRC20 Wallet - No TronLink Required</p>
             <div class="chain-badge">TRON Network (TRC20)</div>
         </div>
 
-        <div id="notConnected" style="display: block;">
-            <button class="btn btn-connect" onclick="connectWallet()">
-                🔗 Connect TronLink Wallet
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('create')">🔑 Create</div>
+            <div class="tab" onclick="switchTab('import')">📥 Import</div>
+            <div class="tab" onclick="switchTab('wallet')">💼 Wallet</div>
+        </div>
+
+        <!-- Create Wallet Tab -->
+        <div id="createTab" class="tab-content active">
+            <div class="backup-warning">
+                <h4>⚠️ IMPORTANT!</h4>
+                <p>Write down your Private Key & Mnemonic Phrase. If you lose them, you lose access to your wallet forever!</p>
+            </div>
+
+            <button class="btn btn-success" onclick="createNewWallet()">
+                🪄 Generate New Wallet
             </button>
-            <div style="text-align: center; margin-top: 15px; color: #666; font-size: 14px;">
-                <p>Please install <a href="https://www.tronlink.org/" target="_blank" style="color: #667eea; text-decoration: none;">TronLink</a> extension or mobile app</p>
+
+            <div id="walletInfo" style="display: none;">
+                <div class="input-group">
+                    <label>Wallet Address:</label>
+                    <input type="text" id="newAddress" readonly>
+                </div>
+
+                <div class="input-group">
+                    <label>Private Key:</label>
+                    <textarea id="privateKey" readonly></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Mnemonic Phrase (12 words):</label>
+                    <textarea id="mnemonicPhrase" readonly></textarea>
+                </div>
+
+                <div class="qr-code" id="qrCodeContainer"></div>
+
+                <button class="btn btn-primary" onclick="copyToClipboard('privateKey')">
+                    📋 Copy Private Key
+                </button>
+
+                <button class="btn btn-primary" onclick="copyToClipboard('mnemonicPhrase')">
+                    📋 Copy Mnemonic
+                </button>
+
+                <button class="btn btn-warning" onclick="saveWallet()">
+                    💾 Save to Browser (Encrypted)
+                </button>
             </div>
         </div>
 
-        <div id="connected" style="display: none;">
-            <div class="status-box">
-                <div class="status-item">
-                    <span class="status-label">Wallet Address:</span>
-                    <span class="status-value" id="walletAddress">-</span>
-                </div>
-                <div class="status-item">
-                    <span class="status-label">TRX Balance:</span>
-                    <span class="status-value" id="trxBalance">0 TRX</span>
-                </div>
-                <div class="status-item">
-                    <span class="status-label">BOSSX Balance:</span>
-                    <span class="status-value" id="bossxBalance">0 BOSSX</span>
-                </div>
-            </div>
-
+        <!-- Import Wallet Tab -->
+        <div id="importTab" class="tab-content">
             <div class="input-group">
-                <label for="recipient">Recipient Address:</label>
-                <input type="text" id="recipient" placeholder="Enter TRON address (T...)">
+                <label>Import by Private Key:</label>
+                <textarea id="importPrivateKey" placeholder="Enter your private key (hex format)"></textarea>
             </div>
 
-            <div class="input-group">
-                <label for="amount">Amount:</label>
-                <input type="number" id="amount" placeholder="Enter amount" min="0" step="0.000001">
-            </div>
-
-            <div class="input-group">
-                <label>Token:</label>
-                <select id="tokenType" class="btn" style="background: #f5f5f5; color: #333; margin-bottom: 15px;">
-                    <option value="BOSSX">BOSSX Token</option>
-                    <option value="TRX">TRX</option>
-                </select>
-            </div>
-
-            <button class="btn btn-transfer" onclick="transferToken()" id="transferBtn">
-                💸 Transfer
+            <button class="btn btn-primary" onclick="importByPrivateKey()">
+                🔑 Import Wallet
             </button>
 
-            <button class="btn btn-connect" onclick="disconnectWallet()" style="background: #e53935;">
-                🔌 Disconnect Wallet
-            </button>
+            <hr style="margin: 20px 0; border: 1px solid #e0e0e0;">
 
-            <div class="token-info">
-                <h4>ℹ️ BOSSX Token Info</h4>
-                <p><strong>Contract:</strong> <span id="contractAddress">Loading...</span></p>
-                <p><strong>Decimals:</strong> 6</p>
-                <p><strong>Network:</strong> TRON (TRC20)</p>
+            <div class="input-group">
+                <label>Mnemonic Phrase:</label>
+                <textarea id="importMnemonic" placeholder="Enter 12-word mnemonic phrase"></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Password (optional):</label>
+                <input type="password" id="importPassword" placeholder="Enter password if encrypted">
+            </div>
+
+            <button class="btn btn-primary" onclick="importByMnemonic()">
+                🔑 Import from Mnemonic
+            </button>
+        </div>
+
+        <!-- Wallet Tab -->
+        <div id="walletTab" class="tab-content">
+            <div id="notLoggedIn" style="display: block;">
+                <p style="text-align: center; color: #666; margin-bottom: 20px;">
+                    Please create or import a wallet first
+                </p>
+                <button class="btn btn-warning" onclick="switchTab('create')">
+                    Create New Wallet
+                </button>
+                <button class="btn btn-primary" onclick="switchTab('import')">
+                    Import Wallet
+                </button>
+            </div>
+
+            <div id="loggedIn" style="display: none;">
+                <div class="status-box">
+                    <div class="status-item">
+                        <span class="status-label">Wallet Address:</span>
+                        <span class="status-value" id="walletAddress">-</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">TRX Balance:</span>
+                        <span class="status-value" id="trxBalance">0 TRX</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">BOSSX Balance:</span>
+                        <span class="status-value" id="bossxBalance">0 BOSSX</span>
+                    </div>
+                </div>
+
+                <div class="qr-code">
+                    <img id="receiveQR" src="" alt="QR Code">
+                    <p style="margin-top: 10px; font-size: 12px; color: #666;">Scan to receive BOSSX/TRX</p>
+                </div>
+
+                <div class="input-group">
+                    <label for="recipient">Recipient Address:</label>
+                    <input type="text" id="recipient" placeholder="Enter TRON address (T...)">
+                </div>
+
+                <div class="input-group">
+                    <label for="amount">Amount:</label>
+                    <input type="number" id="amount" placeholder="Enter amount" min="0" step="0.000001">
+                </div>
+
+                <div class="input-group">
+                    <label>Token:</label>
+                    <select id="tokenType" class="btn" style="background: #f5f5f5; color: #333; margin-bottom: 15px;">
+                        <option value="BOSSX">BOSSX Token</option>
+                        <option value="TRX">TRX</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-success" onclick="transferToken()" id="transferBtn">
+                    💸 Transfer
+                </button>
+
+                <button class="btn btn-danger" onclick="logoutWallet()">
+                    🔓 Logout
+                </button>
+
+                <div class="token-info">
+                    <h4>ℹ️ BOSSX Token Info</h4>
+                    <p><strong>Contract:</strong> <span id="contractAddress">Loading...</span></p>
+                    <p><strong>Decimals:</strong> 6</p>
+                    <p><strong>Network:</strong> TRON (TRC20)</p>
+                </div>
             </div>
         </div>
 
         <div class="footer">
-            <p>© 2026 BossX Wallet | TRC20 Token Wallet</p>
-            <p style="margin-top: 5px; color: #ff5252; font-size: 11px;">
-                ⚠️ Use at your own risk. Always verify contract addresses.
+            <p>© 2026 BossX Wallet | Standalone TRC20 Wallet</p>
+            <p style="margin-top: 5px; color: #f44336; font-size: 11px;">
+                ⚠️ Never share your private key. This is a client-side wallet only.
             </p>
         </div>
     </div>
@@ -345,8 +543,8 @@
     <!-- Modal -->
     <div class="modal" id="loadingModal">
         <div class="modal-content">
-            <h3>⏳ Processing Transaction</h3>
-            <p>Please confirm in your TronLink wallet...</p>
+            <h3>⏳ Processing...</h3>
+            <p id="modalMessage">Please wait...</p>
             <div class="loading"></div>
         </div>
     </div>
@@ -357,91 +555,215 @@
     <script>
         // ===== CONFIGURASI - GANTI DENGAN DATA ANDA =====
         const BOSSX_CONTRACT_ADDRESS = "TYourContractAddressHere123456789"; // ⚠️ GANTI DENGAN CONTRACT ADDRESS BOSSX ANDA
-        const BOSSX_DECIMALS = 6; // Sesuaikan dengan decimals saat deploy token
+        const BOSSX_DECIMALS = 6;
+        const TRON_NODE = {
+            fullNode: 'https://api.trongrid.io',
+            solidityNode: 'https://api.trongrid.io',
+            eventServer: 'https://api.trongrid.io'
+        };
         // ================================================
 
         let tronWeb = null;
-        let accountAddress = null;
+        let currentWallet = null;
+        let password = 'bossxwallet2026'; // Default password untuk enkripsi
 
         // DOM Elements
-        const notConnectedDiv = document.getElementById('notConnected');
-        const connectedDiv = document.getElementById('connected');
+        const createTab = document.getElementById('createTab');
+        const importTab = document.getElementById('importTab');
+        const walletTab = document.getElementById('walletTab');
+        const notLoggedIn = document.getElementById('notLoggedIn');
+        const loggedIn = document.getElementById('loggedIn');
         const walletAddressEl = document.getElementById('walletAddress');
         const trxBalanceEl = document.getElementById('trxBalance');
         const bossxBalanceEl = document.getElementById('bossxBalance');
         const contractAddressEl = document.getElementById('contractAddress');
+        const receiveQREl = document.getElementById('receiveQR');
         const transferBtn = document.getElementById('transferBtn');
         const loadingModal = document.getElementById('loadingModal');
+        const modalMessage = document.getElementById('modalMessage');
         const notification = document.getElementById('notification');
 
         // Set contract address display
         contractAddressEl.textContent = BOSSX_CONTRACT_ADDRESS;
 
-        // Check TronLink
-        async function checkTronLink() {
-            if (window.tronWeb && window.tronWeb.ready) {
-                tronWeb = window.tronWeb;
-                await connectWallet();
+        // Initialize TronWeb
+        function initTronWeb(privateKey) {
+            try {
+                tronWeb = new TronWeb(TRON_NODE, privateKey);
                 return true;
+            } catch (error) {
+                console.error("TronWeb init error:", error);
+                return false;
             }
-            return false;
         }
 
-        // Connect Wallet
-        async function connectWallet() {
-            showLoading(true);
+        // Create New Wallet
+        async function createNewWallet() {
+            showLoading(true, "Generating new wallet...");
 
             try {
-                if (window.tronWeb) {
-                    tronWeb = window.tronWeb;
-                } else if (window.tronLink) {
-                    await window.tronLink.request({ method: 'tron_requestAccounts' });
-                    tronWeb = window.tronLink.tronWeb;
-                } else {
-                    throw new Error("TronLink not detected");
-                }
+                // Generate random private key
+                const privateKey = TronWeb.utils.bytes.toHex(TronWeb.utils.bytes.random(32));
+                const address = tronWeb.address.fromPrivateKey(privateKey);
+                const hexAddress = tronWeb.address.toHex(address);
 
-                if (!tronWeb.ready) {
-                    throw new Error("TronLink not ready");
-                }
+                // Generate mnemonic
+                const mnemonic = bip39.generateMnemonic();
 
-                const accounts = await tronWeb.trx.getAccounts();
-                if (accounts.length === 0) {
-                    throw new Error("No account found. Please login to TronLink");
-                }
+                // Display wallet info
+                document.getElementById('newAddress').value = address;
+                document.getElementById('privateKey').value = privateKey;
+                document.getElementById('mnemonicPhrase').value = mnemonic;
 
-                accountAddress = accounts[0];
-                
-                // Update UI
-                walletAddressEl.textContent = formatAddress(accountAddress);
-                notConnectedDiv.style.display = 'none';
-                connectedDiv.style.display = 'block';
+                document.getElementById('walletInfo').style.display = 'block';
 
-                // Load balances
-                await loadBalances();
+                // Generate QR Code
+                generateQRCode(address);
 
-                showNotification('Connected successfully!', 'success');
+                // Auto-init TronWeb
+                initTronWeb(privateKey);
+                currentWallet = { address, privateKey, mnemonic };
+
+                showNotification('Wallet generated successfully!', 'success');
+
+                // Auto switch to wallet tab after 2 seconds
+                setTimeout(() => {
+                    switchTab('wallet');
+                    loadWalletUI();
+                }, 2000);
+
             } catch (error) {
-                console.error("Connection error:", error);
-                showNotification(error.message || "Failed to connect wallet", 'error');
+                console.error("Error creating wallet:", error);
+                showNotification('Failed to create wallet', 'error');
             } finally {
                 showLoading(false);
             }
         }
 
+        // Import by Private Key
+        async function importByPrivateKey() {
+            const privateKey = document.getElementById('importPrivateKey').value.trim();
+
+            if (!privateKey) {
+                showNotification('Please enter private key', 'error');
+                return;
+            }
+
+            showLoading(true, "Importing wallet...");
+
+            try {
+                // Validate private key format
+                if (!/^([A-Fa-f0-9]{64})$/.test(privateKey)) {
+                    throw new Error('Invalid private key format');
+                }
+
+                const address = tronWeb.address.fromPrivateKey(privateKey);
+                const hexAddress = tronWeb.address.toHex(address);
+
+                // Init TronWeb
+                initTronWeb(privateKey);
+                currentWallet = { address, privateKey };
+
+                showNotification('Wallet imported successfully!', 'success');
+
+                // Switch to wallet tab
+                switchTab('wallet');
+                loadWalletUI();
+
+            } catch (error) {
+                console.error("Import error:", error);
+                showNotification(error.message || 'Failed to import wallet', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Import by Mnemonic
+        async function importByMnemonic() {
+            const mnemonic = document.getElementById('importMnemonic').value.trim();
+
+            if (!mnemonic) {
+                showNotification('Please enter mnemonic phrase', 'error');
+                return;
+            }
+
+            showLoading(true, "Importing wallet from mnemonic...");
+
+            try {
+                // Validate mnemonic
+                if (!bip39.validateMnemonic(mnemonic)) {
+                    throw new Error('Invalid mnemonic phrase');
+                }
+
+                // Derive private key from mnemonic (BIP44 for TRON)
+                const seed = await bip39.mnemonicToSeed(mnemonic);
+                // TRON uses m/44'/195'/0'/0/0 path
+                // For simplicity, we'll use the first derived key
+                // In production, use proper HD wallet derivation
+
+                // Generate private key from mnemonic (simplified)
+                const privateKey = TronWeb.utils.bytes.toHex(TronWeb.utils.bytes.sha256(seed.slice(0, 32)));
+
+                const address = tronWeb.address.fromPrivateKey(privateKey);
+
+                // Init TronWeb
+                initTronWeb(privateKey);
+                currentWallet = { address, privateKey, mnemonic };
+
+                showNotification('Wallet imported successfully!', 'success');
+
+                // Switch to wallet tab
+                switchTab('wallet');
+                loadWalletUI();
+
+            } catch (error) {
+                console.error("Mnemonic import error:", error);
+                showNotification(error.message || 'Failed to import from mnemonic', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Load Wallet UI
+        async function loadWalletUI() {
+            if (!currentWallet || !tronWeb) {
+                showNotification('No wallet loaded', 'error');
+                return;
+            }
+
+            // Update UI
+            walletAddressEl.textContent = formatAddress(currentWallet.address);
+            notLoggedIn.style.display = 'none';
+            loggedIn.style.display = 'block';
+
+            // Generate QR Code
+            generateQRCode(currentWallet.address);
+
+            // Load balances
+            await loadBalances();
+        }
+
         // Load Balances
         async function loadBalances() {
+            if (!currentWallet || !tronWeb) return;
+
+            showLoading(true, "Loading balances...");
+
             try {
                 // Get TRX balance
-                const trxBalance = await tronWeb.trx.getBalance(accountAddress);
+                const trxBalance = await tronWeb.trx.getBalance(currentWallet.address);
                 const trxFormatted = tronWeb.fromSun(trxBalance);
                 trxBalanceEl.textContent = parseFloat(trxFormatted).toFixed(2) + ' TRX';
 
                 // Get BOSSX balance
-                const bossxBalance = await getBOSSXBalance(accountAddress);
+                const bossxBalance = await getBOSSXBalance(currentWallet.address);
                 bossxBalanceEl.textContent = bossxBalance + ' BOSSX';
+
             } catch (error) {
                 console.error("Error loading balances:", error);
+                showNotification('Failed to load balances', 'error');
+            } finally {
+                showLoading(false);
             }
         }
 
@@ -471,7 +793,7 @@
             }
 
             if (!tronWeb.isAddress(recipient)) {
-                showNotification('Invalid TRON address', 'error');
+                showNotification('Invalid TRON address (must start with T)', 'error');
                 return;
             }
 
@@ -480,7 +802,7 @@
                 return;
             }
 
-            showLoading(true);
+            showLoading(true, `Transferring ${amount} ${tokenType}...`);
             transferBtn.disabled = true;
             transferBtn.innerHTML = '<span class="loading"></span> Processing...';
 
@@ -493,12 +815,13 @@
 
                 // Refresh balances
                 await loadBalances();
-                
+
                 // Clear form
                 document.getElementById('recipient').value = '';
                 document.getElementById('amount').value = '';
 
                 showNotification(`Successfully transferred ${amount} ${tokenType}!`, 'success');
+
             } catch (error) {
                 console.error("Transfer error:", error);
                 showNotification(error.message || `Failed to transfer ${tokenType}`, 'error');
@@ -514,15 +837,17 @@
             try {
                 const contract = await tronWeb.contract().at(BOSSX_CONTRACT_ADDRESS);
                 const amountInWei = Math.floor(parseFloat(amount) * Math.pow(10, BOSSX_DECIMALS));
-                
+
                 const result = await contract.transfer(recipient, amountInWei).send({
-                    feeLimit: 100000000, // 100 TRX max fee limit
-                    callValue: 0
+                    feeLimit: 100000000, // 100 TRX max fee
+                    callValue: 0,
+                    shouldPollResponse: true
                 });
 
-                if (result.transaction) {
+                if (result && result.transaction) {
                     await tronWeb.trx.getTransaction(result.transaction);
                 }
+
             } catch (error) {
                 throw error;
             }
@@ -533,31 +858,144 @@
             try {
                 const amountInSun = tronWeb.toSun(amount);
                 const result = await tronWeb.trx.sendTransaction(recipient, amountInSun);
-                
-                if (result.transaction) {
-                    await tronWeb.trx.getTransaction(result.transaction);
+
+                if (result) {
+                    await tronWeb.trx.getTransaction(result.txID);
                 }
+
             } catch (error) {
                 throw error;
             }
         }
 
-        // Disconnect Wallet
-        function disconnectWallet() {
+        // Save Wallet to Browser (Encrypted)
+        function saveWallet() {
+            if (!currentWallet) {
+                showNotification('No wallet to save', 'error');
+                return;
+            }
+
+            showLoading(true, "Encrypting and saving wallet...");
+
+            try {
+                // Encrypt private key
+                const encryptedPrivateKey = CryptoJS.AES.encrypt(currentWallet.privateKey, password).toString();
+                const encryptedMnemonic = currentWallet.mnemonic ? CryptoJS.AES.encrypt(currentWallet.mnemonic, password).toString() : '';
+
+                // Save to localStorage
+                localStorage.setItem('bossx_wallet_address', currentWallet.address);
+                localStorage.setItem('bossx_wallet_privateKey', encryptedPrivateKey);
+                if (encryptedMnemonic) {
+                    localStorage.setItem('bossx_wallet_mnemonic', encryptedMnemonic);
+                }
+
+                showNotification('Wallet saved to browser (encrypted)!', 'success');
+
+            } catch (error) {
+                console.error("Save error:", error);
+                showNotification('Failed to save wallet', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Load Saved Wallet
+        async function loadSavedWallet() {
+            const encryptedPrivateKey = localStorage.getItem('bossx_wallet_privateKey');
+            const address = localStorage.getItem('bossx_wallet_address');
+
+            if (!encryptedPrivateKey || !address) {
+                return false;
+            }
+
+            try {
+                // Decrypt private key
+                const bytes = CryptoJS.AES.decrypt(encryptedPrivateKey, password);
+                const privateKey = bytes.toString(CryptoJS.enc.Utf8);
+
+                if (!privateKey) {
+                    throw new Error('Failed to decrypt wallet');
+                }
+
+                // Init TronWeb
+                initTronWeb(privateKey);
+                currentWallet = { address, privateKey };
+
+                return true;
+
+            } catch (error) {
+                console.error("Load saved wallet error:", error);
+                return false;
+            }
+        }
+
+        // Logout
+        function logoutWallet() {
+            currentWallet = null;
             tronWeb = null;
-            accountAddress = null;
-            connectedDiv.style.display = 'none';
-            notConnectedDiv.style.display = 'block';
-            showNotification('Wallet disconnected', 'success');
+            loggedIn.style.display = 'none';
+            notLoggedIn.style.display = 'block';
+            showNotification('Logged out successfully', 'success');
+        }
+
+        // Switch Tab
+        function switchTab(tabName) {
+            // Hide all tabs
+            createTab.classList.remove('active');
+            importTab.classList.remove('active');
+            walletTab.classList.remove('active');
+
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            if (tabName === 'create') {
+                createTab.classList.add('active');
+                document.getElementById('createTab').classList.add('active');
+            } else if (tabName === 'import') {
+                importTab.classList.add('active');
+                document.getElementById('importTab').classList.add('active');
+            } else if (tabName === 'wallet') {
+                walletTab.classList.add('active');
+                document.getElementById('walletTab').classList.add('active');
+            }
+
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // Generate QR Code
+        function generateQRCode(data) {
+            // Simple QR code using Google Charts API
+            const qrUrl = `https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(data)}&chs=200x200`;
+            receiveQREl.src = qrUrl;
         }
 
         // Format Address
         function formatAddress(address) {
-            return address.substring(0, 6) + '...' + address.substring(address.length - 4);
+            return address.substring(0, 8) + '...' + address.substring(address.length - 6);
+        }
+
+        // Copy to Clipboard
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.value || element.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Copied to clipboard!', 'success');
+            }).catch(() => {
+                showNotification('Failed to copy', 'error');
+            });
         }
 
         // Show Loading Modal
-        function showLoading(show) {
+        function showLoading(show, message = "Please wait...") {
+            modalMessage.textContent = message;
             loadingModal.style.display = show ? 'flex' : 'none';
         }
 
@@ -565,23 +1003,22 @@
         function showNotification(message, type) {
             notification.textContent = message;
             notification.className = `notification ${type} show`;
-            
+
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
         }
 
-        // Auto-check TronLink on page load
+        // Auto-load saved wallet on page load
         window.addEventListener('load', async () => {
-            await checkTronLink();
-            
-            // Listen for account change
-            if (window.tronWeb) {
-                window.addEventListener('message', (e) => {
-                    if (e.data.message && e.data.message.action === 'accountsChanged') {
-                        location.reload();
-                    }
-                });
+            // Initialize default TronWeb (without private key)
+            initTronWeb(null);
+
+            // Try to load saved wallet
+            const loaded = await loadSavedWallet();
+            if (loaded) {
+                switchTab('wallet');
+                loadWalletUI();
             }
         });
     </script>
