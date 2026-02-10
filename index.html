@@ -45,7 +45,7 @@
             left: 0;
             right: 0;
             height: 5px;
-            background: linear-gradient(90deg, #d4af37, #f5c518, #ffd700, #f5c518, #d4af37);
+            background: linear-gradient(90deg, #d4af37, #ffd700, #f5c518, #ffd700, #d4af37);
             border-radius: 5px 5px 0 0;
         }
 
@@ -66,8 +66,8 @@
         }
 
         .logo-container {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             margin: 0 auto 20px;
             background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
             border-radius: 50%;
@@ -77,13 +77,14 @@
             border: 4px solid rgba(255, 215, 0, 0.3);
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.4),
                         inset 0 0 20px rgba(255, 215, 0, 0.1);
+            overflow: hidden; /* Penting untuk potong gambar jadi bulat sempurna */
         }
 
         .logo-container img {
-            width: 70px;
-            height: 70px;
-            object-fit: contain;
-            border-radius: 50%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Memastikan gambar tidak terdistorsi */
+            border-radius: 50%; /* Double protection untuk bulat sempurna */
         }
 
         .logo-text {
@@ -659,7 +660,6 @@
             font-weight: 700;
         }
 
-        /* Responsive */
         @media (max-width: 600px) {
             .wallet-container {
                 padding: 30px 25px;
@@ -667,13 +667,8 @@
             }
 
             .logo-container {
-                width: 80px;
-                height: 80px;
-            }
-
-            .logo-container img {
-                width: 60px;
-                height: 60px;
+                width: 90px;
+                height: 90px;
             }
 
             .logo-text {
@@ -703,8 +698,8 @@
     <div class="wallet-container">
         <div class="header">
             <div class="logo-container">
-                <!-- LOGO BOSSX - Ganti dengan URL logo Anda -->
-                <img src="https://via.placeholder.com/150/ffd700/1a1a1a?text=BOSSX" alt="BossX Logo">
+                <!-- LOGO BOSSX BULAT SEMPURNA - URL SUDAH DIPERBAIKI -->
+                <img src="https://i.ibb.co/zWyt91b3/Whats-App-Image-2026-01-20-at-17-53-17.jpg" alt="BossX Logo">
             </div>
             <div class="logo-text">BOSSX</div>
             <h1>Premium Crypto Wallet</h1>
@@ -714,7 +709,6 @@
             </div>
         </div>
 
-        <!-- Tabs -->
         <div class="tabs">
             <div class="tab active" onclick="switchTab('create')">
                 <i class="fas fa-plus-circle"></i> Create
@@ -727,7 +721,6 @@
             </div>
         </div>
 
-        <!-- Create Wallet Tab -->
         <div id="createTab" class="tab-content active">
             <div class="backup-warning">
                 <h4><i class="fas fa-exclamation-triangle"></i> CRITICAL WARNING</h4>
@@ -780,7 +773,6 @@
             </div>
         </div>
 
-        <!-- Import Wallet Tab -->
         <div id="importTab" class="tab-content">
             <div class="input-group">
                 <label><i class="fas fa-key"></i> Import by Private Key:</label>
@@ -805,7 +797,6 @@
             </button>
         </div>
 
-        <!-- Wallet Tab -->
         <div id="walletTab" class="tab-content">
             <div id="notLoggedIn" style="display: block;">
                 <div style="text-align: center; color: #888; margin-bottom: 30px;">
@@ -888,7 +879,6 @@
         </div>
     </div>
 
-    <!-- Modal -->
     <div class="modal" id="loadingModal">
         <div class="modal-content">
             <h3><i class="fas fa-spinner fa-spin"></i> Processing</h3>
@@ -897,25 +887,21 @@
         </div>
     </div>
 
-    <!-- Notification -->
     <div class="notification" id="notification"></div>
 
     <script>
-        // ===== CONFIGURASI - GANTI DENGAN DATA ANDA =====
-        const BOSSX_CONTRACT_ADDRESS = "TYourContractAddressHere123456789"; // ⚠️ GANTI DENGAN CONTRACT ADDRESS BOSSX ANDA
+        const BOSSX_CONTRACT_ADDRESS = "TYourContractAddressHere123456789";
         const BOSSX_DECIMALS = 6;
         const TRON_NODE = {
             fullNode: 'https://api.trongrid.io',
             solidityNode: 'https://api.trongrid.io',
             eventServer: 'https://api.trongrid.io'
         };
-        // ================================================
 
         let tronWeb = null;
         let currentWallet = null;
-        let password = 'bossxwallet2026'; // Default password untuk enkripsi
+        let password = 'bossxwallet2026';
 
-        // DOM Elements
         const createTab = document.getElementById('createTab');
         const importTab = document.getElementById('importTab');
         const walletTab = document.getElementById('walletTab');
@@ -931,10 +917,8 @@
         const modalMessage = document.getElementById('modalMessage');
         const notification = document.getElementById('notification');
 
-        // Set contract address display
         contractAddressEl.textContent = BOSSX_CONTRACT_ADDRESS;
 
-        // Initialize TronWeb
         function initTronWeb(privateKey) {
             try {
                 tronWeb = new TronWeb(TRON_NODE, privateKey);
@@ -945,35 +929,23 @@
             }
         }
 
-        // Create New Wallet
         async function createNewWallet() {
             showLoading(true, "Generating your new BossX wallet...");
 
             try {
-                // Generate random private key
                 const privateKey = TronWeb.utils.bytes.toHex(TronWeb.utils.bytes.random(32));
                 const address = tronWeb.address.fromPrivateKey(privateKey);
-
-                // Generate mnemonic
                 const mnemonic = bip39.generateMnemonic();
 
-                // Display wallet info
                 document.getElementById('newAddress').textContent = address;
                 document.getElementById('privateKey').value = privateKey;
                 document.getElementById('mnemonicPhrase').value = mnemonic;
-
                 document.getElementById('walletInfo').style.display = 'block';
-
-                // Generate QR Code
                 generateQRCode(address, 'qrCodeImg');
-
-                // Auto-init TronWeb
                 initTronWeb(privateKey);
                 currentWallet = { address, privateKey, mnemonic };
-
                 showNotification('🎉 Wallet generated successfully! Please backup your keys!', 'info');
 
-                // Auto switch to wallet tab after 3 seconds
                 setTimeout(() => {
                     switchTab('wallet');
                     loadWalletUI();
@@ -987,7 +959,6 @@
             }
         }
 
-        // Import by Private Key
         async function importByPrivateKey() {
             const privateKey = document.getElementById('importPrivateKey').value.trim();
 
@@ -999,20 +970,14 @@
             showLoading(true, "Importing wallet...");
 
             try {
-                // Validate private key format
                 if (!/^([A-Fa-f0-9]{64})$/.test(privateKey)) {
                     throw new Error('Invalid private key format (must be 64 hex characters)');
                 }
 
                 const address = tronWeb.address.fromPrivateKey(privateKey);
-
-                // Init TronWeb
                 initTronWeb(privateKey);
                 currentWallet = { address, privateKey };
-
                 showNotification('✅ Wallet imported successfully!', 'success');
-
-                // Switch to wallet tab
                 switchTab('wallet');
                 loadWalletUI();
 
@@ -1024,7 +989,6 @@
             }
         }
 
-        // Import by Mnemonic
         async function importByMnemonic() {
             const mnemonic = document.getElementById('importMnemonic').value.trim();
 
@@ -1036,23 +1000,16 @@
             showLoading(true, "Importing wallet from mnemonic...");
 
             try {
-                // Validate mnemonic
                 if (!bip39.validateMnemonic(mnemonic)) {
                     throw new Error('Invalid mnemonic phrase');
                 }
 
-                // Generate private key from mnemonic (simplified)
                 const seed = await bip39.mnemonicToSeed(mnemonic);
                 const privateKey = TronWeb.utils.bytes.toHex(TronWeb.utils.bytes.sha256(seed.slice(0, 32)));
                 const address = tronWeb.address.fromPrivateKey(privateKey);
-
-                // Init TronWeb
                 initTronWeb(privateKey);
                 currentWallet = { address, privateKey, mnemonic };
-
                 showNotification('✅ Wallet imported successfully!', 'success');
-
-                // Switch to wallet tab
                 switchTab('wallet');
                 loadWalletUI();
 
@@ -1064,38 +1021,28 @@
             }
         }
 
-        // Load Wallet UI
         async function loadWalletUI() {
             if (!currentWallet || !tronWeb) {
                 showNotification('⚠️ No wallet loaded', 'error');
                 return;
             }
 
-            // Update UI
             walletAddressEl.textContent = formatAddress(currentWallet.address);
             notLoggedIn.style.display = 'none';
             loggedIn.style.display = 'block';
-
-            // Generate QR Code
             generateQRCode(currentWallet.address, 'receiveQR');
-
-            // Load balances
             await loadBalances();
         }
 
-        // Load Balances
         async function loadBalances() {
             if (!currentWallet || !tronWeb) return;
 
             showLoading(true, "Loading balances...");
 
             try {
-                // Get TRX balance
                 const trxBalance = await tronWeb.trx.getBalance(currentWallet.address);
                 const trxFormatted = tronWeb.fromSun(trxBalance);
                 trxBalanceEl.textContent = parseFloat(trxFormatted).toFixed(2) + ' TRX';
-
-                // Get BOSSX balance
                 const bossxBalance = await getBOSSXBalance(currentWallet.address);
                 bossxBalanceEl.textContent = bossxBalance + ' BOSSX';
 
@@ -1107,7 +1054,6 @@
             }
         }
 
-        // Get BOSSX Balance
         async function getBOSSXBalance(address) {
             try {
                 const contract = await tronWeb.contract().at(BOSSX_CONTRACT_ADDRESS);
@@ -1120,13 +1066,11 @@
             }
         }
 
-        // Transfer Token
         async function transferToken() {
             const recipient = document.getElementById('recipient').value.trim();
             const amount = document.getElementById('amount').value.trim();
             const tokenType = document.getElementById('tokenType').value;
 
-            // Validation
             if (!recipient || !amount) {
                 showNotification('⚠️ Please fill all fields', 'error');
                 return;
@@ -1153,13 +1097,9 @@
                     await transferTRX(recipient, amount);
                 }
 
-                // Refresh balances
                 await loadBalances();
-
-                // Clear form
                 document.getElementById('recipient').value = '';
                 document.getElementById('amount').value = '';
-
                 showNotification(`✅ Successfully transferred ${amount} ${tokenType}!`, 'success');
 
             } catch (error) {
@@ -1172,43 +1112,35 @@
             }
         }
 
-        // Transfer BOSSX
         async function transferBOSSX(recipient, amount) {
             try {
                 const contract = await tronWeb.contract().at(BOSSX_CONTRACT_ADDRESS);
                 const amountInWei = Math.floor(parseFloat(amount) * Math.pow(10, BOSSX_DECIMALS));
-
                 const result = await contract.transfer(recipient, amountInWei).send({
                     feeLimit: 100000000,
                     callValue: 0,
                     shouldPollResponse: true
                 });
-
                 if (result && result.transaction) {
                     await tronWeb.trx.getTransaction(result.transaction);
                 }
-
             } catch (error) {
                 throw error;
             }
         }
 
-        // Transfer TRX
         async function transferTRX(recipient, amount) {
             try {
                 const amountInSun = tronWeb.toSun(amount);
                 const result = await tronWeb.trx.sendTransaction(recipient, amountInSun);
-
                 if (result) {
                     await tronWeb.trx.getTransaction(result.txID);
                 }
-
             } catch (error) {
                 throw error;
             }
         }
 
-        // Save Wallet to Browser (Encrypted)
         function saveWallet() {
             if (!currentWallet) {
                 showNotification('⚠️ No wallet to save', 'error');
@@ -1218,19 +1150,14 @@
             showLoading(true, "Encrypting and saving wallet...");
 
             try {
-                // Encrypt private key
                 const encryptedPrivateKey = CryptoJS.AES.encrypt(currentWallet.privateKey, password).toString();
                 const encryptedMnemonic = currentWallet.mnemonic ? CryptoJS.AES.encrypt(currentWallet.mnemonic, password).toString() : '';
-
-                // Save to localStorage
                 localStorage.setItem('bossx_wallet_address', currentWallet.address);
                 localStorage.setItem('bossx_wallet_privateKey', encryptedPrivateKey);
                 if (encryptedMnemonic) {
                     localStorage.setItem('bossx_wallet_mnemonic', encryptedMnemonic);
                 }
-
                 showNotification('💾 Wallet saved to browser (encrypted)!', 'success');
-
             } catch (error) {
                 console.error("Save error:", error);
                 showNotification('❌ Failed to save wallet', 'error');
@@ -1239,7 +1166,6 @@
             }
         }
 
-        // Load Saved Wallet
         async function loadSavedWallet() {
             const encryptedPrivateKey = localStorage.getItem('bossx_wallet_privateKey');
             const address = localStorage.getItem('bossx_wallet_address');
@@ -1249,27 +1175,20 @@
             }
 
             try {
-                // Decrypt private key
                 const bytes = CryptoJS.AES.decrypt(encryptedPrivateKey, password);
                 const privateKey = bytes.toString(CryptoJS.enc.Utf8);
-
                 if (!privateKey) {
                     throw new Error('Failed to decrypt wallet');
                 }
-
-                // Init TronWeb
                 initTronWeb(privateKey);
                 currentWallet = { address, privateKey };
-
                 return true;
-
             } catch (error) {
                 console.error("Load saved wallet error:", error);
                 return false;
             }
         }
 
-        // Logout
         function logoutWallet() {
             currentWallet = null;
             tronWeb = null;
@@ -1278,19 +1197,14 @@
             showNotification('🔓 Logged out successfully', 'info');
         }
 
-        // Switch Tab
         function switchTab(tabName) {
-            // Hide all tabs
             createTab.classList.remove('active');
             importTab.classList.remove('active');
             walletTab.classList.remove('active');
-
-            // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
 
-            // Show selected tab
             if (tabName === 'create') {
                 createTab.classList.add('active');
                 document.getElementById('createTab').classList.add('active');
@@ -1302,29 +1216,24 @@
                 document.getElementById('walletTab').classList.add('active');
             }
 
-            // Update tab buttons
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
             event.target.classList.add('active');
         }
 
-        // Generate QR Code
         function generateQRCode(data, elementId) {
             const qrUrl = `https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(data)}&chs=220x220&chld=L|0`;
             document.getElementById(elementId).src = qrUrl;
         }
 
-        // Format Address
         function formatAddress(address) {
             return address.substring(0, 10) + '...' + address.substring(address.length - 8);
         }
 
-        // Copy to Clipboard
         function copyToClipboard(elementId) {
             const element = document.getElementById(elementId);
             const text = element.value || element.textContent;
-
             navigator.clipboard.writeText(text).then(() => {
                 showNotification('📋 Copied to clipboard!', 'success');
             }).catch(() => {
@@ -1332,7 +1241,6 @@
             });
         }
 
-        // Print Backup
         function printBackup() {
             const address = document.getElementById('newAddress').textContent;
             const privateKey = document.getElementById('privateKey').value;
@@ -1389,28 +1297,21 @@
             printWindow.print();
         }
 
-        // Show Loading Modal
         function showLoading(show, message = "Please wait...") {
             modalMessage.textContent = message;
             loadingModal.style.display = show ? 'flex' : 'none';
         }
 
-        // Show Notification
         function showNotification(message, type) {
             notification.textContent = message;
             notification.className = `notification ${type} show`;
-
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 4000);
         }
 
-        // Auto-load saved wallet on page load
         window.addEventListener('load', async () => {
-            // Initialize default TronWeb (without private key)
             initTronWeb(null);
-
-            // Try to load saved wallet
             const loaded = await loadSavedWallet();
             if (loaded) {
                 switchTab('wallet');
