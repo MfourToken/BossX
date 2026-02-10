@@ -23,6 +23,7 @@
             --danger: #dc3545;
             --usdt-color: #26a17b;
             --btc-color: #f7931a;
+            --trx-color: #e03131;
         }
 
         * {
@@ -194,7 +195,7 @@
         .portfolio-item-value.bossx { color: var(--gold-light); }
         .portfolio-item-value.usdt { color: var(--usdt-color); }
         .portfolio-item-value.btc { color: var(--btc-color); }
-        .portfolio-item-value.trx { color: #e03131; }
+        .portfolio-item-value.trx { color: var(--trx-color); }
 
         .nav-tabs {
             display: flex;
@@ -301,36 +302,34 @@
             border: 1px solid var(--border-color);
             cursor: pointer;
             transition: transform 0.2s, border-color 0.3s;
+            display: flex;
+            align-items: center;
         }
 
         .asset-card:hover {
             transform: translateY(-2px);
             border-color: rgba(212, 175, 55, 0.3);
+            background: rgba(40, 40, 80, 0.8);
         }
 
-        .asset-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .asset-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+        .asset-icon-container {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+            flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 12px;
-            flex-shrink: 0;
-            font-weight: 700;
-            font-size: 16px;
         }
 
-        .asset-icon.bossx { background: rgba(212, 175, 55, 0.2); color: var(--gold-light); }
-        .asset-icon.usdt { background: rgba(38, 161, 123, 0.2); color: var(--usdt-color); }
-        .asset-icon.btc { background: rgba(247, 147, 26, 0.2); color: var(--btc-color); }
-        .asset-icon.trx { background: rgba(224, 49, 49, 0.2); color: #e03131; }
+        .asset-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: contain;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
 
         .asset-info {
             flex: 1;
@@ -350,6 +349,7 @@
 
         .asset-balance {
             text-align: right;
+            min-width: 100px;
         }
 
         .asset-amount {
@@ -807,20 +807,20 @@
             border: 1px solid var(--gold-light);
         }
 
+        .swap-token-icon-container {
+            width: 32px;
+            height: 32px;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
         .swap-token-icon {
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
+            object-fit: contain;
+            border: 2px solid rgba(255, 255, 255, 0.1);
         }
-
-        .swap-token-icon.bossx { background: rgba(212, 175, 55, 0.2); color: var(--gold-light); }
-        .swap-token-icon.usdt { background: rgba(38, 161, 123, 0.2); color: var(--usdt-color); }
-        .swap-token-icon.trx { background: rgba(224, 49, 49, 0.2); color: #e03131; }
 
         .swap-rate {
             text-align: center;
@@ -927,6 +927,16 @@
             .bottom-nav-item {
                 font-size: 10px;
             }
+            
+            .asset-icon-container {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .asset-icon {
+                width: 36px;
+                height: 36px;
+            }
         }
     </style>
 </head>
@@ -989,58 +999,58 @@
                 </div>
                 
                 <div class="asset-card" onclick="showSendModal('BOSSX')">
-                    <div class="asset-header">
-                        <div class="asset-icon bossx">B</div>
-                        <div class="asset-info">
-                            <div class="asset-name">BossX Token</div>
-                            <div class="asset-symbol">BOSSX</div>
-                        </div>
-                        <div class="asset-balance">
-                            <div class="asset-amount">1,250.50</div>
-                            <div class="asset-value">$1,250.50</div>
-                        </div>
+                    <div class="asset-icon-container">
+                        <img src="https://i.ibb.co/zWyt91b3/Whats-App-Image-2026-01-20-at-17-53-17.jpg" alt="BOSSX" class="asset-icon">
+                    </div>
+                    <div class="asset-info">
+                        <div class="asset-name">BossX Token</div>
+                        <div class="asset-symbol">BOSSX</div>
+                    </div>
+                    <div class="asset-balance">
+                        <div class="asset-amount">1,250.50</div>
+                        <div class="asset-value">$1,250.50</div>
                     </div>
                 </div>
 
                 <div class="asset-card" onclick="showSendModal('USDT')">
-                    <div class="asset-header">
-                        <div class="asset-icon usdt">U</div>
-                        <div class="asset-info">
-                            <div class="asset-name">Tether USD</div>
-                            <div class="asset-symbol">USDT (TRC20)</div>
-                        </div>
-                        <div class="asset-balance">
-                            <div class="asset-amount">500.00</div>
-                            <div class="asset-value">$500.00</div>
-                        </div>
+                    <div class="asset-icon-container">
+                        <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT" class="asset-icon">
+                    </div>
+                    <div class="asset-info">
+                        <div class="asset-name">Tether USD</div>
+                        <div class="asset-symbol">USDT (TRC20)</div>
+                    </div>
+                    <div class="asset-balance">
+                        <div class="asset-amount">500.00</div>
+                        <div class="asset-value">$500.00</div>
                     </div>
                 </div>
 
                 <div class="asset-card" onclick="showSendModal('BTC')">
-                    <div class="asset-header">
-                        <div class="asset-icon btc">₿</div>
-                        <div class="asset-info">
-                            <div class="asset-name">Bitcoin</div>
-                            <div class="asset-symbol">BTC (WBTC)</div>
-                        </div>
-                        <div class="asset-balance">
-                            <div class="asset-amount">0.0050</div>
-                            <div class="asset-value">$300.00</div>
-                        </div>
+                    <div class="asset-icon-container">
+                        <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC" class="asset-icon">
+                    </div>
+                    <div class="asset-info">
+                        <div class="asset-name">Bitcoin</div>
+                        <div class="asset-symbol">BTC (WBTC)</div>
+                    </div>
+                    <div class="asset-balance">
+                        <div class="asset-amount">0.0050</div>
+                        <div class="asset-value">$300.00</div>
                     </div>
                 </div>
 
                 <div class="asset-card" onclick="showSendModal('TRX')">
-                    <div class="asset-header">
-                        <div class="asset-icon trx">T</div>
-                        <div class="asset-info">
-                            <div class="asset-name">TRON</div>
-                            <div class="asset-symbol">TRX</div>
-                        </div>
-                        <div class="asset-balance">
-                            <div class="asset-amount">15.75</div>
-                            <div class="asset-value">$15.75</div>
-                        </div>
+                    <div class="asset-icon-container">
+                        <img src="https://cryptologos.cc/logos/tron-trx-logo.png" alt="TRX" class="asset-icon">
+                    </div>
+                    <div class="asset-info">
+                        <div class="asset-name">TRON</div>
+                        <div class="asset-symbol">TRX</div>
+                    </div>
+                    <div class="asset-balance">
+                        <div class="asset-amount">15.75</div>
+                        <div class="asset-value">$15.75</div>
                     </div>
                 </div>
             </div>
@@ -1105,7 +1115,9 @@
                         <input type="number" class="swap-amount" id="fromAmount" placeholder="0.00" min="0" step="0.01">
                         <div class="swap-token-select" onclick="showTokenSelector('from')">
                             <div class="swap-token-option active" id="fromTokenOption">
-                                <div class="swap-token-icon bossx">B</div>
+                                <div class="swap-token-icon-container">
+                                    <img src="https://i.ibb.co/zWyt91b3/Whats-App-Image-2026-01-20-at-17-53-17.jpg" alt="BOSSX" class="swap-token-icon">
+                                </div>
                                 <span>BOSSX</span>
                             </div>
                             <i class="fas fa-chevron-down"></i>
@@ -1124,7 +1136,9 @@
                         <input type="number" class="swap-amount" id="toAmount" placeholder="0.00" readonly>
                         <div class="swap-token-select" onclick="showTokenSelector('to')">
                             <div class="swap-token-option" id="toTokenOption">
-                                <div class="swap-token-icon usdt">U</div>
+                                <div class="swap-token-icon-container">
+                                    <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT" class="swap-token-icon">
+                                </div>
                                 <span>USDT</span>
                             </div>
                             <i class="fas fa-chevron-down"></i>
@@ -1246,19 +1260,27 @@
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                 <div class="swap-token-option" onclick="selectToken('BOSSX', 'from')">
-                    <div class="swap-token-icon bossx">B</div>
+                    <div class="swap-token-icon-container">
+                        <img src="https://i.ibb.co/zWyt91b3/Whats-App-Image-2026-01-20-at-17-53-17.jpg" alt="BOSSX" class="swap-token-icon">
+                    </div>
                     <span>BOSSX</span>
                 </div>
                 <div class="swap-token-option" onclick="selectToken('USDT', 'from')">
-                    <div class="swap-token-icon usdt">U</div>
+                    <div class="swap-token-icon-container">
+                        <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT" class="swap-token-icon">
+                    </div>
                     <span>USDT</span>
                 </div>
                 <div class="swap-token-option" onclick="selectToken('TRX', 'from')">
-                    <div class="swap-token-icon trx">T</div>
+                    <div class="swap-token-icon-container">
+                        <img src="https://cryptologos.cc/logos/tron-trx-logo.png" alt="TRX" class="swap-token-icon">
+                    </div>
                     <span>TRX</span>
                 </div>
                 <div class="swap-token-option" onclick="selectToken('BTC', 'from')">
-                    <div class="swap-token-icon btc">₿</div>
+                    <div class="swap-token-icon-container">
+                        <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC" class="swap-token-icon">
+                    </div>
                     <span>BTC</span>
                 </div>
             </div>
@@ -1566,8 +1588,8 @@
 
         // Update Swap UI
         function updateSwapUI() {
-            const fromToken = document.getElementById('fromTokenOption').textContent.trim();
-            const toToken = document.getElementById('toTokenOption').textContent.trim();
+            const fromToken = document.getElementById('fromTokenOption').querySelector('span').textContent.trim();
+            const toToken = document.getElementById('toTokenOption').querySelector('span').textContent.trim();
             
             // Update balances
             document.getElementById('fromBalance').textContent = `Balance: ${currentWallet.balances[fromToken] || 0} ${fromToken}`;
@@ -1593,9 +1615,22 @@
                 el.classList.remove('active');
             });
             
-            // Set selected token
+            // Set selected token with logo
+            let logoUrl = '';
+            if (token === 'BOSSX') {
+                logoUrl = 'https://i.ibb.co/zWyt91b3/Whats-App-Image-2026-01-20-at-17-53-17.jpg';
+            } else if (token === 'USDT') {
+                logoUrl = 'https://cryptologos.cc/logos/tether-usdt-logo.png';
+            } else if (token === 'BTC') {
+                logoUrl = 'https://cryptologos.cc/logos/bitcoin-btc-logo.png';
+            } else if (token === 'TRX') {
+                logoUrl = 'https://cryptologos.cc/logos/tron-trx-logo.png';
+            }
+            
             optionDiv.innerHTML = `
-                <div class="swap-token-icon ${token.toLowerCase()}">${token === 'BTC' ? '₿' : token.charAt(0)}</div>
+                <div class="swap-token-icon-container">
+                    <img src="${logoUrl}" alt="${token}" class="swap-token-icon">
+                </div>
                 <span>${token}</span>
             `;
             optionDiv.classList.add('active');
@@ -1608,8 +1643,13 @@
         // Calculate Swap
         function calculateSwap() {
             const fromAmount = parseFloat(document.getElementById('fromAmount').value) || 0;
-            const fromToken = document.getElementById('fromTokenOption').textContent.trim();
-            const toToken = document.getElementById('toTokenOption').textContent.trim();
+            const fromTokenSpan = document.getElementById('fromTokenOption').querySelector('span');
+            const toTokenSpan = document.getElementById('toTokenOption').querySelector('span');
+            
+            if (!fromTokenSpan || !toTokenSpan) return;
+            
+            const fromToken = fromTokenSpan.textContent.trim();
+            const toToken = toTokenSpan.textContent.trim();
             
             if (fromAmount <= 0) {
                 document.getElementById('toAmount').value = '';
@@ -1683,8 +1723,16 @@
         // Execute Swap
         async function executeSwap() {
             const fromAmount = parseFloat(document.getElementById('fromAmount').value);
-            const fromToken = document.getElementById('fromTokenOption').textContent.trim();
-            const toToken = document.getElementById('toTokenOption').textContent.trim();
+            const fromTokenSpan = document.getElementById('fromTokenOption').querySelector('span');
+            const toTokenSpan = document.getElementById('toTokenOption').querySelector('span');
+            
+            if (!fromTokenSpan || !toTokenSpan) {
+                showNotification('⚠️ Please select tokens', 'error');
+                return;
+            }
+            
+            const fromToken = fromTokenSpan.textContent.trim();
+            const toToken = toTokenSpan.textContent.trim();
             
             if (!fromAmount || fromAmount <= 0) {
                 showNotification('⚠️ Please enter amount to swap', 'error');
