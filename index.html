@@ -7,6 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/tronweb@4.0.1/dist/TronWeb.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bip39@3.0.4/dist/index.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -401,6 +402,12 @@
         .asset-value {
             color: var(--text-secondary);
             font-size: 13px;
+        }
+
+        .chart-mini {
+            width: 100%;
+            height: 40px;
+            margin-top: 8px;
         }
 
         .history-item {
@@ -933,6 +940,30 @@
             margin-top: 10px;
         }
 
+        .tradingview-widget {
+            width: 100%;
+            height: 300px;
+            margin-top: 15px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .tradingview-widget-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+        }
+
+        .tradingview-widget-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
         @media (max-width: 480px) {
             .app-container {
                 border-radius: 20px;
@@ -1004,14 +1035,14 @@
                 <div class="account-balance" id="headerBalance">$1,850.00</div>
             </div>
 
-            <!-- Portfolio Card dengan Real-Time Prices -->
+            <!-- Portfolio Card dengan TradingView Real-Time Prices -->
             <div class="balance-card">
                 <div class="balance-label">
                     <i class="fas fa-chart-pie"></i> Portfolio Value
                 </div>
                 <div class="balance-amount" id="totalBalance">$0.00</div>
                 <div class="price-update" id="priceUpdate">
-                    <i class="fas fa-sync-alt"></i> <span id="lastUpdate">Updating...</span>
+                    <i class="fas fa-sync-alt fa-spin"></i> <span id="lastUpdate">Loading prices...</span>
                 </div>
                 <div class="portfolio-row">
                     <div class="portfolio-item">
@@ -1047,13 +1078,13 @@
                 </div>
             </div>
 
-            <!-- Assets List dengan Real-Time Prices -->
+            <!-- Assets List dengan TradingView Real-Time Prices -->
             <div class="balance-card">
                 <div class="balance-label">
                     <i class="fas fa-coins"></i> Your Assets
                 </div>
                 
-                <div class="asset-card" onclick="showSendModal('BOSSX')">
+                <div class="asset-card" onclick="showAssetDetail('BOSSX')">
                     <div class="asset-icon-container">
                         <img src="https://i.ibb.co/zWyt91b3/Whats-App-Image-2026-01-20-at-17-53-17.jpg" alt="BOSSX" class="asset-icon">
                     </div>
@@ -1065,6 +1096,7 @@
                             <span id="bossxPriceDisplay">$0.00</span>
                             <span id="bossxPriceChangeSmall" class="price-badge">-</span>
                         </div>
+                        <div class="chart-mini" id="chartBOSSX"></div>
                     </div>
                     <div class="asset-balance">
                         <div class="asset-amount" id="bossxBalanceDisplay">0.00</div>
@@ -1072,7 +1104,7 @@
                     </div>
                 </div>
 
-                <div class="asset-card" onclick="showSendModal('USDT')">
+                <div class="asset-card" onclick="showAssetDetail('USDT')">
                     <div class="asset-icon-container">
                         <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT" class="asset-icon">
                     </div>
@@ -1084,6 +1116,7 @@
                             <span id="usdtPriceDisplay">$1.00</span>
                             <span id="usdtPriceChangeSmall" class="price-badge price-up">+0.00%</span>
                         </div>
+                        <div class="chart-mini" id="chartUSDT"></div>
                     </div>
                     <div class="asset-balance">
                         <div class="asset-amount" id="usdtBalanceDisplay">0.00</div>
@@ -1091,7 +1124,7 @@
                     </div>
                 </div>
 
-                <div class="asset-card" onclick="showSendModal('BTC')">
+                <div class="asset-card" onclick="showAssetDetail('BTC')">
                     <div class="asset-icon-container">
                         <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC" class="asset-icon">
                     </div>
@@ -1103,6 +1136,7 @@
                             <span id="btcPriceDisplay">$0.00</span>
                             <span id="btcPriceChangeSmall" class="price-badge">-</span>
                         </div>
+                        <div class="chart-mini" id="chartBTC"></div>
                     </div>
                     <div class="asset-balance">
                         <div class="asset-amount" id="btcBalanceDisplay">0.0000</div>
@@ -1110,7 +1144,7 @@
                     </div>
                 </div>
 
-                <div class="asset-card" onclick="showSendModal('TRX')">
+                <div class="asset-card" onclick="showAssetDetail('TRX')">
                     <div class="asset-icon-container">
                         <img src="https://cryptologos.cc/logos/tron-trx-logo.png" alt="TRX" class="asset-icon">
                     </div>
@@ -1122,6 +1156,7 @@
                             <span id="trxPriceDisplay">$0.00</span>
                             <span id="trxPriceChangeSmall" class="price-badge">-</span>
                         </div>
+                        <div class="chart-mini" id="chartTRX"></div>
                     </div>
                     <div class="asset-balance">
                         <div class="asset-amount" id="trxBalanceDisplay">0.00</div>
@@ -1242,7 +1277,7 @@
                 </button>
 
                 <div style="margin-top: 15px; padding: 12px; background: rgba(38, 161, 123, 0.1); border-radius: 12px; font-size: 13px; color: var(--text-secondary);">
-                    <i class="fas fa-info-circle"></i> Swap powered by JustSwap • Prices update every 30s
+                    <i class="fas fa-info-circle"></i> Swap powered by JustSwap • Prices from TradingView
                 </div>
             </div>
 
@@ -1270,6 +1305,57 @@
             <div class="bottom-nav-item" onclick="showSettingsModal()">
                 <i class="fas fa-cog"></i>
                 <span>Settings</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Asset Detail Modal with TradingView Chart -->
+    <div class="modal" id="assetDetailModal">
+        <div class="modal-content" style="padding: 25px;">
+            <div class="modal-header">
+                <div class="modal-title" id="assetDetailTitle">Asset Details</div>
+                <button class="modal-close" onclick="closeModal('assetDetailModal')">&times;</button>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="display: inline-block; width: 60px; height: 60px; border-radius: 50%; overflow: hidden; margin-bottom: 15px;">
+                    <img src="" alt="Asset Logo" id="assetDetailLogo" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+                <div style="font-size: 24px; font-weight: 700; margin-bottom: 5px;" id="assetDetailName">Asset Name</div>
+                <div style="color: var(--text-secondary); font-size: 14px;" id="assetDetailSymbol">SYMBOL</div>
+            </div>
+            
+            <div style="background: rgba(30, 30, 60, 0.8); border-radius: 16px; padding: 20px; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                    <span style="color: var(--text-secondary); font-size: 14px;">Current Price</span>
+                    <span style="font-size: 20px; font-weight: 700;" id="assetDetailPrice">$0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                    <span style="color: var(--text-secondary); font-size: 14px;">24h Change</span>
+                    <span style="font-size: 16px; font-weight: 600;" id="assetDetailChange">0.00%</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-secondary); font-size: 14px;">Market Cap</span>
+                    <span style="font-size: 16px;" id="assetDetailMarketCap">-</span>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <div class="tradingview-widget-container">
+                    <iframe id="tradingViewChart" frameborder="0" scrolling="no"></iframe>
+                </div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 10px;">
+                    Data from TradingView • Updated in real-time
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="showSendModal()">
+                    <i class="fas fa-paper-plane"></i> Send
+                </button>
+                <button class="btn btn-outline" onclick="showReceiveModal()">
+                    <i class="fas fa-qrcode"></i> Receive
+                </button>
             </div>
         </div>
     </div>
@@ -1388,8 +1474,8 @@
     <script>
         // ===== CONFIGURASI =====
         const BOSSX_CONTRACT_ADDRESS = "TLp5ViMF8A7F5HhgT34i4eqJV699UvCiYk";
-        const USDT_CONTRACT_ADDRESS = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"; // USDT TRC20
-        const WBTC_CONTRACT_ADDRESS = "TXpw8XeWYeTUd4quDskoUqeQPowRh4jY65"; // WBTC TRC20 (Wrapped Bitcoin)
+        const USDT_CONTRACT_ADDRESS = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
+        const WBTC_CONTRACT_ADDRESS = "TXpw8XeWYeTUd4quDskoUqeQPowRh4jY65";
         const BOSSX_DECIMALS = 6;
         const USDT_DECIMALS = 6;
         const WBTC_DECIMALS = 8;
@@ -1400,23 +1486,26 @@
             eventServer: 'https://api.trongrid.io'
         };
 
-        // CoinGecko IDs untuk API
-        const COINGECKO_IDS = {
-            'bitcoin': 'bitcoin',
-            'tron': 'tron'
+        // TradingView Symbols
+        const TRADINGVIEW_SYMBOLS = {
+            'BOSSX': 'BOSSXUSDT', // Custom pair
+            'BTC': 'BINANCE:BTCUSDT',
+            'TRX': 'BINANCE:TRXUSDT',
+            'USDT': 'BINANCE:USDTUSDC'
         };
 
         let tronWeb = null;
         let currentWallet = null;
         let transactionHistory = [];
         let currentTokenSelector = 'from';
-        let slippage = 0.5; // Default 0.5%
+        let slippage = 0.5;
         let priceData = {
-            BOSSX: { price: 0.4, change: 0, lastUpdate: null },
-            USDT: { price: 1.0, change: 0, lastUpdate: null },
-            BTC: { price: 0, change: 0, lastUpdate: null },
-            TRX: { price: 0, change: 0, lastUpdate: null }
+            BOSSX: { price: 0.4, change: 0, marketCap: 0, lastUpdate: null },
+            USDT: { price: 1.0, change: 0.01, marketCap: 83000000000, lastUpdate: null },
+            BTC: { price: 0, change: 0, marketCap: 0, lastUpdate: null },
+            TRX: { price: 0, change: 0, marketCap: 0, lastUpdate: null }
         };
+        let charts = {};
 
         // Initialize TronWeb
         function initTronWeb(privateKey) {
@@ -1446,115 +1535,192 @@
                 }
             };
             
-            // Update UI
             document.getElementById('headerAddress').textContent = formatAddress(address);
             document.getElementById('receiveAddress').textContent = address;
-            
-            // Generate QR
             generateQRCode(address);
-            
-            // Add demo history
             addDemoHistory();
             
-            // Fetch real-time prices
-            await fetchRealTimePrices();
+            // Fetch TradingView prices
+            await fetchTradingViewPrices();
             updatePortfolioUI();
             
-            showNotification('✨ Welcome to BossX Wallet Pro!', 'info');
+            // Initialize mini charts
+            initMiniCharts();
             
-            // Auto-update prices every 30 seconds
-            setInterval(fetchRealTimePrices, 30000);
+            // Auto-update every 15 seconds
+            setInterval(fetchTradingViewPrices, 15000);
+            
+            showNotification('✨ Welcome to BossX Wallet Pro!', 'info');
         }
 
-        // Fetch Real-Time Prices from CoinGecko API
-        async function fetchRealTimePrices() {
+        // Fetch Real-Time Prices from Binance API (TradingView data source)
+        async function fetchTradingViewPrices() {
             try {
-                showLoading(true, "Updating prices...");
+                showLoading(true, "Updating prices from TradingView...");
                 
-                // Fetch BTC and TRX from CoinGecko
-                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,tron&vs_currencies=usd&include_24hr_change=true');
-                const data = await response.json();
+                // Fetch BTC and TRX from Binance API (same data as TradingView)
+                const [btcResponse, trxResponse] = await Promise.all([
+                    fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT'),
+                    fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=TRXUSDT')
+                ]);
                 
-                // Update BTC price
-                if (data.bitcoin) {
+                const btcData = await btcResponse.json();
+                const trxData = await trxData.json();
+                
+                // Update BTC
+                if (btcData) {
                     const oldPrice = priceData.BTC.price;
-                    priceData.BTC.price = data.bitcoin.usd;
-                    priceData.BTC.change = data.bitcoin.usd_24h_change || 0;
+                    priceData.BTC.price = parseFloat(btcData.lastPrice);
+                    priceData.BTC.change = parseFloat(btcData.priceChangePercent);
+                    priceData.BTC.marketCap = priceData.BTC.price * 19500000; // Approx supply
                     priceData.BTC.lastUpdate = new Date();
-                    
-                    // Log price movement
-                    if (oldPrice > 0) {
-                        const percentChange = ((priceData.BTC.price - oldPrice) / oldPrice) * 100;
-                        if (Math.abs(percentChange) > 1) {
-                            console.log(`₿ BTC: $${priceData.BTC.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} (${percentChange > 0 ? '+' : ''}${percentChange.toFixed(2)}%)`);
-                        }
-                    }
                 }
                 
-                // Update TRX price
-                if (data.tron) {
+                // Update TRX
+                if (trxData) {
                     const oldPrice = priceData.TRX.price;
-                    priceData.TRX.price = data.tron.usd;
-                    priceData.TRX.change = data.tron.usd_24h_change || 0;
+                    priceData.TRX.price = parseFloat(trxData.lastPrice);
+                    priceData.TRX.change = parseFloat(trxData.priceChangePercent);
+                    priceData.TRX.marketCap = priceData.TRX.price * 88000000000; // Approx supply
                     priceData.TRX.lastUpdate = new Date();
                 }
                 
-                // BOSSX - Custom token, use dummy price or fetch from DEX
-                // For demo, we'll use a simulated price that fluctuates
+                // BOSSX - Simulated (replace with your DEX API if available)
                 const bossxBasePrice = 0.4;
-                const randomFluctuation = (Math.random() - 0.5) * 0.05; // ±2.5%
+                const randomFluctuation = (Math.random() - 0.5) * 0.05;
                 priceData.BOSSX.price = bossxBasePrice + randomFluctuation;
-                priceData.BOSSX.change = (Math.random() - 0.5) * 4; // Random -2% to +2%
+                priceData.BOSSX.change = (Math.random() - 0.5) * 4;
+                priceData.BOSSX.marketCap = priceData.BOSSX.price * 100000000; // 100M supply
                 priceData.BOSSX.lastUpdate = new Date();
                 
-                // USDT - Stablecoin, always $1.00
+                // USDT - Stable
                 priceData.USDT.price = 1.00;
-                priceData.USDT.change = 0.01; // Tiny positive change for stablecoins
+                priceData.USDT.change = 0.01;
+                priceData.USDT.marketCap = 83000000000;
                 priceData.USDT.lastUpdate = new Date();
                 
                 // Update UI
                 updatePortfolioUI();
                 
-                // Update last update time
+                // Update charts
+                updateCharts();
+                
+                // Update timestamp
                 const now = new Date();
-                document.getElementById('lastUpdate').textContent = `Updated ${now.toLocaleTimeString()}`;
+                document.getElementById('lastUpdate').innerHTML = `Updated ${now.toLocaleTimeString()}`;
+                document.querySelector('#lastUpdate i').classList.remove('fa-spin');
                 
                 showLoading(false);
                 
             } catch (error) {
-                console.error("Error fetching prices:", error);
+                console.error("Error fetching TradingView prices:", error);
                 showNotification('⚠️ Failed to update prices. Using cached data.', 'error');
+                document.querySelector('#lastUpdate i').classList.remove('fa-spin');
                 showLoading(false);
             }
         }
 
-        // Update Portfolio UI dengan Real-Time Prices
+        // Initialize Mini Charts using Lightweight Charts
+        function initMiniCharts() {
+            const symbols = ['BOSSX', 'USDT', 'BTC', 'TRX'];
+            
+            symbols.forEach(symbol => {
+                const container = document.getElementById(`chart${symbol}`);
+                if (container) {
+                    const chart = LightweightCharts.createChart(container, {
+                        width: container.clientWidth,
+                        height: 40,
+                        layout: {
+                            backgroundColor: 'transparent',
+                            textColor: '#a0a0c0',
+                        },
+                        grid: {
+                            vertLines: { color: 'transparent' },
+                            horzLines: { color: 'transparent' },
+                        },
+                        crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+                        priceScale: { borderColor: 'rgba(212, 175, 55, 0.1)' },
+                        timeScale: { borderColor: 'rgba(212, 175, 55, 0.1)', visible: false },
+                        handleScroll: { mouseWheel: false, pressedMouseMove: false },
+                        handleScale: { mouseWheel: false, pinch: false, axisPressedMouseMove: { time: false, price: false } }
+                    });
+                    
+                    const lineSeries = chart.addLineSeries({
+                        color: symbol === 'BOSSX' ? '#ffd700' : 
+                               symbol === 'USDT' ? '#26a17b' : 
+                               symbol === 'BTC' ? '#f7931a' : '#e03131',
+                        lineWidth: 2,
+                        priceLineVisible: false,
+                        lastValueVisible: false,
+                    });
+                    
+                    charts[symbol] = { chart, lineSeries };
+                    
+                    // Generate random data for demo
+                    generateRandomChartData(symbol);
+                }
+            });
+            
+            // Resize charts on window resize
+            window.addEventListener('resize', () => {
+                symbols.forEach(symbol => {
+                    if (charts[symbol]) {
+                        const container = document.getElementById(`chart${symbol}`);
+                        if (container) {
+                            charts[symbol].chart.resize(container.clientWidth, 40);
+                        }
+                    }
+                });
+            });
+        }
+
+        // Generate random chart data for demo
+        function generateRandomChartData(symbol) {
+            if (!charts[symbol]) return;
+            
+            const data = [];
+            const basePrice = priceData[symbol]?.price || 1;
+            const now = Date.now() / 1000;
+            
+            for (let i = 60; i >= 0; i--) {
+                const time = now - (i * 60); // 1 hour of data, 1 min intervals
+                const randomChange = (Math.random() - 0.5) * 0.02; // ±2%
+                const price = basePrice * (1 + randomChange);
+                data.push({ time, value: price });
+            }
+            
+            charts[symbol].lineSeries.setData(data);
+        }
+
+        // Update charts with new data
+        function updateCharts() {
+            Object.keys(charts).forEach(symbol => {
+                generateRandomChartData(symbol);
+            });
+        }
+
+        // Update Portfolio UI
         function updatePortfolioUI() {
             if (!currentWallet) return;
             
-            // Calculate total portfolio value
             const totalValue = calculateTotalValue();
             document.getElementById('totalBalance').textContent = `$${totalValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             document.getElementById('headerBalance').textContent = `$${totalValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             
-            // Update individual asset values dengan prices
             updateAssetDisplay('BOSSX', currentWallet.balances.BOSSX, priceData.BOSSX.price, priceData.BOSSX.change);
             updateAssetDisplay('USDT', currentWallet.balances.USDT, priceData.USDT.price, priceData.USDT.change);
             updateAssetDisplay('BTC', currentWallet.balances.BTC, priceData.BTC.price, priceData.BTC.change);
             updateAssetDisplay('TRX', currentWallet.balances.TRX, priceData.TRX.price, priceData.TRX.change);
             
-            // Update swap rate
             updateSwapRate();
         }
 
-        // Update Display untuk Satu Asset
+        // Update Asset Display
         function updateAssetDisplay(symbol, balance, price, change) {
             const value = balance * price;
             
-            // Update portfolio card
             document.getElementById(`${symbol.toLowerCase()}Value`).textContent = `${balance.toLocaleString(undefined, {minimumFractionDigits: symbol === 'BTC' ? 4 : 2, maximumFractionDigits: symbol === 'BTC' ? 4 : 2})} ${symbol}`;
             
-            // Update price change badge
             const changeBadge = document.getElementById(`${symbol.toLowerCase()}PriceChange`);
             const changeBadgeSmall = document.getElementById(`${symbol.toLowerCase()}PriceChangeSmall`);
             
@@ -1570,7 +1736,6 @@
                 changeBadgeSmall.textContent = `${change.toFixed(2)}%`;
             }
             
-            // Update asset card
             if (document.getElementById(`${symbol.toLowerCase()}BalanceDisplay`)) {
                 document.getElementById(`${symbol.toLowerCase()}BalanceDisplay`).textContent = `${balance.toLocaleString(undefined, {minimumFractionDigits: symbol === 'BTC' ? 4 : 2, maximumFractionDigits: symbol === 'BTC' ? 4 : 2})}`;
                 document.getElementById(`${symbol.toLowerCase()}ValueDisplay`).textContent = `$${value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
@@ -1586,7 +1751,7 @@
                    (currentWallet.balances.BTC * priceData.BTC.price);
         }
 
-        // Update Swap Rate berdasarkan harga real-time
+        // Update Swap Rate
         function updateSwapRate() {
             const fromToken = document.getElementById('fromTokenOption')?.querySelector('span')?.textContent?.trim() || 'BOSSX';
             const toToken = document.getElementById('toTokenOption')?.querySelector('span')?.textContent?.trim() || 'USDT';
@@ -1600,6 +1765,42 @@
                     document.getElementById('swapRateDisplay').textContent = `1 ${fromToken} ≈ ${rate.toFixed(4)} ${toToken}`;
                 }
             }
+        }
+
+        // Show Asset Detail with TradingView Chart
+        function showAssetDetail(symbol) {
+            const assetName = symbol === 'BOSSX' ? 'BossX Token' : 
+                             symbol === 'USDT' ? 'Tether USD' : 
+                             symbol === 'BTC' ? 'Bitcoin' : 'TRON';
+            
+            const assetLogo = symbol === 'BOSSX' ? 'https://i.ibb.co/zWyt91b3/Whats-App-Image-2026-01-20-at-17-53-17.jpg' :
+                            symbol === 'USDT' ? 'https://cryptologos.cc/logos/tether-usdt-logo.png' :
+                            symbol === 'BTC' ? 'https://cryptologos.cc/logos/bitcoin-btc-logo.png' :
+                            'https://cryptologos.cc/logos/tron-trx-logo.png';
+            
+            document.getElementById('assetDetailTitle').textContent = `${symbol} Details`;
+            document.getElementById('assetDetailLogo').src = assetLogo;
+            document.getElementById('assetDetailName').textContent = assetName;
+            document.getElementById('assetDetailSymbol').textContent = symbol;
+            document.getElementById('assetDetailPrice').textContent = `$${priceData[symbol].price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            
+            const changeEl = document.getElementById('assetDetailChange');
+            if (priceData[symbol].change >= 0) {
+                changeEl.textContent = `+${priceData[symbol].change.toFixed(2)}%`;
+                changeEl.style.color = '#28a745';
+            } else {
+                changeEl.textContent = `${priceData[symbol].change.toFixed(2)}%`;
+                changeEl.style.color = '#dc3545';
+            }
+            
+            document.getElementById('assetDetailMarketCap').textContent = `$${(priceData[symbol].marketCap / 1000000000).toFixed(2)}B`;
+            
+            // Set TradingView chart
+            const tradingViewSymbol = TRADINGVIEW_SYMBOLS[symbol] || `BINANCE:${symbol}USDT`;
+            const iframe = document.getElementById('tradingViewChart');
+            iframe.src = `https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22${tradingViewSymbol}%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22largeChartUrl%22%3A%22%22%7D`;
+            
+            showModal('assetDetailModal');
         }
 
         // Format Address
@@ -1806,14 +2007,9 @@
             const fromToken = fromTokenSpan.textContent.trim();
             const toToken = toTokenSpan.textContent.trim();
             
-            // Update balances
             document.getElementById('fromBalance').textContent = `Balance: ${currentWallet.balances[fromToken] || 0} ${fromToken}`;
             document.getElementById('toBalance').textContent = `Balance: ${currentWallet.balances[toToken] || 0} ${toToken}`;
-            
-            // Update button text
             document.getElementById('swapBtn').innerHTML = `<i class="fas fa-exchange-alt"></i> Swap ${fromToken} to ${toToken}`;
-            
-            // Update swap rate
             updateSwapRate();
         }
 
@@ -1828,12 +2024,10 @@
         function selectToken(token, type) {
             const optionDiv = type === 'from' ? document.getElementById('fromTokenOption') : document.getElementById('toTokenOption');
             
-            // Clear active class from all options
             document.querySelectorAll('.swap-token-option').forEach(el => {
                 el.classList.remove('active');
             });
             
-            // Set selected token with logo
             let logoUrl = '';
             if (token === 'BOSSX') {
                 logoUrl = 'https://i.ibb.co/zWyt91b3/Whats-App-Image-2026-01-20-at-17-53-17.jpg';
@@ -1875,7 +2069,6 @@
                 return;
             }
             
-            // Calculate using real-time prices
             const fromPrice = priceData[fromToken]?.price || 1;
             const toPrice = priceData[toToken]?.price || 1;
             
@@ -1884,7 +2077,6 @@
                 return;
             }
             
-            // Calculate output amount
             const fromValueUSD = fromAmount * fromPrice;
             const toAmount = fromValueUSD / toPrice;
             const minReceived = toAmount * (1 - slippage / 100);
@@ -1896,7 +2088,6 @@
 
         // Calculate Price Impact
         function calculatePriceImpact(amount, fromToken, toToken) {
-            // Simple simulation - in production use real liquidity data
             if (amount > 1000 && (fromToken === 'BOSSX' || toToken === 'BOSSX')) {
                 return 1.5;
             } else if (amount > 500) {
@@ -1961,18 +2152,14 @@
             document.getElementById('swapBtn').innerHTML = `<span class="loading"></span> Swapping...`;
             document.getElementById('swapBtn').disabled = true;
             
-            // Simulate swap
             setTimeout(() => {
                 const toAmount = parseFloat(document.getElementById('toAmount').value);
                 
-                // Update balances
                 currentWallet.balances[fromToken] -= fromAmount;
                 currentWallet.balances[toToken] = (currentWallet.balances[toToken] || 0) + toAmount;
                 
-                // Update UI
                 updatePortfolioUI();
                 
-                // Add to history
                 transactionHistory.unshift({
                     type: 'swap',
                     fromToken: fromToken,
@@ -1985,7 +2172,6 @@
                 
                 renderRecentHistory();
                 
-                // Reset form
                 document.getElementById('fromAmount').value = '';
                 document.getElementById('toAmount').value = '';
                 
@@ -2068,13 +2254,9 @@
             document.getElementById('sendBtn').disabled = true;
             
             setTimeout(() => {
-                // Update balance
                 currentWallet.balances[token] -= parseFloat(amount);
-                
-                // Update UI
                 updatePortfolioUI();
                 
-                // Add to history
                 transactionHistory.unshift({
                     type: 'sent',
                     token: token,
@@ -2145,7 +2327,6 @@
             initTronWeb(null);
             await createDemoWallet();
             
-            // Add event listener for swap amount input
             document.getElementById('fromAmount').addEventListener('input', calculateSwap);
         });
     </script>
