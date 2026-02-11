@@ -10,23 +10,44 @@
   <style>
     body { font-family: 'Inter', system-ui, sans-serif; max-width: 420px; margin: 0 auto; }
     .asset-logo { width: 48px; height: 48px; object-fit: contain; border-radius: 12px; }
-    .header-logo { width: 32px; height: 32px; object-fit: contain; border-radius: 8px; }
+    .header-logo { width: 34px; height: 34px; object-fit: contain; border-radius: 10px; }
+    .clock { font-variant-numeric: tabular-nums; }
   </style>
 </head>
 <body class="bg-gray-950 text-white min-h-screen pb-20">
 
-  <!-- Header dengan Logo BossX -->
-  <header class="bg-gray-900 px-5 py-4 flex items-center justify-between border-b border-gray-800">
-    <div class="flex items-center gap-3">
-      <img src="https://i.ibb.co/Jj9MPHck/logo.jpg" class="header-logo" alt="BossX Logo">
-      <h1 class="text-xl font-bold">BossX Wallet Pro</h1>
+  <!-- Header Mewah -->
+  <header class="bg-gradient-to-r from-gray-900 to-black border-b border-yellow-500/30 px-5 py-5 shadow-xl">
+    <div class="flex items-center justify-between">
+      <!-- Logo + Nama -->
+      <div class="flex items-center gap-3">
+        <img src="https://i.ibb.co/Jj9MPHck/logo.jpg" class="header-logo" alt="BossX Logo">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight">BossX Wallet Pro</h1>
+          <p class="text-[10px] text-gray-400 -mt-1">TRON • Official</p>
+        </div>
+      </div>
+
+      <!-- User Info -->
+      <div onclick="showUserMenu()" class="flex items-center gap-3 cursor-pointer">
+        <div class="text-right">
+          <p class="font-semibold text-sm">Alex Rivera</p>
+          <p class="text-yellow-400 text-xs font-mono">BX-872391</p>
+        </div>
+        <img src="https://i.pravatar.cc/48?u=alex" class="w-10 h-10 rounded-2xl object-cover border border-yellow-500/50" alt="Profile">
+      </div>
     </div>
-    <button onclick="connectWallet()" class="text-sm bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-2xl">Connect</button>
+
+    <!-- Real Time Clock -->
+    <div class="mt-6 text-center">
+      <p id="dateDisplay" class="text-xs text-gray-400"></p>
+      <p id="timeDisplay" class="clock text-4xl font-semibold text-white tracking-widest"></p>
+    </div>
   </header>
 
   <div class="p-5">
     <!-- Balance -->
-    <div class="bg-gradient-to-br from-yellow-600 to-amber-600 rounded-3xl p-8 text-center mb-8">
+    <div class="bg-gradient-to-br from-yellow-600 to-amber-600 rounded-3xl p-8 text-center mb-8 shadow-2xl">
       <p class="text-yellow-100 text-sm tracking-widest">TOTAL BALANCE</p>
       <p id="totalBalance" class="text-5xl font-bold mt-3">$0.00</p>
       <p id="addressDisplay" class="mt-4 text-xs font-mono bg-black/30 px-4 py-1.5 rounded-full inline-block">Belum terhubung</p>
@@ -118,9 +139,20 @@
       `).join('');
     }
 
+    function updateClock() {
+      const now = new Date();
+      const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+      document.getElementById('dateDisplay').textContent = now.toLocaleDateString('id-ID', options);
+      document.getElementById('timeDisplay').textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+
     function connectWallet() {
       alert("Wallet terhubung!\n\nAlamat contoh:\nTQx...BossXPro");
       document.getElementById('addressDisplay').textContent = "TQx...BossXPro";
+    }
+
+    function showUserMenu() {
+      alert("User Menu:\n\nUsername: Alex Rivera\nID: BX-872391\n\n(Fitur profile akan dikembangkan)");
     }
 
     function showSend() { alert("Halaman Send"); }
@@ -128,6 +160,8 @@
 
     window.onload = () => {
       renderAssets();
+      updateClock();
+      setInterval(updateClock, 1000); // update setiap detik
     };
   </script>
 </body>
