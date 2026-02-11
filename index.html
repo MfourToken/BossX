@@ -9,7 +9,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
   <style>
     body { font-family: 'Inter', system-ui, sans-serif; max-width: 420px; margin: 0 auto; }
-    .asset-logo { width: 48px; height: 48px; object-fit: contain; }
+    .asset-logo { width: 48px; height: 48px; object-fit: contain; border-radius: 12px; }
   </style>
 </head>
 <body class="bg-gray-950 text-white min-h-screen pb-20">
@@ -28,7 +28,7 @@
     <div class="bg-gradient-to-br from-yellow-600 to-amber-600 rounded-3xl p-8 text-center mb-8">
       <p class="text-yellow-100 text-sm tracking-widest">TOTAL BALANCE</p>
       <p id="totalBalance" class="text-5xl font-bold mt-3">$0.00</p>
-      <p id="addressDisplay" class="mt-4 text-xs font-mono bg-black/30 px-4 py-1.5 rounded-full inline-block">0x... belum terhubung</p>
+      <p id="addressDisplay" class="mt-4 text-xs font-mono bg-black/30 px-4 py-1.5 rounded-full inline-block">Belum terhubung</p>
     </div>
 
     <!-- Energy & Bandwidth -->
@@ -74,24 +74,19 @@
   <div class="fixed bottom-0 left-0 right-0 max-w-[420px] mx-auto bg-gray-900 border-t border-gray-800 py-3">
     <div class="flex justify-around text-[10px]">
       <div class="flex flex-col items-center text-yellow-400">
-        <i class="fas fa-home text-2xl"></i>
-        <span>Home</span>
+        <i class="fas fa-home text-2xl"></i><span>Home</span>
       </div>
       <div class="flex flex-col items-center text-gray-400">
-        <i class="fas fa-coins text-2xl"></i>
-        <span>Assets</span>
+        <i class="fas fa-coins text-2xl"></i><span>Assets</span>
       </div>
       <div class="flex flex-col items-center text-gray-400">
-        <i class="fas fa-history text-2xl"></i>
-        <span>Activity</span>
+        <i class="fas fa-history text-2xl"></i><span>Activity</span>
       </div>
       <div class="flex flex-col items-center text-gray-400">
-        <i class="fas fa-globe text-2xl"></i>
-        <span>DApps</span>
+        <i class="fas fa-globe text-2xl"></i><span>DApps</span>
       </div>
       <div class="flex flex-col items-center text-gray-400">
-        <i class="fas fa-ellipsis-h text-2xl"></i>
-        <span>More</span>
+        <i class="fas fa-ellipsis-h text-2xl"></i><span>More</span>
       </div>
     </div>
   </div>
@@ -100,7 +95,7 @@
     const assets = [
       { name: "TRX", logo: "https://cryptologos.cc/logos/tron-trx-logo.png", balance: "124.85", usd: "18.72" },
       { name: "USDT", logo: "https://cryptologos.cc/logos/tether-usdt-logo.png", balance: "245.00", usd: "245.00" },
-      { name: "BossX", logo: "https://via.placeholder.com/48x48/FFD700/000000?text=BX", balance: "12,450", usd: "124.50" },
+      { name: "BossX", logo: "https://i.ibb.co.com/Jj9MPHck/logo.jpg", balance: "12,450", usd: "124.50" },
       { name: "BTC", logo: "https://cryptologos.cc/logos/bitcoin-btc-logo.png", balance: "0.0042", usd: "248.30" },
       { name: "SOL", logo: "https://cryptologos.cc/logos/solana-sol-logo.png", balance: "8.75", usd: "142.60" }
     ];
@@ -109,7 +104,7 @@
       const container = document.getElementById('assetsList');
       container.innerHTML = assets.map(asset => `
         <div class="bg-gray-900 rounded-3xl p-4 flex items-center gap-4">
-          <img src="${asset.logo}" class="asset-logo rounded-xl" alt="${asset.name}">
+          <img src="${asset.logo}" class="asset-logo" alt="${asset.name}">
           <div class="flex-1">
             <p class="font-semibold">${asset.name}</p>
             <p class="text-xs text-gray-400">TRC20 • Available</p>
@@ -127,8 +122,8 @@
       document.getElementById('addressDisplay').textContent = "TQx...BossXPro";
     }
 
-    function showSend() { alert("Halaman Send (mirip TronLink Pro)"); }
-    function showReceive() { alert("Scan QR atau copy alamat untuk menerima"); }
+    function showSend() { alert("Halaman Send"); }
+    function showReceive() { alert("Halaman Receive + QR Code"); }
 
     window.onload = () => {
       renderAssets();
