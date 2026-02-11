@@ -3,221 +3,170 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BossX Wallet</title>
+  <title>BossX Wallet Pro</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/tronweb@latest/dist/TronWeb.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
   <style>
     body { font-family: 'Inter', system-ui, sans-serif; }
-    .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; }
   </style>
 </head>
-<body class="bg-gray-950 text-white min-h-screen">
+<body class="bg-gray-950 text-white min-h-screen pb-20">
 
-  <div class="flex h-screen">
-    <!-- Sidebar -->
-    <div class="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col">
-      <div class="flex items-center gap-3 mb-10">
-        <div class="w-10 h-10 bg-yellow-500 rounded-xl flex items-center justify-center text-black font-bold text-2xl">B</div>
-        <h1 class="text-3xl font-bold">BossX</h1>
+  <!-- Header -->
+  <header class="bg-gray-900 border-b border-gray-800 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 bg-yellow-500 rounded-2xl flex items-center justify-center text-black font-bold text-2xl">B</div>
+      <div>
+        <h1 class="text-2xl font-bold">BossX Wallet Pro</h1>
+        <p class="text-xs text-gray-400">TRON Network</p>
       </div>
+    </div>
+    <button onclick="connectWallet()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 rounded-2xl text-sm font-semibold flex items-center gap-2">
+      <i class="fas fa-wallet"></i> Connect
+    </button>
+  </header>
 
-      <nav class="space-y-2 flex-1">
-        <a href="#" onclick="showPage('dashboard')" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 active">Dashboard</a>
-        <a href="#" onclick="showPage('wallet')" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800">My Wallet</a>
-        <a href="#" onclick="showPage('send')" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800">Send</a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800">Assets</a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800">History</a>
-      </nav>
+  <div class="p-6">
+    <!-- Balance Card -->
+    <div class="bg-gradient-to-br from-yellow-600 to-orange-600 rounded-3xl p-8 text-center mb-8">
+      <p class="text-yellow-100 text-sm">Total Balance</p>
+      <p id="totalBalance" class="text-5xl font-bold mt-2">$0.00</p>
+      <p id="addressDisplay" class="text-xs mt-4 font-mono bg-black/30 inline-block px-4 py-1 rounded-full">Belum terhubung</p>
+    </div>
 
-      <div class="mt-auto pt-6 border-t border-gray-800">
-        <button onclick="logout()" class="w-full py-3 bg-red-600 hover:bg-red-700 rounded-2xl">Logout</button>
+    <!-- Energy & Bandwidth -->
+    <div class="grid grid-cols-2 gap-4 mb-8">
+      <div class="bg-gray-900 rounded-3xl p-5">
+        <p class="text-gray-400 text-sm">Energy</p>
+        <p class="text-2xl font-bold">0 / 5000</p>
+        <div class="h-2 bg-gray-700 rounded-full mt-3"><div class="h-2 w-1/3 bg-yellow-500 rounded-full"></div></div>
+      </div>
+      <div class="bg-gray-900 rounded-3xl p-5">
+        <p class="text-gray-400 text-sm">Bandwidth</p>
+        <p class="text-2xl font-bold">600 / 600</p>
+        <div class="h-2 bg-gray-700 rounded-full mt-3"><div class="h-2 w-full bg-green-500 rounded-full"></div></div>
       </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="flex-1 overflow-auto">
-      <!-- Header -->
-      <header class="bg-gray-900 border-b border-gray-800 px-8 py-5 flex justify-between items-center">
-        <h2 id="pageTitle" class="text-2xl font-semibold">Dashboard</h2>
-        <div class="flex items-center gap-4">
-          <button onclick="connectTronLink()" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 rounded-2xl flex items-center gap-2">
-            <i class="fas fa-wallet"></i> Connect Wallet
-          </button>
-          <div class="w-10 h-10 bg-gray-700 rounded-2xl flex items-center justify-center cursor-pointer">👤</div>
-        </div>
-      </header>
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-4 gap-4 mb-10">
+      <button onclick="showSendModal()" class="flex flex-col items-center gap-1 text-yellow-400">
+        <div class="w-14 h-14 bg-gray-800 rounded-2xl flex items-center justify-center text-2xl">↑</div>
+        <span class="text-xs">Send</span>
+      </button>
+      <button onclick="showReceiveModal()" class="flex flex-col items-center gap-1 text-yellow-400">
+        <div class="w-14 h-14 bg-gray-800 rounded-2xl flex items-center justify-center text-2xl">↓</div>
+        <span class="text-xs">Receive</span>
+      </button>
+      <button class="flex flex-col items-center gap-1 text-yellow-400">
+        <div class="w-14 h-14 bg-gray-800 rounded-2xl flex items-center justify-center text-2xl">↔</div>
+        <span class="text-xs">Swap</span>
+      </button>
+      <button class="flex flex-col items-center gap-1 text-yellow-400">
+        <div class="w-14 h-14 bg-gray-800 rounded-2xl flex items-center justify-center text-2xl">⭐</div>
+        <span class="text-xs">Stake</span>
+      </button>
+    </div>
 
-      <!-- Dashboard Page -->
-      <div id="dashboardPage" class="p-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-          <div class="glass border border-gray-700 rounded-3xl p-6">
-            <p class="text-gray-400">Total Balance</p>
-            <p id="totalBalance" class="text-4xl font-bold mt-2">$0.00</p>
-          </div>
-          <div class="glass border border-gray-700 rounded-3xl p-6">
-            <p class="text-gray-400">TRX Balance</p>
-            <p id="trxBalance" class="text-3xl font-bold mt-2">0 TRX</p>
-          </div>
-          <div class="glass border border-gray-700 rounded-3xl p-6">
-            <p class="text-gray-400">USDT Balance</p>
-            <p id="usdtBalance" class="text-3xl font-bold mt-2">0 USDT</p>
-          </div>
-        </div>
+    <!-- Assets -->
+    <h3 class="font-semibold mb-4 flex items-center justify-between">
+      Assets <span class="text-xs text-gray-400">TRON Network</span>
+    </h3>
+    <div id="assetsList" class="space-y-3"></div>
+  </div>
 
-        <h3 class="text-xl font-semibold mb-4">Your Assets</h3>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4" id="assetsList">
-          <!-- Assets akan di-generate oleh JS -->
-        </div>
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav bg-gray-900 border-t border-gray-800 py-2">
+    <div class="flex justify-around text-xs">
+      <div onclick="setActiveNav(0)" class="nav-item flex flex-col items-center text-yellow-400">
+        <i class="fas fa-home text-2xl"></i><span>Home</span>
       </div>
-
-      <!-- Wallet Page (Create & Import) -->
-      <div id="walletPage" class="p-8 hidden">
-        <h3 class="text-xl font-semibold mb-6">Manage Wallet</h3>
-        
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <!-- Create New Wallet -->
-          <div class="glass border border-gray-700 rounded-3xl p-8">
-            <h4 class="text-lg font-semibold mb-4">Create New Wallet</h4>
-            <button onclick="createNewWallet()" class="w-full py-4 bg-green-600 hover:bg-green-700 rounded-2xl font-semibold">Generate New Wallet</button>
-            
-            <div id="newWalletResult" class="mt-6 hidden">
-              <p class="text-sm text-gray-400 mb-2">Seed Phrase (12 words) - Simpan dengan aman!</p>
-              <div id="mnemonicDisplay" class="bg-gray-950 p-6 rounded-2xl text-yellow-300 font-mono leading-relaxed break-all"></div>
-              <button onclick="copyMnemonic()" class="mt-4 w-full py-3 border border-gray-600 rounded-2xl hover:bg-gray-800">Copy Seed Phrase</button>
-              <p class="text-red-500 text-xs mt-4">⚠️ Jangan pernah bagikan seed phrase ini!</p>
-            </div>
-          </div>
-
-          <!-- Import Wallet -->
-          <div class="glass border border-gray-700 rounded-3xl p-8">
-            <h4 class="text-lg font-semibold mb-4">Import Wallet</h4>
-            <textarea id="importMnemonic" rows="3" class="w-full bg-gray-950 border border-gray-700 rounded-2xl p-4" placeholder="Masukkan 12 kata seed phrase..."></textarea>
-            <button onclick="importWallet()" class="mt-4 w-full py-4 bg-blue-600 hover:bg-blue-700 rounded-2xl font-semibold">Import Wallet</button>
-          </div>
-        </div>
+      <div onclick="setActiveNav(1)" class="nav-item flex flex-col items-center text-gray-400">
+        <i class="fas fa-coins text-2xl"></i><span>Assets</span>
       </div>
-
-      <!-- Send Page -->
-      <div id="sendPage" class="p-8 hidden">
-        <h3 class="text-xl font-semibold mb-6">Send Crypto</h3>
-        <div class="max-w-lg mx-auto glass border border-gray-700 rounded-3xl p-8">
-          <select id="sendAsset" class="w-full bg-gray-950 border border-gray-700 rounded-2xl p-4 mb-4">
-            <option value="TRX">TRX</option>
-            <option value="USDT">USDT (TRC20)</option>
-            <option value="BOSSX">BossX Token</option>
-          </select>
-          <input id="toAddress" type="text" placeholder="Alamat tujuan (Tron)" class="w-full bg-gray-950 border border-gray-700 rounded-2xl p-4 mb-4"/>
-          <input id="sendAmount" type="number" placeholder="Jumlah" class="w-full bg-gray-950 border border-gray-700 rounded-2xl p-4 mb-6"/>
-          <button onclick="sendTransaction()" class="w-full py-4 bg-red-600 hover:bg-red-700 rounded-2xl font-semibold">Kirim Sekarang</button>
-        </div>
+      <div onclick="setActiveNav(2)" class="nav-item flex flex-col items-center text-gray-400">
+        <i class="fas fa-history text-2xl"></i><span>Activity</span>
+      </div>
+      <div onclick="setActiveNav(3)" class="nav-item flex flex-col items-center text-gray-400">
+        <i class="fas fa-globe text-2xl"></i><span>DApps</span>
+      </div>
+      <div onclick="setActiveNav(4)" class="nav-item flex flex-col items-center text-gray-400">
+        <i class="fas fa-ellipsis-h text-2xl"></i><span>More</span>
       </div>
     </div>
   </div>
 
   <script>
     let currentAddress = null;
-    let currentPrivateKey = null;
     let tronWebInstance = null;
 
-    // Inisialisasi TronWeb
-    function initTronWeb() {
-      tronWebInstance = new TronWeb({
-        fullHost: 'https://api.trongrid.io'
-      });
-    }
-
-    // Assets (ganti contract BossX kalau sudah ada)
     const assets = [
-      { symbol: "TRX", name: "Tron", balance: "0", icon: "🔶" },
-      { symbol: "USDT", name: "Tether USD", balance: "0", icon: "💵", contract: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t" },
-      { symbol: "BOSSX", name: "BossX Token", balance: "0", icon: "⭐", contract: "MASUKKAN_CONTRACT_BOSSX_ANDA" },
-      { symbol: "BTC", name: "Bitcoin (Wrapped)", balance: "0", icon: "₿" },
-      { symbol: "SOL", name: "Solana (Bridge)", balance: "0", icon: "◎" }
+      { icon: "🔶", name: "TRX", balance: "0", usd: "0" },
+      { icon: "💵", name: "USDT", balance: "0", usd: "0" },
+      { icon: "⭐", name: "BossX", balance: "0", usd: "0" },
+      { icon: "₿", name: "BTC", balance: "0", usd: "0" },
+      { icon: "◎", name: "SOL", balance: "0", usd: "0" }
     ];
 
     function renderAssets() {
       const container = document.getElementById('assetsList');
-      container.innerHTML = assets.map(asset => `
-        <div class="glass border border-gray-700 rounded-3xl p-6 hover:border-yellow-500 transition-all">
-          <div class="text-4xl mb-4">${asset.icon}</div>
-          <p class="font-semibold">${asset.name}</p>
-          <p class="text-2xl font-bold mt-2">${asset.balance} ${asset.symbol}</p>
+      container.innerHTML = assets.map(a => `
+        <div class="bg-gray-900 rounded-3xl p-5 flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <span class="text-3xl">${a.icon}</span>
+            <div>
+              <p class="font-semibold">${a.name}</p>
+              <p class="text-xs text-gray-400">TRC20</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="font-bold">${a.balance} ${a.name}</p>
+            <p class="text-xs text-gray-400">$${a.usd}</p>
+          </div>
         </div>
       `).join('');
     }
 
-    async function createNewWallet() {
-      if (!tronWebInstance) initTronWeb();
-      
+    async function createWalletDemo() {
+      if (!tronWebInstance) tronWebInstance = new TronWeb({ fullHost: 'https://api.trongrid.io' });
       const wallet = await TronWeb.createRandom();
       currentAddress = wallet.address.base58;
-      currentPrivateKey = wallet.privateKey;
-
-      document.getElementById('mnemonicDisplay').textContent = wallet.mnemonic.phrase;
-      document.getElementById('newWalletResult').classList.remove('hidden');
-
-      alert(`Wallet berhasil dibuat!\n\nAlamat: ${currentAddress}\n\nBackup seed phrase sekarang!`);
-      renderAssets(); // update balance nanti
+      document.getElementById('addressDisplay').textContent = currentAddress.slice(0,8) + '...' + currentAddress.slice(-6);
+      alert("Wallet berhasil dibuat!\n\nSeed Phrase: " + wallet.mnemonic.phrase + "\n\nSimpan dengan aman!");
     }
 
-    function copyMnemonic() {
-      const text = document.getElementById('mnemonicDisplay').textContent;
-      navigator.clipboard.writeText(text);
-      alert("Seed phrase sudah dicopy!");
-    }
-
-    async function importWallet() {
-      const mnemonic = document.getElementById('importMnemonic').value.trim();
-      if (!mnemonic) return alert("Masukkan seed phrase!");
-
-      try {
-        const wallet = await TronWeb.fromMnemonic(mnemonic);
-        currentAddress = wallet.address;
-        alert(`Wallet berhasil di-import!\nAlamat: ${currentAddress}`);
-      } catch (e) {
-        alert("Mnemonic tidak valid!");
-      }
-    }
-
-    async function connectTronLink() {
-      if (window.tronLink) {
-        const tronLink = await window.tronLink.request({ method: 'tron_requestAccounts' });
-        currentAddress = tronLink[0];
-        alert("Terhubung dengan TronLink!\nAlamat: " + currentAddress);
+    function connectWallet() {
+      if (confirm("Ingin generate wallet baru?")) {
+        createWalletDemo();
       } else {
-        alert("TronLink tidak terdeteksi. Install ekstensi TronLink dulu.");
+        alert("Connect TronLink Pro (demo)");
       }
     }
 
-    async function sendTransaction() {
-      if (!currentAddress) return alert("Hubungkan wallet dulu!");
-      
-      const asset = document.getElementById('sendAsset').value;
-      const to = document.getElementById('toAddress').value;
-      const amount = document.getElementById('sendAmount').value;
-
-      if (!to || !amount) return alert("Lengkapi alamat dan jumlah!");
-
-      alert(`Demo Send:\nAsset: ${asset}\nKe: ${to}\nJumlah: ${amount}\n\n(Ini hanya simulasi. Untuk real transaction butuh private key signing)`);
+    function showSendModal() {
+      alert("Fitur Send (mirip TronLink Pro)\nPilih aset → Masukkan alamat → Jumlah");
     }
 
-    function showPage(page) {
-      document.querySelectorAll('[id$="Page"]').forEach(p => p.classList.add('hidden'));
-      document.getElementById(page + "Page").classList.remove('hidden');
-      document.getElementById('pageTitle').textContent = page === 'dashboard' ? 'Dashboard' : 
-                                                        page === 'wallet' ? 'My Wallet' : 'Send Crypto';
+    function showReceiveModal() {
+      if (currentAddress) {
+        alert("Alamat Receive:\n" + currentAddress + "\n\n(Scan QR di aplikasi nyata)");
+      } else {
+        alert("Hubungkan wallet dulu!");
+      }
     }
 
-    function logout() {
-      if (confirm("Yakin ingin logout?")) location.reload();
+    function setActiveNav(n) {
+      document.querySelectorAll('.nav-item').forEach((el,i) => {
+        el.classList.toggle('text-yellow-400', i === n);
+        el.classList.toggle('text-gray-400', i !== n);
+      });
     }
 
-    // Inisialisasi
     window.onload = () => {
       renderAssets();
-      showPage('dashboard');
-      initTronWeb();
+      setActiveNav(0);
     };
   </script>
 </body>
