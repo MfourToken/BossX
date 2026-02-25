@@ -19,6 +19,7 @@ body { background:#000; color:#fff; overflow-x:hidden; }
 .gallery-img { transition:all .3s; }
 .gallery-img:hover { transform:scale(1.05); box-shadow:0 0 0 4px rgba(245,158,11,0.4); }
 .main-container { max-height:100vh; }
+.badge { font-size:0.7rem; letter-spacing:0.06em; }
 </style>
 </head>
 <body>
@@ -73,9 +74,10 @@ body { background:#000; color:#fff; overflow-x:hidden; }
                 </div>
 
                 <div class="flex items-center gap-3 md:gap-4">
-                    <a href="#" class="hidden sm:flex items-center gap-2 px-3 py-1 bg-green-500/10 rounded-xl border border-green-500/20 text-green-400 text-xs md:text-sm">
-                        <i data-lucide="globe" class="w-4 h-4"></i> Network Online
-                    </a>
+                    <div class="hidden sm:flex items-center gap-2 px-3 py-1 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-emerald-400 text-xs md:text-sm">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>Network Online</span>
+                    </div>
                     <button class="relative text-gray-400 hover:text-amber-400 p-2">
                         <i data-lucide="bell" class="w-5 h-5"></i>
                         <span class="absolute -top-1 -right-1 bg-red-500 text-[10px] w-4 h-4 flex items-center justify-center rounded-full">3</span>
@@ -99,24 +101,33 @@ body { background:#000; color:#fff; overflow-x:hidden; }
                 <!-- HERO -->
                 <section class="mb-4">
                     <div class="max-w-4xl mx-auto text-center">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/40 mb-4 badge">
+                            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                            <span>BossX • MasterXCloud Node Rental</span>
+                        </div>
                         <h1 class="text-3xl md:text-4xl font-extrabold text-amber-400 mb-4">
                             Sewa Node BossX di Cloud, Tanpa Beli Perangkat
                         </h1>
                         <p class="text-gray-300 text-sm md:text-base mb-2">
                             MasterXCloud adalah program penyewaan mesin dan node pada jaringan BossX.
-                            Kamu cukup menyewa kapasitas node yang sudah dikonfigurasi dan dikelola, tanpa harus membeli dan merawat alat mining fisik sendiri.
+                            Kamu menyewa kapasitas node yang sudah dikonfigurasi dan dikelola, tanpa harus membeli dan merawat alat mining fisik sendiri.
                         </p>
-                        <p class="text-amber-300 text-xs md:text-sm mb-6 font-semibold">
+                        <p class="text-amber-300 text-xs md:text-sm mb-3 font-semibold">
                             Minimal sewa mulai dari 10 USD, pembayaran hanya menggunakan BossX.
                         </p>
+                        <p class="text-gray-400 text-[11px] md:text-xs mb-6">
+                            Transaksi sewa dilakukan dengan BossX melalui wallet dan ekosistem on-chain. 
+                            WhatsApp hanya digunakan untuk bantuan onboarding dan dukungan teknis, bukan untuk memproses transaksi.
+                        </p>
                         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                            <button onclick="beliMesin()" class="action-button flex items-center justify-center gap-3 text-base px-8 py-3 rounded-2xl">
-                                <i data-lucide="shopping-cart" class="w-5 h-5"></i>
-                                Sewa Node Sekarang
-                            </button>
-                            <a href="#cara-kerja" class="text-sm text-amber-400 hover:underline">
-                                Pelajari cara kerja MasterXCloud
+                            <a href="#paket-sewa" class="action-button flex items-center justify-center gap-3 text-base px-8 py-3 rounded-2xl">
+                                <i data-lucide="cpu" class="w-5 h-5"></i>
+                                Lihat Paket Sewa Node
                             </a>
+                            <button onclick="hubungiTim()" class="text-sm text-amber-300 hover:text-amber-200 underline flex items-center justify-center gap-2">
+                                <i data-lucide="message-circle" class="w-4 h-4"></i>
+                                Butuh bantuan onboarding? Hubungi tim
+                            </button>
                         </div>
                     </div>
                 </section>
@@ -149,10 +160,14 @@ body { background:#000; color:#fff; overflow-x:hidden; }
                         Melalui MasterXCloud, kamu menyewa kapasitas node yang sudah dikonfigurasi dan dikelola oleh tim teknis,
                         sehingga tidak perlu membeli perangkat sendiri atau menangani setup yang rumit.
                     </p>
-                    <p class="text-gray-400 text-xs md:text-sm">
+                    <p class="text-gray-400 text-xs md:text-sm mb-2">
                         Setiap penyewaan akan menghasilkan sebuah kode unik yang kami sebut 
                         <span class="text-amber-400 font-semibold">XNode</span>. 
                         Kode ini menjadi bukti hak sewa kamu dan nantinya dapat digunakan di dalam ekosistem BossX sesuai ketentuan yang berlaku.
+                    </p>
+                    <p class="text-gray-500 text-[11px] md:text-xs">
+                        Detail mekanisme penggunaan XNode di dalam ekosistem BossX akan dijelaskan pada dashboard dan dokumentasi resmi. 
+                        Halaman ini berfokus pada informasi penyewaan cloud node.
                     </p>
                 </section>
 
@@ -171,29 +186,32 @@ body { background:#000; color:#fff; overflow-x:hidden; }
                         </div>
                         <div class="text-center">
                             <div class="mx-auto mb-3 w-10 h-10 flex items-center justify-center rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-400 text-sm font-bold">2</div>
-                            <p class="text-gray-200 text-sm font-semibold mb-1">Konfirmasi via WhatsApp</p>
+                            <p class="text-gray-200 text-sm font-semibold mb-1">Bayar dengan BossX</p>
                             <p class="text-gray-400 text-xs">
-                                Hubungi kami untuk konfirmasi detail, pembayaran dalam BossX, dan proses aktivasi node.
+                                Lakukan transaksi sewa menggunakan token BossX melalui wallet dan smart contract yang didukung.
                             </p>
                         </div>
                         <div class="text-center">
                             <div class="mx-auto mb-3 w-10 h-10 flex items-center justify-center rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-400 text-sm font-bold">3</div>
                             <p class="text-gray-200 text-sm font-semibold mb-1">Terima Kode XNode</p>
                             <p class="text-gray-400 text-xs">
-                                Setelah sewa aktif, kamu akan menerima kode XNode sebagai bukti dan akses ke node yang disewa.
+                                Setelah transaksi on-chain selesai, kamu akan menerima kode XNode sebagai bukti hak sewa node.
                             </p>
                         </div>
                     </div>
+                    <p class="text-gray-500 text-[11px] md:text-xs mt-4 text-center">
+                        Jika kamu baru di dunia crypto atau BossX, tim kami dapat membantu proses onboarding dan panduan penggunaan wallet melalui kanal dukungan.
+                    </p>
                 </section>
 
                 <!-- PAKET SEWA -->
-                <section class="mt-10 max-w-5xl mx-auto">
+                <section id="paket-sewa" class="mt-10 max-w-5xl mx-auto">
                     <h3 class="text-xl md:text-2xl font-semibold text-amber-400 mb-6 text-center">
                         Paket Sewa Node MasterXCloud
                     </h3>
                     <p class="text-gray-400 text-xs md:text-sm mb-6 text-center">
                         Semua paket dapat disewa mulai dari 10 USD setara dalam BossX. 
-                        Pembayaran dilakukan 100% menggunakan token BossX.
+                        Pembayaran dilakukan 100% menggunakan token BossX melalui wallet yang kompatibel.
                     </p>
                     <div class="grid md:grid-cols-3 gap-6">
                         <!-- Starter -->
@@ -211,9 +229,9 @@ body { background:#000; color:#fff; overflow-x:hidden; }
                             <p class="text-amber-400 font-bold text-sm mb-3">
                                 Mulai dari 10 USD setara BossX
                             </p>
-                            <button onclick="beliMesin()" class="mt-auto action-button w-full text-sm py-2 rounded-xl">
-                                Pilih Paket Starter
-                            </button>
+                            <a href="#cara-kerja" class="action-button w-full text-xs py-2 rounded-xl text-center">
+                                Lihat cara sewa
+                            </a>
                         </div>
 
                         <!-- Pro -->
@@ -229,9 +247,9 @@ body { background:#000; color:#fff; overflow-x:hidden; }
                                 <li>- Minimal sewa: 10 USD (dibayar dengan BossX)</li>
                             </ul>
                             <p class="text-amber-400 font-bold text-sm mb-3">
-                                Detail harga fleksibel, konsultasikan dengan kami
+                                Detail harga dan konfigurasi akan tersedia di dashboard
                             </p>
-                            <button onclick="beliMesin()" class="mt-auto action-button w-full text-sm py-2 rounded-xl">
+                            <button onclick="hubungiTim()" class="mt-auto action-button w-full text-xs py-2 rounded-xl">
                                 Konsultasi Paket Pro
                             </button>
                         </div>
@@ -249,20 +267,27 @@ body { background:#000; color:#fff; overflow-x:hidden; }
                                 <li>- Minimal sewa: 10 USD (dibayar dengan BossX)</li>
                             </ul>
                             <p class="text-amber-400 font-bold text-sm mb-3">
-                                Hubungi tim untuk penawaran khusus
+                                Hubungi tim untuk penawaran dan integrasi khusus
                             </p>
-                            <button onclick="beliMesin()" class="mt-auto action-button w-full text-sm py-2 rounded-xl">
-                                Hubungi Tim Kami
+                            <button onclick="hubungiTim()" class="mt-auto action-button w-full text-xs py-2 rounded-xl">
+                                Hubungi Tim MasterXCloud
                             </button>
                         </div>
                     </div>
                 </section>
 
                 <!-- CTA BAWAH -->
-                <section class="mt-12 flex justify-center">
-                    <button onclick="beliMesin()" class="action-button text-lg px-10 py-4 rounded-3xl flex items-center gap-3">
-                        <i data-lucide="message-circle" class="w-6 h-6"></i>
-                        Chat via WhatsApp untuk Sewa Node
+                <section class="mt-12 max-w-3xl mx-auto text-center">
+                    <h4 class="text-lg md:text-xl font-semibold text-amber-400 mb-3">
+                        Baru pertama kali pakai BossX atau sewa node?
+                    </h4>
+                    <p class="text-gray-400 text-xs md:text-sm mb-4">
+                        Tim kami siap membantu proses onboarding, mulai dari pembuatan wallet, pengiriman BossX, 
+                        hingga langkah-langkah melakukan transaksi sewa node pertama kamu.
+                    </p>
+                    <button onclick="hubungiTim()" class="action-button text-sm px-8 py-3 rounded-3xl flex items-center gap-2 mx-auto">
+                        <i data-lucide="message-circle" class="w-5 h-5"></i>
+                        Hubungi Tim Dukungan via WhatsApp
                     </button>
                 </section>
             </div>
@@ -290,9 +315,9 @@ function updateClock(){
     }
 }
 
-function beliMesin(){
+function hubungiTim(){
     const wa="62812XXXXYYYY"; // GANTI NOMOR WA KAMU (tanpa +, spasi, tanda baca)
-    const text=encodeURIComponent("Halo Fery, saya tertarik sewa node BossX lewat MasterXCloud. Mohon info paket yang tersedia.");
+    const text=encodeURIComponent("Halo tim MasterXCloud, saya butuh bantuan onboarding dan informasi sewa node BossX.");
     window.open(`https://wa.me/${wa}?text=${text}`,'_blank');
 }
 
