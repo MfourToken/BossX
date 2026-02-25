@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BossX - Key Node System</title>
+<title>BossX - MasterXCloud Node Rental</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <style>
@@ -14,29 +14,37 @@ body { background:#000; color:#fff; overflow-x:hidden; }
 .sidebar { transition:width .3s; width:14rem; min-width:14rem; }
 .sidebar.collapsed { width:4rem; min-width:4rem; }
 .menu-item.active { background:linear-gradient(to right,rgba(245,158,11,0.2),rgba(234,179,8,0.2)); color:#f59e0b; }
-.action-button { background:linear-gradient(145deg,#f59e0b,#d97706); color:#000; font-weight:600; padding:0.75rem 1.5rem; border-radius:0.5rem; }
+.action-button { background:linear-gradient(145deg,#f59e0b,#d97706); color:#000; font-weight:600; padding:0.75rem 1.5rem; border-radius:0.5rem; transition:all .2s; }
 .action-button:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(245,158,11,0.4); }
 .gallery-img { transition:all .3s; }
 .gallery-img:hover { transform:scale(1.05); box-shadow:0 0 0 4px rgba(245,158,11,0.4); }
+.main-container { max-height:100vh; }
 </style>
 </head>
 <body>
 <div class="min-h-screen bg-black text-white flex main-container">
     <!-- Sidebar -->
-    <div id="sidebar" class="sidebar h-screen gradient-bg gradient-border">
+    <div id="sidebar" class="hidden md:block sidebar h-screen gradient-bg gradient-border">
         <div class="p-3 border-b border-amber-500/20">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                    <div class="crypto-icon"><img src="https://i.ibb.co/qYBkPDH3/Picsart-25-04-01-16-25-47-054.png" alt="BossX"></div>
-                    <div id="logo-text"><h1 class="text-lg font-bold text-amber-400">BossX</h1><p class="text-xs text-gray-400">Key Node System</p></div>
+                    <div class="crypto-icon">
+                        <img src="https://i.ibb.co/qYBkPDH3/Picsart-25-04-01-16-25-47-054.png" alt="BossX">
+                    </div>
+                    <div id="logo-text">
+                        <h1 class="text-lg font-bold text-amber-400">BossX</h1>
+                        <p class="text-xs text-gray-400">MasterXCloud Node Rental</p>
+                    </div>
                 </div>
-                <button id="toggle-sidebar" class="text-gray-400 hover:text-amber-400 p-1 rounded"><i data-lucide="chevron-left"></i></button>
+                <button id="toggle-sidebar" class="text-gray-400 hover:text-amber-400 p-1 rounded hidden md:inline-flex">
+                    <i data-lucide="chevron-left"></i>
+                </button>
             </div>
         </div>
         <nav class="mt-4 px-2">
             <a href="#" class="menu-item active flex items-center px-2 py-2 mb-2 rounded-xl" data-page="key-node">
                 <i data-lucide="cpu" class="w-4 h-4"></i>
-                <span class="ml-2 font-medium menu-text text-sm">Key Node</span>
+                <span class="ml-2 font-medium menu-text text-sm">MasterXCloud</span>
             </a>
         </nav>
     </div>
@@ -44,53 +52,219 @@ body { background:#000; color:#fff; overflow-x:hidden; }
     <!-- Main -->
     <div class="flex-1 flex flex-col">
         <!-- Header -->
-        <header class="bg-gradient-to-r from-gray-900 via-black to-gray-900 border-b border-amber-500/20 px-6 h-16 flex items-center">
+        <header class="bg-gradient-to-r from-gray-900 via-black to-gray-900 border-b border-amber-500/20 px-4 md:px-6 h-16 flex items-center">
             <div class="flex items-center justify-between w-full">
-                <div class="flex flex-col">
-                    <div id="time" class="text-amber-400 text-lg font-bold">00:00:00</div>
-                    <div id="date" class="text-gray-400 text-xs">Loading...</div>
-                </div>
-                <div class="flex-1 max-w-md mx-8">
-                    <div class="relative">
-                        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"></i>
-                        <input type="text" placeholder="Cari node atau mesin..." class="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-xl text-sm focus:border-amber-500">
+                <div class="flex items-center gap-3">
+                    <button id="mobile-menu-btn" class="md:hidden text-gray-400 hover:text-amber-400">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                    <div class="flex flex-col">
+                        <div id="time" class="text-amber-400 text-lg font-bold">00:00:00</div>
+                        <div id="date" class="text-gray-400 text-xs">Loading...</div>
                     </div>
                 </div>
-                <div class="flex items-center gap-4">
-                    <a href="#" class="flex items-center gap-2 px-3 py-1 bg-green-500/10 rounded-xl border border-green-500/20 text-green-400 text-sm"><i data-lucide="globe" class="w-4 h-4"></i> Market Open</a>
-                    <button class="relative text-gray-400 hover:text-amber-400 p-2"><i data-lucide="bell" class="w-5 h-5"></i><span class="absolute -top-1 -right-1 bg-red-500 text-[10px] w-4 h-4 flex items-center justify-center rounded-full">3</span></button>
-                    <div class="flex items-center gap-3 pl-4 border-l border-gray-700">
-                        <div class="profile-picture w-8 h-8 rounded-full overflow-hidden"><img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="Fery"></div>
-                        <div><p class="text-sm font-medium">Fery Muliawan</p><p class="text-amber-400 text-xs">Validator 8055x</p></div>
+
+                <div class="flex-1 max-w-md mx-2 md:mx-8 hidden sm:block">
+                    <div class="relative">
+                        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"></i>
+                        <input type="text" placeholder="Cari node atau paket sewa..."
+                               class="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-xl text-sm focus:border-amber-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 md:gap-4">
+                    <a href="#" class="hidden sm:flex items-center gap-2 px-3 py-1 bg-green-500/10 rounded-xl border border-green-500/20 text-green-400 text-xs md:text-sm">
+                        <i data-lucide="globe" class="w-4 h-4"></i> Network Online
+                    </a>
+                    <button class="relative text-gray-400 hover:text-amber-400 p-2">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-[10px] w-4 h-4 flex items-center justify-center rounded-full">3</span>
+                    </button>
+                    <div class="hidden sm:flex items-center gap-3 pl-4 border-l border-gray-700">
+                        <div class="profile-picture w-8 h-8 rounded-full overflow-hidden">
+                            <img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="Fery">
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium">Fery Muliawan</p>
+                            <p class="text-amber-400 text-xs">Validator 8055x</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </header>
 
-        <main class="flex-1 overflow-auto p-8">
-            <div id="key-node-page" class="page-content active">
-                <!-- 4 GAMBAR ATAS (tanpa tulisan) -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-                    <img src="https://i.ibb.co.com/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 1">
-                    <img src="https://i.ibb.co.com/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 2">
-                    <img src="https://i.ibb.co.com/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 3">
-                    <img src="https://i.ibb.co.com/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 4">
-                </div>
+        <!-- Content -->
+        <main class="flex-1 overflow-auto p-6 md:p-8">
+            <div id="key-node-page" class="page-content active space-y-10">
+                <!-- HERO -->
+                <section class="mb-4">
+                    <div class="max-w-4xl mx-auto text-center">
+                        <h1 class="text-3xl md:text-4xl font-extrabold text-amber-400 mb-4">
+                            Sewa Node BossX di Cloud, Tanpa Beli Perangkat
+                        </h1>
+                        <p class="text-gray-300 text-sm md:text-base mb-2">
+                            MasterXCloud adalah program penyewaan mesin dan node pada jaringan BossX.
+                            Kamu cukup menyewa kapasitas node yang sudah dikonfigurasi dan dikelola, tanpa harus membeli dan merawat alat mining fisik sendiri.
+                        </p>
+                        <p class="text-amber-300 text-xs md:text-sm mb-6 font-semibold">
+                            Minimal sewa mulai dari 10 USD, pembayaran hanya menggunakan BossX.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <button onclick="beliMesin()" class="action-button flex items-center justify-center gap-3 text-base px-8 py-3 rounded-2xl">
+                                <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                                Sewa Node Sekarang
+                            </button>
+                            <a href="#cara-kerja" class="text-sm text-amber-400 hover:underline">
+                                Pelajari cara kerja MasterXCloud
+                            </a>
+                        </div>
+                    </div>
+                </section>
 
-                <!-- 4 GAMBAR BAWAH (tanpa tulisan) -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    <img src="https://i.ibb.co.com/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 5">
-                    <img src="https://i.ibb.co.com/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 6">
-                    <img src="https://i.ibb.co.com/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 7">
-                    <img src="https://i.ibb.co.com/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 8">
-                </div>
+                <!-- 4 GAMBAR ATAS -->
+                <section>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6">
+                        <img src="https://i.ibb.co/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 1">
+                        <img src="https://i.ibb.co/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 2">
+                        <img src="https://i.ibb.co/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 3">
+                        <img src="https://i.ibb.co/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 4">
+                    </div>
 
-                <!-- Tombol Beli -->
-                <div class="mt-12 flex justify-center">
-                    <button onclick="beliMesin()" class="action-button text-xl px-12 py-6 rounded-3xl flex items-center gap-4">
-                        <i data-lucide="shopping-cart" class="w-7 h-7"></i> BELI SEKARANG - Rp 12.500.000
+                    <!-- 4 GAMBAR BAWAH -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                        <img src="https://i.ibb.co/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 5">
+                        <img src="https://i.ibb.co/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 6">
+                        <img src="https://i.ibb.co/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 7">
+                        <img src="https://i.ibb.co/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 8">
+                    </div>
+                </section>
+
+                <!-- PENJELASAN MASTERXCLOUD & XNODE -->
+                <section class="mt-4 max-w-4xl mx-auto text-center">
+                    <h2 class="text-2xl md:text-3xl font-bold text-amber-400 mb-4">
+                        Apa itu MasterXCloud?
+                    </h2>
+                    <p class="text-gray-300 text-sm md:text-base mb-4">
+                        MasterXCloud adalah program penyewaan mesin dan node pada jaringan BossX. 
+                        Melalui MasterXCloud, kamu menyewa kapasitas node yang sudah dikonfigurasi dan dikelola oleh tim teknis,
+                        sehingga tidak perlu membeli perangkat sendiri atau menangani setup yang rumit.
+                    </p>
+                    <p class="text-gray-400 text-xs md:text-sm">
+                        Setiap penyewaan akan menghasilkan sebuah kode unik yang kami sebut 
+                        <span class="text-amber-400 font-semibold">XNode</span>. 
+                        Kode ini menjadi bukti hak sewa kamu dan nantinya dapat digunakan di dalam ekosistem BossX sesuai ketentuan yang berlaku.
+                    </p>
+                </section>
+
+                <!-- CARA KERJA -->
+                <section id="cara-kerja" class="mt-10 max-w-4xl mx-auto">
+                    <h3 class="text-xl md:text-2xl font-semibold text-amber-400 mb-6 text-center">
+                        Cara Kerja Sewa Node di MasterXCloud
+                    </h3>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="mx-auto mb-3 w-10 h-10 flex items-center justify-center rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-400 text-sm font-bold">1</div>
+                            <p class="text-gray-200 text-sm font-semibold mb-1">Pilih Paket Sewa</p>
+                            <p class="text-gray-400 text-xs">
+                                Tentukan paket node sesuai kebutuhan kapasitas dan durasi sewa kamu.
+                            </p>
+                        </div>
+                        <div class="text-center">
+                            <div class="mx-auto mb-3 w-10 h-10 flex items-center justify-center rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-400 text-sm font-bold">2</div>
+                            <p class="text-gray-200 text-sm font-semibold mb-1">Konfirmasi via WhatsApp</p>
+                            <p class="text-gray-400 text-xs">
+                                Hubungi kami untuk konfirmasi detail, pembayaran dalam BossX, dan proses aktivasi node.
+                            </p>
+                        </div>
+                        <div class="text-center">
+                            <div class="mx-auto mb-3 w-10 h-10 flex items-center justify-center rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-400 text-sm font-bold">3</div>
+                            <p class="text-gray-200 text-sm font-semibold mb-1">Terima Kode XNode</p>
+                            <p class="text-gray-400 text-xs">
+                                Setelah sewa aktif, kamu akan menerima kode XNode sebagai bukti dan akses ke node yang disewa.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PAKET SEWA -->
+                <section class="mt-10 max-w-5xl mx-auto">
+                    <h3 class="text-xl md:text-2xl font-semibold text-amber-400 mb-6 text-center">
+                        Paket Sewa Node MasterXCloud
+                    </h3>
+                    <p class="text-gray-400 text-xs md:text-sm mb-6 text-center">
+                        Semua paket dapat disewa mulai dari 10 USD setara dalam BossX. 
+                        Pembayaran dilakukan 100% menggunakan token BossX.
+                    </p>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <!-- Starter -->
+                        <div class="gradient-bg gradient-border p-5 rounded-2xl flex flex-col">
+                            <h4 class="text-amber-300 font-semibold mb-2 text-sm">Paket Starter</h4>
+                            <p class="text-gray-400 text-xs mb-3">
+                                Cocok untuk kamu yang ingin mencoba sewa node BossX dengan kapasitas kecil.
+                            </p>
+                            <ul class="text-gray-300 text-xs space-y-1 mb-4">
+                                <li>- Durasi sewa: 30 hari</li>
+                                <li>- Kapasitas node: kecil</li>
+                                <li>- 1 kode XNode</li>
+                                <li>- Minimal sewa: 10 USD (dibayar dengan BossX)</li>
+                            </ul>
+                            <p class="text-amber-400 font-bold text-sm mb-3">
+                                Mulai dari 10 USD setara BossX
+                            </p>
+                            <button onclick="beliMesin()" class="mt-auto action-button w-full text-sm py-2 rounded-xl">
+                                Pilih Paket Starter
+                            </button>
+                        </div>
+
+                        <!-- Pro -->
+                        <div class="gradient-bg gradient-border p-5 rounded-2xl flex flex-col">
+                            <h4 class="text-amber-300 font-semibold mb-2 text-sm">Paket Pro</h4>
+                            <p class="text-gray-400 text-xs mb-3">
+                                Untuk pengguna yang membutuhkan kapasitas node lebih besar.
+                            </p>
+                            <ul class="text-gray-300 text-xs space-y-1 mb-4">
+                                <li>- Durasi sewa: 90 hari</li>
+                                <li>- Kapasitas node: menengah</li>
+                                <li>- Beberapa kode XNode</li>
+                                <li>- Minimal sewa: 10 USD (dibayar dengan BossX)</li>
+                            </ul>
+                            <p class="text-amber-400 font-bold text-sm mb-3">
+                                Detail harga fleksibel, konsultasikan dengan kami
+                            </p>
+                            <button onclick="beliMesin()" class="mt-auto action-button w-full text-sm py-2 rounded-xl">
+                                Konsultasi Paket Pro
+                            </button>
+                        </div>
+
+                        <!-- Enterprise -->
+                        <div class="gradient-bg gradient-border p-5 rounded-2xl flex flex-col">
+                            <h4 class="text-amber-300 font-semibold mb-2 text-sm">Paket Enterprise</h4>
+                            <p class="text-gray-400 text-xs mb-3">
+                                Untuk kebutuhan skala besar, institusi, atau konfigurasi khusus.
+                            </p>
+                            <ul class="text-gray-300 text-xs space-y-1 mb-4">
+                                <li>- Durasi sewa: custom</li>
+                                <li>- Kapasitas node: besar</li>
+                                <li>- Konfigurasi dan deployment khusus</li>
+                                <li>- Minimal sewa: 10 USD (dibayar dengan BossX)</li>
+                            </ul>
+                            <p class="text-amber-400 font-bold text-sm mb-3">
+                                Hubungi tim untuk penawaran khusus
+                            </p>
+                            <button onclick="beliMesin()" class="mt-auto action-button w-full text-sm py-2 rounded-xl">
+                                Hubungi Tim Kami
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CTA BAWAH -->
+                <section class="mt-12 flex justify-center">
+                    <button onclick="beliMesin()" class="action-button text-lg px-10 py-4 rounded-3xl flex items-center gap-3">
+                        <i data-lucide="message-circle" class="w-6 h-6"></i>
+                        Chat via WhatsApp untuk Sewa Node
                     </button>
-                </div>
+                </section>
             </div>
         </main>
     </div>
@@ -98,24 +272,52 @@ body { background:#000; color:#fff; overflow-x:hidden; }
 
 <script>
 // Lucide + Clock
-function initIcons(){lucide.createIcons();}
+function initIcons(){ if (window.lucide) { lucide.createIcons(); } }
+
 function updateClock(){
     const n=new Date();
-    document.getElementById('time').textContent=n.toLocaleTimeString('id-ID',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    document.getElementById('date').textContent=n.toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    const timeEl=document.getElementById('time');
+    const dateEl=document.getElementById('date');
+    if(timeEl){
+        timeEl.textContent=n.toLocaleTimeString('id-ID',{
+            hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'
+        });
+    }
+    if(dateEl){
+        dateEl.textContent=n.toLocaleDateString('id-ID',{
+            weekday:'long',year:'numeric',month:'long',day:'numeric'
+        });
+    }
 }
+
 function beliMesin(){
-    const wa="628XXXXXXXXXX"; // GANTI NOMOR WA KAMU
-    window.open(`https://wa.me/${wa}?text=Halo Fery, saya mau beli Mesin Mining BossX Pro`,'_blank');
+    const wa="62812XXXXYYYY"; // GANTI NOMOR WA KAMU (tanpa +, spasi, tanda baca)
+    const text=encodeURIComponent("Halo Fery, saya tertarik sewa node BossX lewat MasterXCloud. Mohon info paket yang tersedia.");
+    window.open(`https://wa.me/${wa}?text=${text}`,'_blank');
 }
 
 // Init
 document.addEventListener('DOMContentLoaded',()=>{
-    initIcons(); updateClock(); setInterval(updateClock,1000);
-    document.getElementById('toggle-sidebar').addEventListener('click',()=>{
-        document.getElementById('sidebar').classList.toggle('collapsed');
-        initIcons();
-    });
+    initIcons();
+    updateClock();
+    setInterval(updateClock,1000);
+
+    const sidebar = document.getElementById('sidebar');
+    const toggleSidebar = document.getElementById('toggle-sidebar');
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+
+    if (toggleSidebar && sidebar) {
+        toggleSidebar.addEventListener('click',()=>{
+            sidebar.classList.toggle('collapsed');
+            initIcons();
+        });
+    }
+
+    if (mobileMenuBtn && sidebar) {
+        mobileMenuBtn.addEventListener('click',()=>{
+            sidebar.classList.toggle('hidden');
+        });
+    }
 });
 </script>
 </body>
