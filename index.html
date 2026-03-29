@@ -31,10 +31,16 @@
             align-items: center;
             margin-bottom: 30px;
             padding: 20px 30px;
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 134, 11, 0.05) 100%);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 148, 31, 0.05) 100%);
             border-radius: 15px;
             border: 1px solid rgba(212, 175, 55, 0.2);
             box-shadow: 0 8px 32px rgba(212, 175, 55, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 25px;
         }
 
         .logo {
@@ -78,6 +84,49 @@
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 3px;
+        }
+
+        /* Real-Time Clock Styles */
+        .realtime-clock {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(184, 148, 31, 0.08) 100%);
+            padding: 15px 25px;
+            border-radius: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            text-align: center;
+            min-width: 200px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .clock-date {
+            font-size: 14px;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .clock-time {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #d4af37 0%, #f4e5c2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+
+        .clock-seconds {
+            font-size: 16px;
+            color: #00d084;
+            font-weight: 600;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
         }
 
         .header-controls {
@@ -304,12 +353,12 @@
             height: 10px;
             border-radius: 50%;
             margin-right: 8px;
-            animation: pulse 2s infinite;
+            animation: pulse-status 2s infinite;
             background: #00d084;
             box-shadow: 0 0 10px #00d084;
         }
 
-        @keyframes pulse {
+        @keyframes pulse-status {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
@@ -331,6 +380,20 @@
                 width: 60px;
                 height: 60px;
             }
+
+            .header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .header-left {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .realtime-clock {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -338,14 +401,26 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <div class="logo">
-                <!-- GANTI src DENGAN PATH LOGO ANDA -->
-                <img src="bossx-logo.png" alt="BossX Logo" class="logo-img" onerror="this.style.display='none'">
-                <div class="logo-text">
-                    <span class="logo-main">BossX</span>
-                    <span class="logo-sub">Premine Dashboard</span>
+            <div class="header-left">
+                <div class="logo">
+                    <!-- GANTI src DENGAN PATH LOGO ANDA -->
+                    <img src="bossx-logo.png" alt="BossX Logo" class="logo-img" onerror="this.style.display='none'">
+                    <div class="logo-text">
+                        <span class="logo-main">BossX</span>
+                        <span class="logo-sub">Premine Dashboard</span>
+                    </div>
+                </div>
+                
+                <!-- Real-Time Clock -->
+                <div class="realtime-clock">
+                    <div class="clock-date" id="clockDate">Loading...</div>
+                    <div class="clock-time">
+                        <span id="clockTime">00:00</span>
+                        <span class="clock-seconds" id="clockSeconds">:00</span>
+                    </div>
                 </div>
             </div>
+            
             <div class="header-controls">
                 <span><span class="status-indicator"></span>Live</span>
                 <button class="btn" onclick="location.reload()">Refresh</button>
@@ -865,8 +940,33 @@
     </div>
 
     <script>
-        // Update timestamp
-        document.getElementById('lastUpdate').textContent = new Date().toLocaleString();
+        // Real-Time Clock Function
+        function updateClock() {
+            const now = new Date();
+            
+            // Format Date: DD - MM - YYYY
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            const dateString = `${day} - ${month} - ${year}`;
+            
+            // Format Time: HH - MM - SS
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            // Update DOM
+            document.getElementById('clockDate').textContent = dateString;
+            document.getElementById('clockTime').textContent = `${hours} - ${minutes}`;
+            document.getElementById('clockSeconds').textContent = `:${seconds}`;
+            
+            // Also update last update timestamp
+            document.getElementById('lastUpdate').textContent = now.toLocaleString();
+        }
+
+        // Initialize clock and update every second
+        updateClock();
+        setInterval(updateClock, 1000);
 
         // Chart defaults
         Chart.defaults.color = '#b8941f';
@@ -1075,11 +1175,6 @@
                 }
             }
         });
-
-        // Auto-refresh simulation
-        setInterval(() => {
-            document.getElementById('lastUpdate').textContent = new Date().toLocaleString();
-        }, 300000); // Update every 5 minutes
     </script>
 </body>
 </html>
