@@ -1,349 +1,998 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BossX - MasterXCloud Node Rental</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<style>
-* { margin:0; padding:0; box-sizing:border-box; font-family:system-ui,sans-serif; }
-body { background:#000; color:#fff; overflow-x:hidden; }
-.gradient-bg { background:linear-gradient(to bottom,#1a1a1a,#000); }
-.gradient-border { border:1px solid rgba(245,158,11,0.2); }
-.sidebar { transition:width .3s; width:14rem; min-width:14rem; }
-.sidebar.collapsed { width:4rem; min-width:4rem; }
-.menu-item.active { background:linear-gradient(to right,rgba(245,158,11,0.2),rgba(234,179,8,0.2)); color:#f59e0b; }
-.action-button { background:linear-gradient(145deg,#f59e0b,#d97706); color:#000; font-weight:600; padding:0.75rem 1.5rem; border-radius:0.5rem; transition:all .2s; }
-.action-button:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(245,158,11,0.4); }
-.gallery-img { transition:all .3s; }
-.gallery-img:hover { transform:scale(1.05); box-shadow:0 0 0 4px rgba(245,158,11,0.4); }
-.main-container { max-height:100vh; }
-.badge { font-size:0.7rem; letter-spacing:0.06em; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Mining Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1920px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #f7931a;
+        }
+
+        .logo svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #f7931a;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #e0830a;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .stat-title {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-value.na {
+            color: #666;
+        }
+
+        .stat-value.positive {
+            color: #00d084;
+        }
+
+        .stat-value.warning {
+            color: #f7931a;
+        }
+
+        .gauge {
+            width: 120px;
+            height: 60px;
+            margin: 15px auto;
+            position: relative;
+        }
+
+        .gauge-bg {
+            fill: none;
+            stroke: '#2d2d44';
+            stroke-width: 10;
+        }
+
+        .gauge-fill {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 20px;
+        }
+
+        .chart-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 250px;
+            margin-bottom: 20px;
+        }
+
+        .miner-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .miner-table th {
+            text-align: left;
+            padding: 10px;
+            background: rgba(247, 147, 26, 0.2);
+            color: #f7931a;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .miner-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .miner-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .miner-name {
+            color: #00d084;
+            font-weight: 600;
+        }
+
+        .stat-min, .stat-avg, .stat-current {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        .stat-min { color: #888; }
+        .stat-avg { color: #f7931a; }
+        .stat-current { color: #00d084; font-weight: bold; }
+
+        .refresh-info {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-online {
+            background: #00d084;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="min-h-screen bg-black text-white flex main-container">
-    <!-- Sidebar -->
-    <div id="sidebar" class="hidden md:block sidebar h-screen gradient-bg gradient-border">
-        <div class="p-3 border-b border-amber-500/20">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <div class="crypto-icon">
-                        <img src="https://i.ibb.co/qYBkPDH3/Picsart-25-04-01-16-25-47-054.png" alt="BossX">
-                    </div>
-                    <div id="logo-text">
-                        <h1 class="text-lg font-bold text-amber-400">BossX</h1>
-                        <p class="text-xs text-gray-400">MasterXCloud Node Rental</p>
-                    </div>
-                </div>
-                <button id="toggle-sidebar" class="text-gray-400 hover:text-amber-400 p-1 rounded hidden md:inline-flex">
-                    <i data-lucide="chevron-left"></i>
-                </button>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <svg viewBox="0 0 24 24" fill="#f7931a">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
+                </svg>
+                CRYPTO MINING
+            </div>
+            <div class="header-controls">
+                <span class="status-indicator status-online"></span>
+                <span>Live</span>
+                <button class="btn btn-primary" onclick="location.reload()">Refresh</button>
             </div>
         </div>
-        <nav class="mt-4 px-2">
-            <a href="#" class="menu-item active flex items-center px-2 py-2 mb-2 rounded-xl" data-page="key-node">
-                <i data-lucide="cpu" class="w-4 h-4"></i>
-                <span class="ml-2 font-medium menu-text text-sm">MasterXCloud</span>
-            </a>
-        </nav>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title">USD per day from ETH</div>
+                <div class="stat-value na">N/A</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-title">ETH Awaiting Payout</div>
+                <div class="stat-value na">N/A</div>
+                <svg class="gauge" viewBox="0 0 100 50">
+                    <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50" stroke="#2d2d44" stroke-width="10" fill="none"/>
+                    <path class="gauge-fill" d="M 10 50 A 40 40 0 0 1 90 50" stroke="#666" stroke-width="10" fill="none" stroke-dasharray="126" stroke-dashoffset="126"/>
+                </svg>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-title">USD per day from ETC</div>
+                <div class="stat-value positive">$29.75</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-title">ETC Awaiting Payout</div>
+                <div class="stat-value positive">0.4205</div>
+                <svg class="gauge" viewBox="0 0 100 50">
+                    <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50" stroke="#2d2d44" stroke-width="10" fill="none"/>
+                    <path class="gauge-fill" d="M 10 50 A 40 40 0 0 1 90 50" stroke="#00d084" stroke-width="10" fill="none" stroke-dasharray="126" stroke-dashoffset="63"/>
+                </svg>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-title">ZCL Awaiting Payout</div>
+                <div class="stat-value warning">0.1055</div>
+                <svg class="gauge" viewBox="0 0 100 50">
+                    <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50" stroke="#2d2d44" stroke-width="10" fill="none"/>
+                    <path class="gauge-fill" d="M 10 50 A 40 40 0 0 1 90 50" stroke="#f7931a" stroke-width="10" fill="none" stroke-dasharray="126" stroke-dashoffset="100"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Suprnova Pool Info -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Suprnova Pool Info</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="suprnovaChart"></canvas>
+                </div>
+                <table class="miner-table">
+                    <thead>
+                        <tr>
+                            <th>Miner</th>
+                            <th class="stat-min">Min</th>
+                            <th class="stat-avg">Avg</th>
+                            <th class="stat-current">Current</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="miner-name">1070-mixed-Reported-Hashrate</td>
+                            <td class="stat-min">3.28 K</td>
+                            <td class="stat-avg">3.31 K</td>
+                            <td class="stat-current">3.31 K</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">mph-zcl-Hashrate</td>
+                            <td class="stat-min">2.44 K</td>
+                            <td class="stat-avg">3.20 K</td>
+                            <td class="stat-current">2.96 K</td>
+                        </tr>
+                        <tr>
+                            <td>suprnova-zcl-Hashrate</td>
+                            <td class="stat-min">0</td>
+                            <td class="stat-avg">0</td>
+                            <td class="stat-current">0</td>
+                        </tr>
+                        <tr>
+                            <td>mph-zcl-Sharerate</td>
+                            <td class="stat-min">0</td>
+                            <td class="stat-avg">0</td>
+                            <td class="stat-current">0</td>
+                        </tr>
+                        <tr>
+                            <td>suprnova-zcl-Sharerate</td>
+                            <td class="stat-min">0</td>
+                            <td class="stat-avg">0</td>
+                            <td class="stat-current">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- DSTM Miner Sol/s -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">DSTM Miner Sol/s</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="dstmMinerChart"></canvas>
+                </div>
+                <table class="miner-table">
+                    <thead>
+                        <tr>
+                            <th>Miner</th>
+                            <th class="stat-min">Min</th>
+                            <th class="stat-avg">Avg</th>
+                            <th class="stat-current">Current</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-0</td>
+                            <td class="stat-min">457</td>
+                            <td class="stat-avg">472</td>
+                            <td class="stat-current">478</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-1</td>
+                            <td class="stat-min">457</td>
+                            <td class="stat-avg">472</td>
+                            <td class="stat-current">471</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-2</td>
+                            <td class="stat-min">462</td>
+                            <td class="stat-avg">475</td>
+                            <td class="stat-current">476</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-3</td>
+                            <td class="stat-min">460</td>
+                            <td class="stat-avg">474</td>
+                            <td class="stat-current">477</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-4</td>
+                            <td class="stat-min">458</td>
+                            <td class="stat-avg">474</td>
+                            <td class="stat-current">468</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-5</td>
+                            <td class="stat-min">460</td>
+                            <td class="stat-avg">475</td>
+                            <td class="stat-current">468</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-6</td>
+                            <td class="stat-min">451</td>
+                            <td class="stat-avg">467</td>
+                            <td class="stat-current">468</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- DSTM Temps -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">DSTM Temps</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="dstmTempsChart"></canvas>
+                </div>
+                <table class="miner-table">
+                    <thead>
+                        <tr>
+                            <th>Miner</th>
+                            <th class="stat-min">Max</th>
+                            <th class="stat-avg">Avg</th>
+                            <th class="stat-current">Current</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-0</td>
+                            <td class="stat-min">68.00</td>
+                            <td class="stat-avg">67.00</td>
+                            <td class="stat-current">67.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-1</td>
+                            <td class="stat-min">70.00</td>
+                            <td class="stat-avg">67.00</td>
+                            <td class="stat-current">67.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-2</td>
+                            <td class="stat-min">70.00</td>
+                            <td class="stat-avg">68.00</td>
+                            <td class="stat-current">68.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-3</td>
+                            <td class="stat-min">69.00</td>
+                            <td class="stat-avg">68.00</td>
+                            <td class="stat-current">68.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-4</td>
+                            <td class="stat-min">69.00</td>
+                            <td class="stat-avg">66.00</td>
+                            <td class="stat-current">66.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-5</td>
+                            <td class="stat-min">71.00</td>
+                            <td class="stat-avg">68.00</td>
+                            <td class="stat-current">68.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-6</td>
+                            <td class="stat-min">76.00</td>
+                            <td class="stat-avg">69.00</td>
+                            <td class="stat-current">69.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- DSTM FanSpeed -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">DSTM FanSpeed</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="dstmFanChart"></canvas>
+                </div>
+                <table class="miner-table">
+                    <thead>
+                        <tr>
+                            <th>Miner</th>
+                            <th class="stat-min">Max</th>
+                            <th class="stat-avg">Avg</th>
+                            <th class="stat-current">Current</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-0</td>
+                            <td class="stat-min">55</td>
+                            <td class="stat-avg">54</td>
+                            <td class="stat-current">53</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-1</td>
+                            <td class="stat-min">54</td>
+                            <td class="stat-avg">37</td>
+                            <td class="stat-current">36</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-2</td>
+                            <td class="stat-min">54</td>
+                            <td class="stat-avg">45</td>
+                            <td class="stat-current">44</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-3</td>
+                            <td class="stat-min">49</td>
+                            <td class="stat-avg">39</td>
+                            <td class="stat-current">36</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-4</td>
+                            <td class="stat-min">49</td>
+                            <td class="stat-avg">35</td>
+                            <td class="stat-current">30</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-5</td>
+                            <td class="stat-min">56</td>
+                            <td class="stat-avg">44</td>
+                            <td class="stat-current">46</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">1070-mixed-gpu-6</td>
+                            <td class="stat-min">100</td>
+                            <td class="stat-avg">77</td>
+                            <td class="stat-current">100</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Etherpool Pool Info -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Etherpool Pool Info</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="etherpoolChart"></canvas>
+                </div>
+                <table class="miner-table">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th class="stat-current">Current</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ethermine-etc-average-Hashrate</td>
+                            <td class="stat-current">456.18</td>
+                        </tr>
+                        <tr>
+                            <td>ethermine-etc-current-Hashrate</td>
+                            <td class="stat-current">430.56</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PhoenixMiner MH/s -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">PhoenixMiner MH/s</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="phoenixMhChart"></canvas>
+                </div>
+                <table class="miner-table">
+                    <thead>
+                        <tr>
+                            <th>Miner</th>
+                            <th class="stat-min">Min</th>
+                            <th class="stat-avg">Avg</th>
+                            <th class="stat-current">Current</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="miner-name">rx580-mixed-0</td>
+                            <td class="stat-min">22.98</td>
+                            <td class="stat-avg">30.35</td>
+                            <td class="stat-current">30.40</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-x12-0</td>
+                            <td class="stat-min">23.97</td>
+                            <td class="stat-avg">30.43</td>
+                            <td class="stat-current">30.47</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-mixed-1</td>
+                            <td class="stat-min">27.94</td>
+                            <td class="stat-avg">29.46</td>
+                            <td class="stat-current">29.50</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-x12-1</td>
+                            <td class="stat-min">28.55</td>
+                            <td class="stat-avg">29.03</td>
+                            <td class="stat-current">29.04</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-x12-10</td>
+                            <td class="stat-min">29.59</td>
+                            <td class="stat-avg">30.09</td>
+                            <td class="stat-current">30.10</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-x12-11</td>
+                            <td class="stat-min">28.96</td>
+                            <td class="stat-avg">29.52</td>
+                            <td class="stat-current">29.54</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-mixed-2</td>
+                            <td class="stat-min">29.13</td>
+                            <td class="stat-avg">30.27</td>
+                            <td class="stat-current">30.30</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PhoenixMiner Temp -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">PhoenixMiner Temp</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="phoenixTempChart"></canvas>
+                </div>
+                <table class="miner-table">
+                    <thead>
+                        <tr>
+                            <th>Miner</th>
+                            <th class="stat-min">Max</th>
+                            <th class="stat-avg">Avg</th>
+                            <th class="stat-current">Current</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="miner-name">rx580-mixed-0</td>
+                            <td class="stat-min">60.00</td>
+                            <td class="stat-avg">59.02</td>
+                            <td class="stat-current">59.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-x12-0</td>
+                            <td class="stat-min">60.00</td>
+                            <td class="stat-avg">59.01</td>
+                            <td class="stat-current">59.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-mixed-1</td>
+                            <td class="stat-min">59.00</td>
+                            <td class="stat-avg">52.11</td>
+                            <td class="stat-current">53.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-x12-1</td>
+                            <td class="stat-min">60.00</td>
+                            <td class="stat-avg">59.01</td>
+                            <td class="stat-current">59.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-x12-10</td>
+                            <td class="stat-min">59.00</td>
+                            <td class="stat-avg">59.00</td>
+                            <td class="stat-current">59.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-x12-11</td>
+                            <td class="stat-min">59.00</td>
+                            <td class="stat-avg">59.00</td>
+                            <td class="stat-current">59.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-mixed-2</td>
+                            <td class="stat-min">60.00</td>
+                            <td class="stat-avg">59.01</td>
+                            <td class="stat-current">59.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PhoenixMiner FanSpeed -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">PhoenixMiner FanSpeed</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="phoenixFanChart"></canvas>
+                </div>
+                <table class="miner-table">
+                    <thead>
+                        <tr>
+                            <th>Miner</th>
+                            <th class="stat-min">Max</th>
+                            <th class="stat-avg">Avg</th>
+                            <th class="stat-current">Current</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="miner-name">rx580-mixed-0</td>
+                            <td class="stat-min">50.00</td>
+                            <td class="stat-avg">48.31</td>
+                            <td class="stat-current">47.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-x12-0</td>
+                            <td class="stat-min">27.00</td>
+                            <td class="stat-avg">25.74</td>
+                            <td class="stat-current">25.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-mixed-1</td>
+                            <td class="stat-min">38.00</td>
+                            <td class="stat-avg">13.83</td>
+                            <td class="stat-current">36.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-x12-1</td>
+                            <td class="stat-min">27.00</td>
+                            <td class="stat-avg">25.43</td>
+                            <td class="stat-current">25.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-x12-10</td>
+                            <td class="stat-min">27.00</td>
+                            <td class="stat-avg">25.83</td>
+                            <td class="stat-current">25.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-x12-11</td>
+                            <td class="stat-min">32.00</td>
+                            <td class="stat-avg">29.97</td>
+                            <td class="stat-current">28.00</td>
+                        </tr>
+                        <tr>
+                            <td class="miner-name">rx580-mixed-2</td>
+                            <td class="stat-min">41.00</td>
+                            <td class="stat-avg">38.94</td>
+                            <td class="stat-current">38.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="refresh-info">
+            Last updated: <span id="lastUpdate"></span> | Auto-refresh every 5 minutes
+        </div>
     </div>
 
-    <!-- Main -->
-    <div class="flex-1 flex flex-col">
-        <!-- Header -->
-        <header class="bg-gradient-to-r from-gray-900 via-black to-gray-900 border-b border-amber-500/20 px-4 md:px-6 h-16 flex items-center">
-            <div class="flex items-center justify-between w-full">
-                <div class="flex items-center gap-3">
-                    <button id="mobile-menu-btn" class="md:hidden text-gray-400 hover:text-amber-400">
-                        <i data-lucide="menu" class="w-6 h-6"></i>
-                    </button>
-                    <div class="flex flex-col">
-                        <div id="time" class="text-amber-400 text-lg font-bold">00:00:00</div>
-                        <div id="date" class="text-gray-400 text-xs">Loading...</div>
-                    </div>
-                </div>
+    <script>
+        // Update timestamp
+        document.getElementById('lastUpdate').textContent = new Date().toLocaleString();
 
-                <div class="flex-1 max-w-md mx-2 md:mx-8 hidden sm:block">
-                    <div class="relative">
-                        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"></i>
-                        <input type="text" placeholder="Cari node atau paket sewa..."
-                               class="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-xl text-sm focus:border-amber-500 outline-none">
-                    </div>
-                </div>
+        // Chart defaults
+        Chart.defaults.color = '#888';
+        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
 
-                <div class="flex items-center gap-3 md:gap-4">
-                    <div class="hidden sm:flex items-center gap-2 px-3 py-1 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-emerald-400 text-xs md:text-sm">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>Network Online</span>
-                    </div>
-                    <button class="relative text-gray-400 hover:text-amber-400 p-2">
-                        <i data-lucide="bell" class="w-5 h-5"></i>
-                        <span class="absolute -top-1 -right-1 bg-red-500 text-[10px] w-4 h-4 flex items-center justify-center rounded-full">3</span>
-                    </button>
-                    <div class="hidden sm:flex items-center gap-3 pl-4 border-l border-gray-700">
-                        <div class="profile-picture w-8 h-8 rounded-full overflow-hidden">
-                            <img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="Fery">
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium">Fery Muliawan</p>
-                            <p class="text-amber-400 text-xs">Validator 8055x</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
+        // Generate time labels
+        function generateTimeLabels() {
+            const labels = [];
+            for (let i = 0; i <= 8; i++) {
+                labels.push(`${String(i).padStart(2, '0')}:00`);
+            }
+            return labels;
+        }
 
-        <!-- Content -->
-        <main class="flex-1 overflow-auto p-6 md:p-8">
-            <div id="key-node-page" class="page-content active space-y-10">
-                <!-- HERO -->
-                <section class="mb-4">
-                    <div class="max-w-4xl mx-auto text-center">
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/40 mb-4 badge">
-                            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-                            <span>BossX • MasterXCloud Node Rental</span>
-                        </div>
-                        <h1 class="text-3xl md:text-4xl font-extrabold text-amber-400 mb-4">
-                            Sewa Node BossX di Cloud, Tanpa Beli Perangkat
-                        </h1>
-                        <p class="text-gray-300 text-sm md:text-base mb-2">
-                            MasterXCloud adalah program penyewaan mesin dan node pada jaringan BossX.
-                            Kamu menyewa kapasitas node yang sudah dikonfigurasi dan dikelola, tanpa harus membeli dan merawat alat mining fisik sendiri.
-                        </p>
-                        <p class="text-amber-300 text-xs md:text-sm mb-3 font-semibold">
-                            Minimal sewa mulai dari 10 USD, pembayaran hanya menggunakan BossX.
-                        </p>
-                        <p class="text-gray-400 text-[11px] md:text-xs mb-6">
-                            Transaksi sewa dilakukan dengan BossX melalui wallet dan ekosistem on-chain. 
-                            WhatsApp hanya digunakan untuk bantuan onboarding dan dukungan teknis, bukan untuk memproses transaksi.
-                        </p>
-                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                            <a href="#paket-sewa" class="action-button flex items-center justify-center gap-3 text-base px-8 py-3 rounded-2xl">
-                                <i data-lucide="cpu" class="w-5 h-5"></i>
-                                Lihat Paket Sewa Node
-                            </a>
-                            <button onclick="hubungiTim()" class="text-sm text-amber-300 hover:text-amber-200 underline flex items-center justify-center gap-2">
-                                <i data-lucide="message-circle" class="w-4 h-4"></i>
-                                Butuh bantuan onboarding? Hubungi tim
-                            </button>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 4 GAMBAR ATAS -->
-                <section>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6">
-                        <img src="https://i.ibb.co/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 1">
-                        <img src="https://i.ibb.co/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 2">
-                        <img src="https://i.ibb.co/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 3">
-                        <img src="https://i.ibb.co/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 4">
-                    </div>
-
-                    <!-- 4 GAMBAR BAWAH -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                        <img src="https://i.ibb.co/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 5">
-                        <img src="https://i.ibb.co/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 6">
-                        <img src="https://i.ibb.co/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 7">
-                        <img src="https://i.ibb.co/tphwj0vz/f95c96fe-ffe6-430d-986d-283ab289537d.jpg" class="gallery-img w-full rounded-3xl border border-amber-500/30" alt="Mining 8">
-                    </div>
-                </section>
-
-                <!-- PENJELASAN MASTERXCLOUD & XNODE -->
-                <section class="mt-4 max-w-4xl mx-auto text-center">
-                    <h2 class="text-2xl md:text-3xl font-bold text-amber-400 mb-4">
-                        Apa itu MasterXCloud?
-                    </h2>
-                    <p class="text-gray-300 text-sm md:text-base mb-4">
-                        MasterXCloud adalah program penyewaan mesin dan node pada jaringan BossX. 
-                        Melalui MasterXCloud, kamu menyewa kapasitas node yang sudah dikonfigurasi dan dikelola oleh tim teknis,
-                        sehingga tidak perlu membeli perangkat sendiri atau menangani setup yang rumit.
-                    </p>
-                    <p class="text-gray-400 text-xs md:text-sm mb-2">
-                        Setiap penyewaan akan menghasilkan sebuah kode unik yang kami sebut 
-                        <span class="text-amber-400 font-semibold">XNode</span>. 
-                        Kode ini menjadi bukti hak sewa kamu dan nantinya dapat digunakan di dalam ekosistem BossX sesuai ketentuan yang berlaku.
-                    </p>
-                    <p class="text-gray-500 text-[11px] md:text-xs">
-                        Detail mekanisme penggunaan XNode di dalam ekosistem BossX akan dijelaskan pada dashboard dan dokumentasi resmi. 
-                        Halaman ini berfokus pada informasi penyewaan cloud node.
-                    </p>
-                </section>
-
-                <!-- CARA KERJA -->
-                <section id="cara-kerja" class="mt-10 max-w-4xl mx-auto">
-                    <h3 class="text-xl md:text-2xl font-semibold text-amber-400 mb-6 text-center">
-                        Cara Kerja Sewa Node di MasterXCloud
-                    </h3>
-                    <div class="grid md:grid-cols-3 gap-6">
-                        <div class="text-center">
-                            <div class="mx-auto mb-3 w-10 h-10 flex items-center justify-center rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-400 text-sm font-bold">1</div>
-                            <p class="text-gray-200 text-sm font-semibold mb-1">Pilih Paket Sewa</p>
-                            <p class="text-gray-400 text-xs">
-                                Tentukan paket node sesuai kebutuhan kapasitas dan durasi sewa kamu.
-                            </p>
-                        </div>
-                        <div class="text-center">
-                            <div class="mx-auto mb-3 w-10 h-10 flex items-center justify-center rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-400 text-sm font-bold">2</div>
-                            <p class="text-gray-200 text-sm font-semibold mb-1">Bayar dengan BossX</p>
-                            <p class="text-gray-400 text-xs">
-                                Lakukan transaksi sewa menggunakan token BossX melalui wallet dan smart contract yang didukung.
-                            </p>
-                        </div>
-                        <div class="text-center">
-                            <div class="mx-auto mb-3 w-10 h-10 flex items-center justify-center rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-400 text-sm font-bold">3</div>
-                            <p class="text-gray-200 text-sm font-semibold mb-1">Terima Kode XNode</p>
-                            <p class="text-gray-400 text-xs">
-                                Setelah transaksi on-chain selesai, kamu akan menerima kode XNode sebagai bukti hak sewa node.
-                            </p>
-                        </div>
-                    </div>
-                    <p class="text-gray-500 text-[11px] md:text-xs mt-4 text-center">
-                        Jika kamu baru di dunia crypto atau BossX, tim kami dapat membantu proses onboarding dan panduan penggunaan wallet melalui kanal dukungan.
-                    </p>
-                </section>
-
-                <!-- PAKET SEWA -->
-                <section id="paket-sewa" class="mt-10 max-w-5xl mx-auto">
-                    <h3 class="text-xl md:text-2xl font-semibold text-amber-400 mb-6 text-center">
-                        Paket Sewa Node MasterXCloud
-                    </h3>
-                    <p class="text-gray-400 text-xs md:text-sm mb-6 text-center">
-                        Semua paket dapat disewa mulai dari 10 USD setara dalam BossX. 
-                        Pembayaran dilakukan 100% menggunakan token BossX melalui wallet yang kompatibel.
-                    </p>
-                    <div class="grid md:grid-cols-3 gap-6">
-                        <!-- Starter -->
-                        <div class="gradient-bg gradient-border p-5 rounded-2xl flex flex-col">
-                            <h4 class="text-amber-300 font-semibold mb-2 text-sm">Paket Starter</h4>
-                            <p class="text-gray-400 text-xs mb-3">
-                                Cocok untuk kamu yang ingin mencoba sewa node BossX dengan kapasitas kecil.
-                            </p>
-                            <ul class="text-gray-300 text-xs space-y-1 mb-4">
-                                <li>- Durasi sewa: 30 hari</li>
-                                <li>- Kapasitas node: kecil</li>
-                                <li>- 1 kode XNode</li>
-                                <li>- Minimal sewa: 10 USD (dibayar dengan BossX)</li>
-                            </ul>
-                            <p class="text-amber-400 font-bold text-sm mb-3">
-                                Mulai dari 10 USD setara BossX
-                            </p>
-                            <a href="#cara-kerja" class="action-button w-full text-xs py-2 rounded-xl text-center">
-                                Lihat cara sewa
-                            </a>
-                        </div>
-
-                        <!-- Pro -->
-                        <div class="gradient-bg gradient-border p-5 rounded-2xl flex flex-col">
-                            <h4 class="text-amber-300 font-semibold mb-2 text-sm">Paket Pro</h4>
-                            <p class="text-gray-400 text-xs mb-3">
-                                Untuk pengguna yang membutuhkan kapasitas node lebih besar.
-                            </p>
-                            <ul class="text-gray-300 text-xs space-y-1 mb-4">
-                                <li>- Durasi sewa: 90 hari</li>
-                                <li>- Kapasitas node: menengah</li>
-                                <li>- Beberapa kode XNode</li>
-                                <li>- Minimal sewa: 10 USD (dibayar dengan BossX)</li>
-                            </ul>
-                            <p class="text-amber-400 font-bold text-sm mb-3">
-                                Detail harga dan konfigurasi akan tersedia di dashboard
-                            </p>
-                            <button onclick="hubungiTim()" class="mt-auto action-button w-full text-xs py-2 rounded-xl">
-                                Konsultasi Paket Pro
-                            </button>
-                        </div>
-
-                        <!-- Enterprise -->
-                        <div class="gradient-bg gradient-border p-5 rounded-2xl flex flex-col">
-                            <h4 class="text-amber-300 font-semibold mb-2 text-sm">Paket Enterprise</h4>
-                            <p class="text-gray-400 text-xs mb-3">
-                                Untuk kebutuhan skala besar, institusi, atau konfigurasi khusus.
-                            </p>
-                            <ul class="text-gray-300 text-xs space-y-1 mb-4">
-                                <li>- Durasi sewa: custom</li>
-                                <li>- Kapasitas node: besar</li>
-                                <li>- Konfigurasi dan deployment khusus</li>
-                                <li>- Minimal sewa: 10 USD (dibayar dengan BossX)</li>
-                            </ul>
-                            <p class="text-amber-400 font-bold text-sm mb-3">
-                                Hubungi tim untuk penawaran dan integrasi khusus
-                            </p>
-                            <button onclick="hubungiTim()" class="mt-auto action-button w-full text-xs py-2 rounded-xl">
-                                Hubungi Tim MasterXCloud
-                            </button>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- CTA BAWAH -->
-                <section class="mt-12 max-w-3xl mx-auto text-center">
-                    <h4 class="text-lg md:text-xl font-semibold text-amber-400 mb-3">
-                        Baru pertama kali pakai BossX atau sewa node?
-                    </h4>
-                    <p class="text-gray-400 text-xs md:text-sm mb-4">
-                        Tim kami siap membantu proses onboarding, mulai dari pembuatan wallet, pengiriman BossX, 
-                        hingga langkah-langkah melakukan transaksi sewa node pertama kamu.
-                    </p>
-                    <button onclick="hubungiTim()" class="action-button text-sm px-8 py-3 rounded-3xl flex items-center gap-2 mx-auto">
-                        <i data-lucide="message-circle" class="w-5 h-5"></i>
-                        Hubungi Tim Dukungan via WhatsApp
-                    </button>
-                </section>
-            </div>
-        </main>
-    </div>
-</div>
-
-<script>
-// Lucide + Clock
-function initIcons(){ if (window.lucide) { lucide.createIcons(); } }
-
-function updateClock(){
-    const n=new Date();
-    const timeEl=document.getElementById('time');
-    const dateEl=document.getElementById('date');
-    if(timeEl){
-        timeEl.textContent=n.toLocaleTimeString('id-ID',{
-            hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'
+        // Suprnova Pool Chart
+        new Chart(document.getElementById('suprnovaChart'), {
+            type: 'line',
+            data: {
+                labels: generateTimeLabels(),
+                datasets: [{
+                    label: 'Hashrate',
+                    data: [3.2, 3.3, 3.1, 3.4, 3.2, 3.3, 3.1, 3.2, 3.3],
+                    borderColor: '#00d084',
+                    backgroundColor: 'rgba(0, 208, 132, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 2.5,
+                        max: 4.0
+                    }
+                }
+            }
         });
-    }
-    if(dateEl){
-        dateEl.textContent=n.toLocaleDateString('id-ID',{
-            weekday:'long',year:'numeric',month:'long',day:'numeric'
+
+        // DSTM Miner Chart
+        new Chart(document.getElementById('dstmMinerChart'), {
+            type: 'bar',
+            data: {
+                labels: generateTimeLabels(),
+                datasets: [
+                    { label: 'GPU 0', data: [450, 460, 470, 475, 472, 478, 475, 476, 478], backgroundColor: '#f7931a' },
+                    { label: 'GPU 1', data: [445, 455, 465, 470, 468, 471, 469, 470, 471], backgroundColor: '#00d084' },
+                    { label: 'GPU 2', data: [455, 465, 472, 476, 474, 476, 475, 476, 476], backgroundColor: '#3498db' },
+                    { label: 'GPU 3', data: [452, 462, 470, 475, 473, 477, 474, 475, 477], backgroundColor: '#9b59b6' },
+                    { label: 'GPU 4', data: [448, 458, 468, 472, 470, 468, 469, 467, 468], backgroundColor: '#e74c3c' },
+                    { label: 'GPU 5', data: [450, 460, 470, 474, 472, 468, 469, 467, 468], backgroundColor: '#1abc9c' },
+                    { label: 'GPU 6', data: [445, 455, 463, 467, 465, 468, 466, 467, 468], backgroundColor: '#f39c12' }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { stacked: true },
+                    y: { stacked: true }
+                }
+            }
         });
-    }
-}
 
-function hubungiTim(){
-    const wa="62812XXXXYYYY"; // GANTI NOMOR WA KAMU (tanpa +, spasi, tanda baca)
-    const text=encodeURIComponent("Halo tim MasterXCloud, saya butuh bantuan onboarding dan informasi sewa node BossX.");
-    window.open(`https://wa.me/${wa}?text=${text}`,'_blank');
-}
-
-// Init
-document.addEventListener('DOMContentLoaded',()=>{
-    initIcons();
-    updateClock();
-    setInterval(updateClock,1000);
-
-    const sidebar = document.getElementById('sidebar');
-    const toggleSidebar = document.getElementById('toggle-sidebar');
-    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-
-    if (toggleSidebar && sidebar) {
-        toggleSidebar.addEventListener('click',()=>{
-            sidebar.classList.toggle('collapsed');
-            initIcons();
+        // DSTM Temps Chart
+        new Chart(document.getElementById('dstmTempsChart'), {
+            type: 'line',
+            data: {
+                labels: generateTimeLabels(),
+                datasets: [
+                    { label: 'GPU 0', data: [65, 66, 67, 67, 66, 67, 67, 67, 67], borderColor: '#f7931a', tension: 0.4 },
+                    { label: 'GPU 1', data: [64, 65, 66, 67, 67, 67, 67, 67, 67], borderColor: '#00d084', tension: 0.4 },
+                    { label: 'GPU 2', data: [65, 66, 67, 68, 68, 68, 68, 68, 68], borderColor: '#3498db', tension: 0.4 },
+                    { label: 'GPU 3', data: [64, 65, 67, 68, 68, 68, 68, 68, 68], borderColor: '#9b59b6', tension: 0.4 },
+                    { label: 'GPU 4', data: [63, 64, 65, 66, 66, 66, 66, 66, 66], borderColor: '#e74c3c', tension: 0.4 },
+                    { label: 'GPU 5', data: [65, 66, 67, 68, 68, 68, 68, 68, 68], borderColor: '#1abc9c', tension: 0.4 },
+                    { label: 'GPU 6', data: [66, 67, 68, 69, 69, 69, 69, 69, 69], borderColor: '#f39c12', tension: 0.4 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
         });
-    }
 
-    if (mobileMenuBtn && sidebar) {
-        mobileMenuBtn.addEventListener('click',()=>{
-            sidebar.classList.toggle('hidden');
+        // DSTM Fan Chart
+        new Chart(document.getElementById('dstmFanChart'), {
+            type: 'line',
+            data: {
+                labels: generateTimeLabels(),
+                datasets: [
+                    { label: 'GPU 0', data: [50, 52, 53, 54, 54, 53, 53, 53, 53], borderColor: '#f7931a', tension: 0.4 },
+                    { label: 'GPU 1', data: [35, 36, 37, 37, 37, 36, 36, 36, 36], borderColor: '#00d084', tension: 0.4 },
+                    { label: 'GPU 2', data: [42, 43, 44, 45, 45, 44, 44, 44, 44], borderColor: '#3498db', tension: 0.4 },
+                    { label: 'GPU 3', data: [36, 37, 38, 39, 39, 36, 36, 36, 36], borderColor: '#9b59b6', tension: 0.4 },
+                    { label: 'GPU 4', data: [32, 33, 34, 35, 35, 30, 30, 30, 30], borderColor: '#e74c3c', tension: 0.4 },
+                    { label: 'GPU 5', data: [42, 43, 44, 45, 45, 46, 46, 46, 46], borderColor: '#1abc9c', tension: 0.4 },
+                    { label: 'GPU 6', data: [70, 75, 77, 80, 85, 100, 100, 100, 100], borderColor: '#f39c12', tension: 0.4 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
         });
-    }
-});
-</script>
+
+        // Etherpool Chart
+        new Chart(document.getElementById('etherpoolChart'), {
+            type: 'line',
+            data: {
+                labels: generateTimeLabels(),
+                datasets: [
+                    { label: 'Average Hashrate', data: [475, 476, 475, 476, 475, 476, 475, 476, 475], borderColor: '#00d084', tension: 0.4 },
+                    { label: 'Current Hashrate', data: [430, 440, 450, 460, 455, 445, 435, 430, 430], borderColor: '#f7931a', tension: 0.4 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true, position: 'top' }
+                }
+            }
+        });
+
+        // PhoenixMiner MH/s Chart
+        new Chart(document.getElementById('phoenixMhChart'), {
+            type: 'bar',
+            data: {
+                labels: generateTimeLabels(),
+                datasets: [
+                    { label: 'RX580-0', data: [28, 29, 30, 30, 30, 30, 30, 30, 30], backgroundColor: '#f7931a' },
+                    { label: 'RX580-1', data: [27, 28, 29, 29, 29, 29, 29, 29, 29], backgroundColor: '#00d084' },
+                    { label: 'RX580-2', data: [28, 29, 30, 30, 30, 30, 30, 30, 30], backgroundColor: '#3498db' },
+                    { label: 'RX580-10', data: [28, 29, 30, 30, 30, 30, 30, 30, 30], backgroundColor: '#9b59b6' },
+                    { label: 'RX580-11', data: [27, 28, 29, 29, 29, 29, 29, 29, 29], backgroundColor: '#e74c3c' }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { stacked: true },
+                    y: { stacked: true }
+                }
+            }
+        });
+
+        // PhoenixMiner Temp Chart
+        new Chart(document.getElementById('phoenixTempChart'), {
+            type: 'line',
+            data: {
+                labels: generateTimeLabels(),
+                datasets: [
+                    { label: 'RX580-0', data: [58, 59, 59, 59, 59, 59, 59, 59, 59], borderColor: '#f7931a', tension: 0.4 },
+                    { label: 'RX580-1', data: [50, 51, 52, 53, 53, 53, 53, 53, 53], borderColor: '#00d084', tension: 0.4 },
+                    { label: 'RX580-2', data: [58, 59, 59, 59, 59, 59, 59, 59, 59], borderColor: '#3498db', tension: 0.4 },
+                    { label: 'RX580-10', data: [58, 59, 59, 59, 59, 59, 59, 59, 59], borderColor: '#9b59b6', tension: 0.4 },
+                    { label: 'RX580-11', data: [58, 59, 59, 59, 59, 59, 59, 59, 59], borderColor: '#e74c3c', tension: 0.4 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // PhoenixMiner Fan Chart
+        new Chart(document.getElementById('phoenixFanChart'), {
+            type: 'bar',
+            data: {
+                labels: generateTimeLabels(),
+                datasets: [
+                    { label: 'RX580-0', data: [45, 46, 47, 48, 48, 47, 47, 47, 47], backgroundColor: '#f7931a' },
+                    { label: 'RX580-1', data: [24, 25, 25, 26, 26, 25, 25, 25, 25], backgroundColor: '#00d084' },
+                    { label: 'RX580-2', data: [35, 36, 36, 37, 37, 36, 36, 36, 36], backgroundColor: '#3498db' },
+                    { label: 'RX580-10', data: [24, 25, 26, 26, 26, 25, 25, 25, 25], backgroundColor: '#9b59b6' },
+                    { label: 'RX580-11', data: [27, 28, 29, 30, 30, 28, 28, 28, 28], backgroundColor: '#e74c3c' }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Auto-refresh simulation
+        setInterval(() => {
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleString();
+        }, 300000); // Update every 5 minutes
+    </script>
 </body>
 </html>
