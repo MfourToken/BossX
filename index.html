@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%);
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
             color: #fff;
             min-height: 100vh;
             padding: 20px;
@@ -30,28 +30,29 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
-            padding: 15px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
+            padding: 20px 30px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 134, 11, 0.05) 100%);
+            border-radius: 15px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.1);
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 15px;
-            font-size: 28px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #f7931a 0%, #ff6b35 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            gap: 20px;
         }
 
         .logo-img {
-            width: 50px;
-            height: 50px;
-            border-radius: 8px;
+            width: 80px;
+            height: 80px;
             object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+            transition: transform 0.3s;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.05);
         }
 
         .logo-text {
@@ -61,19 +62,22 @@
         }
 
         .logo-main {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 800;
-            background: linear-gradient(135deg, #f7931a 0%, #ff6b35 100%);
+            background: linear-gradient(135deg, #d4af37 0%, #f4e5c2 50%, #d4af37 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            letter-spacing: 2px;
         }
 
         .logo-sub {
             font-size: 14px;
-            color: #888;
+            color: #b8941f;
             font-weight: 500;
-            -webkit-text-fill-color: #888;
+            text-transform: uppercase;
+            letter-spacing: 3px;
         }
 
         .header-controls {
@@ -83,80 +87,113 @@
         }
 
         .btn {
-            padding: 8px 20px;
-            border: none;
-            border-radius: 5px;
+            padding: 10px 25px;
+            border: 2px solid #d4af37;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(184, 148, 31, 0.1) 100%);
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .btn-primary {
-            background: #f7931a;
-            color: #fff;
-        }
-
-        .btn-primary:hover {
-            background: #e0830a;
+        .btn:hover {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.4) 0%, rgba(184, 148, 31, 0.2) 100%);
             transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
             margin-bottom: 30px;
         }
 
         .stat-card {
-            background: rgba(0, 0, 0, 0.4);
-            padding: 25px;
-            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 148, 31, 0.05) 100%);
+            padding: 30px;
+            border-radius: 15px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(247, 147, 26, 0.2);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.3);
+            border-color: rgba(212, 175, 55, 0.4);
         }
 
         .stat-title {
-            font-size: 14px;
-            color: #888;
-            margin-bottom: 10px;
+            font-size: 13px;
+            color: #b8941f;
+            margin-bottom: 15px;
             text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
         }
 
         .stat-value {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: bold;
             margin-bottom: 10px;
+            background: linear-gradient(135deg, #d4af37 0%, #f4e5c2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .stat-value.na {
-            color: #666;
+            background: linear-gradient(135deg, #666 0%, #999 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .stat-value.positive {
-            color: #00d084;
+            background: linear-gradient(135deg, #00d084 0%, #00ff88 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .stat-value.warning {
-            color: #f7931a;
+            background: linear-gradient(135deg, #f7931a 0%, #ffb347 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .gauge {
             width: 120px;
             height: 60px;
-            margin: 15px auto;
+            margin: 20px auto;
             position: relative;
         }
 
         .gauge-bg {
             fill: none;
-            stroke: '#2d2d44';
+            stroke: 'rgba(212, 175, 55, 0.2)';
             stroke-width: 10;
         }
 
@@ -169,30 +206,41 @@
 
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 25px;
         }
 
         .chart-card {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(184, 148, 31, 0.03) 100%);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            transition: all 0.3s;
+        }
+
+        .chart-card:hover {
+            border-color: rgba(212, 175, 55, 0.3);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
         }
 
         .chart-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 2px solid rgba(212, 175, 55, 0.2);
         }
 
         .chart-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #d4af37 0%, #f4e5c2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .chart-container {
@@ -209,20 +257,22 @@
 
         .miner-table th {
             text-align: left;
-            padding: 10px;
-            background: rgba(247, 147, 26, 0.2);
-            color: #f7931a;
-            font-weight: 600;
+            padding: 12px 10px;
+            background: rgba(212, 175, 55, 0.15);
+            color: #d4af37;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
         }
 
         .miner-table td {
-            padding: 8px 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
         }
 
         .miner-table tr:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(212, 175, 55, 0.05);
         }
 
         .miner-name {
@@ -236,28 +286,27 @@
         }
 
         .stat-min { color: #888; }
-        .stat-avg { color: #f7931a; }
+        .stat-avg { color: #d4af37; }
         .stat-current { color: #00d084; font-weight: bold; }
 
         .refresh-info {
             text-align: center;
-            margin-top: 30px;
-            padding: 15px;
-            color: #888;
+            margin-top: 40px;
+            padding: 20px;
+            color: #b8941f;
             font-size: 14px;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
         }
 
         .status-indicator {
             display: inline-block;
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             margin-right: 8px;
             animation: pulse 2s infinite;
-        }
-
-        .status-online {
             background: #00d084;
+            box-shadow: 0 0 10px #00d084;
         }
 
         @keyframes pulse {
@@ -275,7 +324,12 @@
             }
 
             .logo-main {
-                font-size: 24px;
+                font-size: 28px;
+            }
+
+            .logo-img {
+                width: 60px;
+                height: 60px;
             }
         }
     </style>
@@ -285,17 +339,16 @@
         <!-- Header -->
         <div class="header">
             <div class="logo">
-                <!-- GANTI LOGO DI SINI - Ganti src dengan path logo Anda -->
-                <img src="logo-bossx.png" alt="BossX Logo" class="logo-img" onerror="this.style.display='none'">
+                <!-- GANTI src DENGAN PATH LOGO ANDA -->
+                <img src="bossx-logo.png" alt="BossX Logo" class="logo-img" onerror="this.style.display='none'">
                 <div class="logo-text">
                     <span class="logo-main">BossX</span>
                     <span class="logo-sub">Premine Dashboard</span>
                 </div>
             </div>
             <div class="header-controls">
-                <span class="status-indicator status-online"></span>
-                <span>Live</span>
-                <button class="btn btn-primary" onclick="location.reload()">Refresh</button>
+                <span><span class="status-indicator"></span>Live</span>
+                <button class="btn" onclick="location.reload()">Refresh</button>
             </div>
         </div>
 
@@ -310,7 +363,7 @@
                 <div class="stat-title">ETH Awaiting Payout</div>
                 <div class="stat-value na">N/A</div>
                 <svg class="gauge" viewBox="0 0 100 50">
-                    <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50" stroke="#2d2d44" stroke-width="10" fill="none"/>
+                    <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50" stroke="rgba(212, 175, 55, 0.2)" stroke-width="10" fill="none"/>
                     <path class="gauge-fill" d="M 10 50 A 40 40 0 0 1 90 50" stroke="#666" stroke-width="10" fill="none" stroke-dasharray="126" stroke-dashoffset="126"/>
                 </svg>
             </div>
@@ -324,7 +377,7 @@
                 <div class="stat-title">ETC Awaiting Payout</div>
                 <div class="stat-value positive">0.4205</div>
                 <svg class="gauge" viewBox="0 0 100 50">
-                    <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50" stroke="#2d2d44" stroke-width="10" fill="none"/>
+                    <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50" stroke="rgba(212, 175, 55, 0.2)" stroke-width="10" fill="none"/>
                     <path class="gauge-fill" d="M 10 50 A 40 40 0 0 1 90 50" stroke="#00d084" stroke-width="10" fill="none" stroke-dasharray="126" stroke-dashoffset="63"/>
                 </svg>
             </div>
@@ -333,7 +386,7 @@
                 <div class="stat-title">ZCL Awaiting Payout</div>
                 <div class="stat-value warning">0.1055</div>
                 <svg class="gauge" viewBox="0 0 100 50">
-                    <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50" stroke="#2d2d44" stroke-width="10" fill="none"/>
+                    <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50" stroke="rgba(212, 175, 55, 0.2)" stroke-width="10" fill="none"/>
                     <path class="gauge-fill" d="M 10 50 A 40 40 0 0 1 90 50" stroke="#f7931a" stroke-width="10" fill="none" stroke-dasharray="126" stroke-dashoffset="100"/>
                 </svg>
             </div>
@@ -807,7 +860,7 @@
         </div>
 
         <div class="refresh-info">
-            Last updated: <span id="lastUpdate"></span> | Auto-refresh every 5 minutes
+            <strong>BossX Premine Dashboard</strong> | Last updated: <span id="lastUpdate"></span> | Auto-refresh every 5 minutes
         </div>
     </div>
 
@@ -816,8 +869,8 @@
         document.getElementById('lastUpdate').textContent = new Date().toLocaleString();
 
         // Chart defaults
-        Chart.defaults.color = '#888';
-        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+        Chart.defaults.color = '#b8941f';
+        Chart.defaults.borderColor = 'rgba(212, 175, 55, 0.2)';
 
         // Generate time labels
         function generateTimeLabels() {
@@ -864,7 +917,7 @@
             data: {
                 labels: generateTimeLabels(),
                 datasets: [
-                    { label: 'GPU 0', data: [450, 460, 470, 475, 472, 478, 475, 476, 478], backgroundColor: '#f7931a' },
+                    { label: 'GPU 0', data: [450, 460, 470, 475, 472, 478, 475, 476, 478], backgroundColor: '#d4af37' },
                     { label: 'GPU 1', data: [445, 455, 465, 470, 468, 471, 469, 470, 471], backgroundColor: '#00d084' },
                     { label: 'GPU 2', data: [455, 465, 472, 476, 474, 476, 475, 476, 476], backgroundColor: '#3498db' },
                     { label: 'GPU 3', data: [452, 462, 470, 475, 473, 477, 474, 475, 477], backgroundColor: '#9b59b6' },
@@ -892,7 +945,7 @@
             data: {
                 labels: generateTimeLabels(),
                 datasets: [
-                    { label: 'GPU 0', data: [65, 66, 67, 67, 66, 67, 67, 67, 67], borderColor: '#f7931a', tension: 0.4 },
+                    { label: 'GPU 0', data: [65, 66, 67, 67, 66, 67, 67, 67, 67], borderColor: '#d4af37', tension: 0.4 },
                     { label: 'GPU 1', data: [64, 65, 66, 67, 67, 67, 67, 67, 67], borderColor: '#00d084', tension: 0.4 },
                     { label: 'GPU 2', data: [65, 66, 67, 68, 68, 68, 68, 68, 68], borderColor: '#3498db', tension: 0.4 },
                     { label: 'GPU 3', data: [64, 65, 67, 68, 68, 68, 68, 68, 68], borderColor: '#9b59b6', tension: 0.4 },
@@ -916,7 +969,7 @@
             data: {
                 labels: generateTimeLabels(),
                 datasets: [
-                    { label: 'GPU 0', data: [50, 52, 53, 54, 54, 53, 53, 53, 53], borderColor: '#f7931a', tension: 0.4 },
+                    { label: 'GPU 0', data: [50, 52, 53, 54, 54, 53, 53, 53, 53], borderColor: '#d4af37', tension: 0.4 },
                     { label: 'GPU 1', data: [35, 36, 37, 37, 37, 36, 36, 36, 36], borderColor: '#00d084', tension: 0.4 },
                     { label: 'GPU 2', data: [42, 43, 44, 45, 45, 44, 44, 44, 44], borderColor: '#3498db', tension: 0.4 },
                     { label: 'GPU 3', data: [36, 37, 38, 39, 39, 36, 36, 36, 36], borderColor: '#9b59b6', tension: 0.4 },
@@ -941,7 +994,7 @@
                 labels: generateTimeLabels(),
                 datasets: [
                     { label: 'Average Hashrate', data: [475, 476, 475, 476, 475, 476, 475, 476, 475], borderColor: '#00d084', tension: 0.4 },
-                    { label: 'Current Hashrate', data: [430, 440, 450, 460, 455, 445, 435, 430, 430], borderColor: '#f7931a', tension: 0.4 }
+                    { label: 'Current Hashrate', data: [430, 440, 450, 460, 455, 445, 435, 430, 430], borderColor: '#d4af37', tension: 0.4 }
                 ]
             },
             options: {
@@ -959,7 +1012,7 @@
             data: {
                 labels: generateTimeLabels(),
                 datasets: [
-                    { label: 'RX580-0', data: [28, 29, 30, 30, 30, 30, 30, 30, 30], backgroundColor: '#f7931a' },
+                    { label: 'RX580-0', data: [28, 29, 30, 30, 30, 30, 30, 30, 30], backgroundColor: '#d4af37' },
                     { label: 'RX580-1', data: [27, 28, 29, 29, 29, 29, 29, 29, 29], backgroundColor: '#00d084' },
                     { label: 'RX580-2', data: [28, 29, 30, 30, 30, 30, 30, 30, 30], backgroundColor: '#3498db' },
                     { label: 'RX580-10', data: [28, 29, 30, 30, 30, 30, 30, 30, 30], backgroundColor: '#9b59b6' },
@@ -985,7 +1038,7 @@
             data: {
                 labels: generateTimeLabels(),
                 datasets: [
-                    { label: 'RX580-0', data: [58, 59, 59, 59, 59, 59, 59, 59, 59], borderColor: '#f7931a', tension: 0.4 },
+                    { label: 'RX580-0', data: [58, 59, 59, 59, 59, 59, 59, 59, 59], borderColor: '#d4af37', tension: 0.4 },
                     { label: 'RX580-1', data: [50, 51, 52, 53, 53, 53, 53, 53, 53], borderColor: '#00d084', tension: 0.4 },
                     { label: 'RX580-2', data: [58, 59, 59, 59, 59, 59, 59, 59, 59], borderColor: '#3498db', tension: 0.4 },
                     { label: 'RX580-10', data: [58, 59, 59, 59, 59, 59, 59, 59, 59], borderColor: '#9b59b6', tension: 0.4 },
@@ -1007,7 +1060,7 @@
             data: {
                 labels: generateTimeLabels(),
                 datasets: [
-                    { label: 'RX580-0', data: [45, 46, 47, 48, 48, 47, 47, 47, 47], backgroundColor: '#f7931a' },
+                    { label: 'RX580-0', data: [45, 46, 47, 48, 48, 47, 47, 47, 47], backgroundColor: '#d4af37' },
                     { label: 'RX580-1', data: [24, 25, 25, 26, 26, 25, 25, 25, 25], backgroundColor: '#00d084' },
                     { label: 'RX580-2', data: [35, 36, 36, 37, 37, 36, 36, 36, 36], backgroundColor: '#3498db' },
                     { label: 'RX580-10', data: [24, 25, 26, 26, 26, 25, 25, 25, 25], backgroundColor: '#9b59b6' },
