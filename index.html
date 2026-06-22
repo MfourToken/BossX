@@ -3,16 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Futures PnL Tracker Dashboard</title>
-    
-    <!-- External Libraries -->
+    <title>Futures PnL Tracker - Input Data</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <style>
-        /* ================= CSS STYLES ================= */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         :root {
             --bg-primary: #0b0e11;
             --bg-secondary: #1e2329;
@@ -25,309 +20,353 @@
             --accent: #fcd535;
             --hover-bg: #474d57;
         }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.5;
-        }
-
-        /* Layout */
-        .sidebar {
-            position: fixed; left: 0; top: 0; width: 240px; height: 100vh;
-            background-color: var(--bg-secondary); border-right: 1px solid var(--border-color);
-            padding: 20px 0; z-index: 1000; overflow-y: auto;
-        }
-        .logo {
-            display: flex; align-items: center; gap: 10px; padding: 0 24px 30px;
-            font-size: 20px; font-weight: 600; color: var(--accent);
-            border-bottom: 1px solid var(--border-color);
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background-color: var(--bg-primary); color: var(--text-primary); line-height: 1.5; }
+        .sidebar { position: fixed; left: 0; top: 0; width: 240px; height: 100vh; background-color: var(--bg-secondary); border-right: 1px solid var(--border-color); padding: 20px 0; z-index: 1000; overflow-y: auto; }
+        .logo { display: flex; align-items: center; gap: 10px; padding: 0 24px 30px; font-size: 20px; font-weight: 600; color: var(--accent); border-bottom: 1px solid var(--border-color); }
         .nav-menu { padding: 16px 0; }
-        .nav-item {
-            display: flex; align-items: center; gap: 12px; padding: 12px 24px;
-            color: var(--text-secondary); text-decoration: none; transition: all 0.3s;
-        }
-        .nav-item:hover, .nav-item.active {
-            background-color: var(--bg-tertiary); color: var(--text-primary);
-            border-left: 3px solid var(--accent);
-        }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: var(--text-secondary); text-decoration: none; transition: all 0.3s; cursor: pointer; }
+        .nav-item:hover, .nav-item.active { background-color: var(--bg-tertiary); color: var(--text-primary); border-left: 3px solid var(--accent); }
         .nav-item i { font-size: 18px; width: 24px; }
-
         .main-content { margin-left: 240px; padding: 24px 32px; min-height: 100vh; }
-
-        /* Header */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
-        .header-left { display: flex; align-items: center; gap: 16px; }
-        .menu-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 20px; cursor: pointer; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 16px; }
         .header h1 { font-size: 20px; font-weight: 600; }
-        .header-right { display: flex; gap: 12px; }
+        .btn { padding: 10px 20px; border-radius: 4px; border: none; cursor: pointer; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s; font-weight: 600; }
+        .btn-primary { background-color: var(--accent); color: var(--bg-primary); }
+        .btn-primary:hover { background-color: #f0c020; }
+        .btn-secondary { background-color: var(--bg-tertiary); color: var(--text-primary); }
+        .btn-secondary:hover { background-color: var(--hover-bg); }
+        .btn-danger { background-color: var(--negative); color: white; }
+        .btn-danger:hover { background-color: #d93852; }
+        .btn-success { background-color: var(--positive); color: white; }
+        .btn-success:hover { background-color: #0db875; }
         
-        .btn-share, .btn-deposit {
-            padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer;
-            font-size: 14px; display: flex; align-items: center; gap: 8px; transition: all 0.3s;
-        }
-        .btn-share { background-color: var(--bg-tertiary); color: var(--text-primary); }
-        .btn-share:hover { background-color: var(--hover-bg); }
-        .btn-deposit { background-color: var(--accent); color: var(--bg-primary); font-weight: 600; }
-        .btn-deposit:hover { background-color: #f0c020; }
-
-        /* Tabs */
+        /* Tabs & Cards */
         .pnl-type-tabs { display: flex; gap: 24px; margin-bottom: 24px; border-bottom: 1px solid var(--border-color); }
-        .tab-btn {
-            background: none; border: none; color: var(--text-secondary); padding: 12px 0;
-            cursor: pointer; font-size: 14px; font-weight: 600; position: relative;
-        }
+        .tab-btn { background: none; border: none; color: var(--text-secondary); padding: 12px 0; cursor: pointer; font-size: 14px; font-weight: 600; position: relative; }
         .tab-btn.active { color: var(--text-primary); }
-        .tab-btn.active::after {
-            content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
-            height: 2px; background-color: var(--accent);
-        }
-
-        /* Summary Cards */
-        .pnl-summary {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
-            background-color: var(--bg-secondary); border-radius: 8px; padding: 24px; margin-bottom: 24px;
-        }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background-color: var(--accent); }
+        .pnl-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; background-color: var(--bg-secondary); border-radius: 8px; padding: 24px; margin-bottom: 24px; }
+        .pnl-card { padding: 16px; background: var(--bg-tertiary); border-radius: 6px; }
         .pnl-label { color: var(--text-secondary); font-size: 13px; margin-bottom: 8px; }
         .pnl-value { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
         .pnl-amount { font-size: 14px; color: var(--text-secondary); }
         .positive { color: var(--positive); }
         .negative { color: var(--negative); }
-
-        /* Analysis Section */
-        .analysis-section { background-color: var(--bg-secondary); border-radius: 8px; padding: 24px; }
-        .time-selector { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
-        .period-buttons { display: flex; gap: 8px; }
-        .period-btn {
-            background: var(--bg-tertiary); border: none; color: var(--text-secondary);
-            padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px;
-        }
-        .period-btn:hover, .period-btn.active { background: var(--hover-bg); color: var(--text-primary); }
         
-        .date-range { display: flex; align-items: center; gap: 12px; }
-        .date-range input[type="date"] {
-            background: var(--bg-tertiary); border: 1px solid var(--border-color);
-            color: var(--text-primary); padding: 8px 12px; border-radius: 4px; font-size: 14px;
-        }
-        .date-range span { color: var(--text-secondary); }
-        .calendar-btn {
-            background: var(--bg-tertiary); border: 1px solid var(--border-color);
-            color: var(--text-primary); padding: 8px 12px; border-radius: 4px; cursor: pointer;
-        }
-
-        .section-title { font-size: 16px; font-weight: 600; margin-bottom: 24px; }
-
-        /* Stats Grid (2 Columns like screenshot) */
-        .stats-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 16px 40px; margin-bottom: 32px;
-        }
-        .stat-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--border-color); }
-        .stat-label { color: var(--text-secondary); font-size: 13px; }
-        .stat-value { font-size: 14px; font-weight: 600; }
-
-        /* Nav Tabs */
-        .nav-tabs { display: flex; gap: 24px; margin-bottom: 24px; border-bottom: 1px solid var(--border-color); }
-        .nav-tab {
-            background: none; border: none; color: var(--text-secondary); padding: 12px 0;
-            cursor: pointer; font-size: 14px; position: relative;
-        }
-        .nav-tab.active { color: var(--text-primary); }
-        .nav-tab.active::after {
-            content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
-            height: 2px; background-color: var(--accent);
-        }
-
-        /* Chart & Table */
-        .historical-section h3 { font-size: 16px; margin-bottom: 24px; }
-        .chart-container { background-color: var(--bg-tertiary); border-radius: 8px; padding: 24px; margin-bottom: 24px; height: 350px; }
+        /* Form Styles */
+        .form-section { background-color: var(--bg-secondary); border-radius: 8px; padding: 24px; margin-bottom: 24px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 16px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { color: var(--text-secondary); font-size: 13px; font-weight: 600; }
+        .form-group input, .form-group select { background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-primary); padding: 10px 12px; border-radius: 4px; font-size: 14px; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent); }
+        .form-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
         
-        .table-container { overflow-x: auto; }
+        /* Table */
+        .table-container { overflow-x: auto; background: var(--bg-secondary); border-radius: 8px; padding: 24px; }
         .data-table { width: 100%; border-collapse: collapse; font-size: 14px; }
         .data-table th, .data-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
         .data-table th { color: var(--text-secondary); font-weight: 600; background-color: var(--bg-tertiary); }
         .data-table tbody tr:hover { background-color: var(--bg-tertiary); }
-
-        /* Responsive */
+        .btn-small { padding: 6px 12px; font-size: 12px; }
+        
+        /* Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-item { background: var(--bg-tertiary); padding: 16px; border-radius: 6px; }
+        .stat-label { color: var(--text-secondary); font-size: 13px; margin-bottom: 8px; }
+        .stat-value { font-size: 18px; font-weight: 600; }
+        
+        /* Chart */
+        .chart-container { background-color: var(--bg-secondary); border-radius: 8px; padding: 24px; margin-bottom: 24px; height: 400px; }
+        
+        /* Section */
+        .section-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; color: var(--text-primary); }
+        
         @media (max-width: 1024px) {
             .sidebar { transform: translateX(-100%); transition: transform 0.3s; }
             .sidebar.active { transform: translateX(0); }
             .main-content { margin-left: 0; }
-            .menu-toggle { display: block; }
             .pnl-summary { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 768px) {
-            .header { flex-direction: column; align-items: flex-start; gap: 16px; }
-            .header-right { width: 100%; justify-content: space-between; }
             .pnl-summary { grid-template-columns: 1fr; }
             .stats-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-
-    <!-- Sidebar -->
     <aside class="sidebar">
         <div class="logo"><i class="fas fa-chart-line"></i><span>PnL Tracker</span></div>
         <nav class="nav-menu">
-            <a href="#" class="nav-item active"><i class="fas fa-wallet"></i><span>Assets</span></a>
-            <a href="#" class="nav-item"><i class="fas fa-list"></i><span>Orders</span></a>
-            <a href="#" class="nav-item"><i class="fas fa-gift"></i><span>Rewards Hub</span></a>
-            <a href="#" class="nav-item"><i class="fas fa-user-friends"></i><span>Referral</span></a>
-            <a href="#" class="nav-item"><i class="fas fa-user"></i><span>Account</span></a>
-            <a href="#" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+            <div class="nav-item active" onclick="showSection('dashboard')"><i class="fas fa-chart-bar"></i><span>Dashboard</span></div>
+            <div class="nav-item" onclick="showSection('input')"><i class="fas fa-plus-circle"></i><span>Input Data</span></div>
+            <div class="nav-item" onclick="showSection('history')"><i class="fas fa-history"></i><span>History</span></div>
+            <div class="nav-item" onclick="resetAllData()"><i class="fas fa-trash"></i><span>Reset Data</span></div>
         </nav>
     </aside>
 
-    <!-- Main Content -->
     <main class="main-content">
-        <!-- Header -->
         <header class="header">
-            <div class="header-left">
-                <button class="menu-toggle"><i class="fas fa-bars"></i></button>
-                <h1>Futures Account Profit and Loss Details</h1>
-            </div>
-            <div class="header-right">
-                <button class="btn-share"><i class="fas fa-share-alt"></i> Share My PnL</button>
-                <button class="btn-deposit"><i class="fas fa-download"></i> Deposit</button>
+            <h1><i class="fas fa-wallet"></i> Futures Trading PnL Tracker</h1>
+            <div>
+                <button class="btn btn-secondary" onclick="exportData()"><i class="fas fa-download"></i> Export</button>
+                <button class="btn btn-primary" onclick="showSection('input')"><i class="fas fa-plus"></i> Tambah Data</button>
             </div>
         </header>
 
-        <!-- PnL Type Tabs -->
-        <div class="pnl-type-tabs">
-            <button class="tab-btn active">USDⓈ-M</button>
-            <button class="tab-btn">COIN-M</button>
-        </div>
-
-        <!-- PnL Summary Cards - NEW DATA -->
-        <div class="pnl-summary">
-            <div class="pnl-card">
-                <div class="pnl-label">Today's PNL</div>
-                <div class="pnl-value positive">+2.35%</div>
-                <div class="pnl-amount positive">+45.80 USD</div>
-            </div>
-            <div class="pnl-card">
-                <div class="pnl-label">7D PNL</div>
-                <div class="pnl-value positive">+8.72%</div>
-                <div class="pnl-amount positive">+168.50 USD</div>
-            </div>
-            <div class="pnl-card">
-                <div class="pnl-label">30D PNL</div>
-                <div class="pnl-value positive">+23.45%</div>
-                <div class="pnl-amount positive">+453.20 USD</div>
-            </div>
-            <div class="pnl-card">
-                <div class="pnl-label">Lifetime PNL</div>
-                <div class="pnl-value positive">+1,247.85</div>
-                <div class="pnl-amount positive">USD</div>
-            </div>
-        </div>
-
-        <!-- Analysis Section -->
-        <div class="analysis-section">
-            <div class="time-selector">
-                <div class="period-buttons">
-                    <button class="period-btn active">7D</button>
-                    <button class="period-btn">1M</button>
-                    <button class="period-btn">3M</button>
-                    <button class="period-btn">1Y</button>
+        <!-- DASHBOARD SECTION -->
+        <section id="dashboard-section">
+            <div class="pnl-summary">
+                <div class="pnl-card">
+                    <div class="pnl-label">Today's PNL</div>
+                    <div class="pnl-value" id="today-percent">0.00%</div>
+                    <div class="pnl-amount" id="today-amount">0.00 USD</div>
                 </div>
-                <div class="date-range">
-                    <input type="date" id="startDate" value="2026-06-16">
-                    <span><i class="fas fa-arrow-right"></i></span>
-                    <input type="date" id="endDate" value="2026-06-22">
-                    <button class="calendar-btn"><i class="fas fa-calendar"></i></button>
+                <div class="pnl-card">
+                    <div class="pnl-label">7D PNL</div>
+                    <div class="pnl-value" id="week7-percent">0.00%</div>
+                    <div class="pnl-amount" id="week7-amount">0.00 USD</div>
+                </div>
+                <div class="pnl-card">
+                    <div class="pnl-label">30D PNL</div>
+                    <div class="pnl-value" id="month30-percent">0.00%</div>
+                    <div class="pnl-amount" id="month30-amount">0.00 USD</div>
+                </div>
+                <div class="pnl-card">
+                    <div class="pnl-label">Lifetime PNL</div>
+                    <div class="pnl-value" id="lifetime-value">0.00</div>
+                    <div class="pnl-amount">USD</div>
                 </div>
             </div>
 
-            <h2 class="section-title">Profit and Loss Analysis</h2>
-
-            <!-- Stats Grid - NEW DATA -->
-            <div class="stats-grid">
-                <div class="stat-item"><div class="stat-label">Total Profit</div><div class="stat-value positive">245.60 USD</div></div>
-                <div class="stat-item"><div class="stat-label">Losing Days</div><div class="stat-value">2 Days</div></div>
-                
-                <div class="stat-item"><div class="stat-label">Total Loss</div><div class="stat-value negative">77.10 USD</div></div>
-                <div class="stat-item"><div class="stat-label">Breakeven Days</div><div class="stat-value">0 Days</div></div>
-                
-                <div class="stat-item"><div class="stat-label">Net Profit/Loss</div><div class="stat-value positive">+168.50 USD</div></div>
-                <div class="stat-item"><div class="stat-label">Average Profit</div><div class="stat-value positive">49.12 USD</div></div>
-                
-                <div class="stat-item"><div class="stat-label">Trading Volume</div><div class="stat-value">12,458.75</div></div>
-                <div class="stat-item"><div class="stat-label">Average Loss</div><div class="stat-value negative">38.55 USD</div></div>
-                
-                <div class="stat-item"><div class="stat-label">Win Rate</div><div class="stat-value">71.43 %</div></div>
-                <div class="stat-item"><div class="stat-label">Profit/Loss Ratio</div><div class="stat-value">1.27</div></div>
-                
-                <div class="stat-item"><div class="stat-label">Winning Days</div><div class="stat-value">5 Days</div></div>
-            </div>
-
-            <!-- Navigation Tabs -->
-            <div class="nav-tabs">
-                <button class="nav-tab">Overview</button>
-                <button class="nav-tab active">Details</button>
-                <button class="nav-tab">Symbol Analysis</button>
-                <button class="nav-tab">Funding & Transaction</button>
-            </div>
-
-            <!-- Historical PnL Section - NEW DATA -->
-            <div class="historical-section">
-                <h3>Historical Profit and Loss</h3>
-                <div class="chart-container">
-                    <canvas id="pnlChart"></canvas>
-                </div>
-                
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Daily PnL (USD)</th>
-                                <th>Cumulative PnL (USD)</th>
-                                <th>Net Transfer (USD)</th>
-                                <th>Trading Volume</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>2026-06-22</td><td class="positive">+45.80</td><td class="positive">+168.50</td><td>0.00</td><td>2,145.30</td></tr>
-                            <tr><td>2026-06-21</td><td class="positive">+32.15</td><td class="positive">+122.70</td><td>0.00</td><td>1,876.45</td></tr>
-                            <tr><td>2026-06-20</td><td class="negative">-28.40</td><td class="positive">+90.55</td><td>0.00</td><td>1,654.20</td></tr>
-                            <tr><td>2026-06-19</td><td class="positive">+51.25</td><td class="positive">+118.95</td><td>0.00</td><td>2,234.80</td></tr>
-                            <tr><td>2026-06-18</td><td class="positive">+38.90</td><td class="positive">+67.70</td><td>0.00</td><td>1,923.50</td></tr>
-                            <tr><td>2026-06-17</td><td class="negative">-48.70</td><td class="positive">+28.80</td><td>0.00</td><td>1,789.25</td></tr>
-                            <tr><td>2026-06-16</td><td class="positive">+77.50</td><td class="positive">+77.50</td><td>0.00</td><td>2,835.25</td></tr>
-                        </tbody>
-                    </table>
+            <div class="form-section">
+                <h2 class="section-title">Profit and Loss Analysis</h2>
+                <div class="stats-grid">
+                    <div class="stat-item"><div class="stat-label">Total Profit</div><div class="stat-value positive" id="total-profit">0.00 USD</div></div>
+                    <div class="stat-item"><div class="stat-label">Total Loss</div><div class="stat-value negative" id="total-loss">0.00 USD</div></div>
+                    <div class="stat-item"><div class="stat-label">Net Profit/Loss</div><div class="stat-value" id="net-profit">0.00 USD</div></div>
+                    <div class="stat-item"><div class="stat-label">Trading Volume</div><div class="stat-value" id="trading-volume">0.00</div></div>
+                    <div class="stat-item"><div class="stat-label">Win Rate</div><div class="stat-value" id="win-rate">0.00%</div></div>
+                    <div class="stat-item"><div class="stat-label">Winning Days</div><div class="stat-value positive" id="winning-days">0</div></div>
+                    <div class="stat-item"><div class="stat-label">Losing Days</div><div class="stat-value negative" id="losing-days">0</div></div>
+                    <div class="stat-item"><div class="stat-label">Profit/Loss Ratio</div><div class="stat-value" id="pl-ratio">0.00</div></div>
                 </div>
             </div>
-        </div>
+
+            <div class="chart-container">
+                <canvas id="pnlChart"></canvas>
+            </div>
+        </section>
+
+        <!-- INPUT SECTION -->
+        <section id="input-section" style="display:none;">
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-plus-circle"></i> Input Data Trading Harian</h2>
+                <form id="tradingForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar"></i> Tanggal</label>
+                            <input type="date" id="input-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-dollar-sign"></i> Profit/Loss (USD)</label>
+                            <input type="number" id="input-pnl" step="0.01" placeholder="-50.00 atau 50.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-chart-line"></i> Trading Volume (USD)</label>
+                            <input type="number" id="input-volume" step="0.01" placeholder="1000.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-exchange-alt"></i> Net Transfer (USD)</label>
+                            <input type="number" id="input-transfer" step="0.01" placeholder="0.00" value="0">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Simpan Data</button>
+                        <button type="reset" class="btn btn-secondary"><i class="fas fa-undo"></i> Reset Form</button>
+                        <button type="button" class="btn btn-primary" onclick="showSection('dashboard')"><i class="fas fa-arrow-left"></i> Kembali</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- HISTORY SECTION -->
+        <section id="history-section" style="display:none;">
+            <div class="table-container">
+                <h2 class="section-title"><i class="fas fa-history"></i> Riwayat Data Trading</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>PnL (USD)</th>
+                            <th>Volume (USD)</th>
+                            <th>Transfer (USD)</th>
+                            <th>Cumulative (USD)</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body">
+                        <!-- Data will be inserted here -->
+                    </tbody>
+                </table>
+                <div style="margin-top: 20px; text-align: center;" id="no-data-msg">
+                    <p style="color: var(--text-secondary);">Belum ada data. Klik "Input Data" untuk menambah.</p>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <!-- ================= JAVASCRIPT ================= -->
     <script>
+        // Data Storage
+        let tradingData = JSON.parse(localStorage.getItem('tradingData')) || [];
+        let pnlChart = null;
+
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            initChart();
-            setupEventListeners();
+            document.getElementById('input-date').valueAsDate = new Date();
+            updateDashboard();
         });
 
-        function initChart() {
-            const ctx = document.getElementById('pnlChart').getContext('2d');
+        // Form Submit
+        document.getElementById('tradingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            new Chart(ctx, {
+            const newData = {
+                id: Date.now(),
+                date: document.getElementById('input-date').value,
+                pnl: parseFloat(document.getElementById('input-pnl').value),
+                volume: parseFloat(document.getElementById('input-volume').value),
+                transfer: parseFloat(document.getElementById('input-transfer').value) || 0
+            };
+
+            // Check if date exists
+            const existingIndex = tradingData.findIndex(d => d.date === newData.date);
+            if (existingIndex >= 0) {
+                if (confirm('Data untuk tanggal ini sudah ada. Timpa data lama?')) {
+                    tradingData[existingIndex] = newData;
+                } else {
+                    return;
+                }
+            } else {
+                tradingData.push(newData);
+            }
+
+            // Sort by date
+            tradingData.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            // Save
+            saveData();
+            updateDashboard();
+            
+            alert('Data berhasil disimpan!');
+            this.reset();
+            document.getElementById('input-date').valueAsDate = new Date();
+            showSection('dashboard');
+        });
+
+        // Save to LocalStorage
+        function saveData() {
+            localStorage.setItem('tradingData', JSON.stringify(tradingData));
+        }
+
+        // Update Dashboard
+        function updateDashboard() {
+            if (tradingData.length === 0) {
+                clearDashboard();
+                return;
+            }
+
+            const sortedData = [...tradingData].sort((a, b) => new Date(b.date) - new Date(a.date));
+            const today = sortedData[0];
+            
+            // Calculate metrics
+            const totalProfit = tradingData.filter(d => d.pnl > 0).reduce((sum, d) => sum + d.pnl, 0);
+            const totalLoss = Math.abs(tradingData.filter(d => d.pnl < 0).reduce((sum, d) => sum + d.pnl, 0));
+            const netProfit = tradingData.reduce((sum, d) => sum + d.pnl, 0);
+            const totalVolume = tradingData.reduce((sum, d) => sum + d.volume, 0);
+            const winningDays = tradingData.filter(d => d.pnl > 0).length;
+            const losingDays = tradingData.filter(d => d.pnl < 0).length;
+            const winRate = tradingData.length > 0 ? (winningDays / tradingData.length * 100).toFixed(2) : 0;
+            const plRatio = totalLoss > 0 ? (totalProfit / totalLoss).toFixed(2) : 0;
+            
+            // Calculate percentages (assuming initial capital from first cumulative)
+            const firstCumulative = sortedData[sortedData.length - 1]?.pnl || 1000;
+            const todayPercent = ((today.pnl / Math.abs(firstCumulative)) * 100).toFixed(2);
+            const last7Days = sortedData.slice(0, 7);
+            const week7PnL = last7Days.reduce((sum, d) => sum + d.pnl, 0);
+            const week7Percent = ((week7PnL / Math.abs(firstCumulative)) * 100).toFixed(2);
+            const last30Days = sortedData.slice(0, 30);
+            const month30PnL = last30Days.reduce((sum, d) => sum + d.pnl, 0);
+            const month30Percent = ((month30PnL / Math.abs(firstCumulative)) * 100).toFixed(2);
+
+            // Update UI
+            updateElement('today-percent', todayPercent + '%', today.pnl >= 0);
+            updateElement('today-amount', formatUSD(today.pnl), today.pnl >= 0);
+            updateElement('week7-percent', week7Percent + '%', week7PnL >= 0);
+            updateElement('week7-amount', formatUSD(week7PnL), week7PnL >= 0);
+            updateElement('month30-percent', month30Percent + '%', month30PnL >= 0);
+            updateElement('month30-amount', formatUSD(month30PnL), month30PnL >= 0);
+            updateElement('lifetime-value', formatNumber(netProfit), netProfit >= 0);
+            
+            document.getElementById('total-profit').textContent = formatUSD(totalProfit);
+            document.getElementById('total-loss').textContent = formatUSD(totalLoss);
+            updateElement('net-profit', formatUSD(netProfit), netProfit >= 0);
+            document.getElementById('trading-volume').textContent = formatNumber(totalVolume);
+            document.getElementById('win-rate').textContent = winRate + '%';
+            document.getElementById('winning-days').textContent = winningDays;
+            document.getElementById('losing-days').textContent = losingDays;
+            document.getElementById('pl-ratio').textContent = plRatio;
+
+            updateChart();
+            updateHistoryTable();
+        }
+
+        function updateElement(id, value, isPositive) {
+            const el = document.getElementById(id);
+            el.textContent = value;
+            el.className = 'pnl-value stat-value ' + (isPositive ? 'positive' : 'negative');
+        }
+
+        function clearDashboard() {
+            document.querySelectorAll('.pnl-value, .stat-value').forEach(el => {
+                el.textContent = '0.00';
+                el.className = 'pnl-value stat-value';
+            });
+            document.querySelectorAll('.pnl-amount').forEach(el => {
+                el.textContent = '0.00 USD';
+            });
+            if (pnlChart) pnlChart.destroy();
+            document.getElementById('history-table-body').innerHTML = '';
+            document.getElementById('no-data-msg').style.display = 'block';
+        }
+
+        // Chart
+        function updateChart() {
+            const ctx = document.getElementById('pnlChart').getContext('2d');
+            const sortedData = [...tradingData].sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            let cumulative = 0;
+            const cumulativeData = sortedData.map(d => {
+                cumulative += d.pnl;
+                return cumulative;
+            });
+
+            if (pnlChart) pnlChart.destroy();
+
+            pnlChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['06-16', '06-17', '06-18', '06-19', '06-20', '06-21', '06-22'],
+                    labels: sortedData.map(d => d.date),
                     datasets: [{
-                        label: 'Daily PnL (USD)',
-                        data: [77.50, -48.70, 38.90, 51.25, -28.40, 32.15, 45.80],
+                        label: 'Cumulative PnL (USD)',
+                        data: cumulativeData,
                         borderColor: '#fcd535',
                         backgroundColor: 'rgba(252, 213, 53, 0.1)',
                         borderWidth: 2,
                         fill: true,
                         tension: 0.4,
-                        pointBackgroundColor: '#fcd535',
-                        pointRadius: 4
+                        pointBackgroundColor: cumulativeData.map(v => v >= 0 ? '#0ecb81' : '#f6465d'),
+                        pointRadius: 5
                     }]
                 },
                 options: {
@@ -344,30 +383,112 @@
             });
         }
 
-        function setupEventListeners() {
-            // Period buttons
-            document.querySelectorAll('.period-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
+        // History Table
+        function updateHistoryTable() {
+            const tbody = document.getElementById('history-table-body');
+            const sortedData = [...tradingData].sort((a, b) => new Date(b.date) - new Date(a.date));
             
-            // Tabs
-            document.querySelectorAll('.tab-btn, .nav-tab').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const parent = this.parentElement;
-                    parent.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-            
-            // Mobile Menu
-            const menuToggle = document.querySelector('.menu-toggle');
-            const sidebar = document.querySelector('.sidebar');
-            if (menuToggle) {
-                menuToggle.addEventListener('click', () => sidebar.classList.toggle('active'));
+            if (sortedData.length === 0) {
+                tbody.innerHTML = '';
+                document.getElementById('no-data-msg').style.display = 'block';
+                return;
             }
+            
+            document.getElementById('no-data-msg').style.display = 'none';
+            let cumulative = 0;
+            
+            tbody.innerHTML = sortedData.map(d => {
+                cumulative += d.pnl;
+                return `
+                    <tr>
+                        <td>${formatDate(d.date)}</td>
+                        <td class="${d.pnl >= 0 ? 'positive' : 'negative'}">${formatUSD(d.pnl)}</td>
+                        <td>${formatNumber(d.volume)}</td>
+                        <td>${formatUSD(d.transfer)}</td>
+                        <td class="${cumulative >= 0 ? 'positive' : 'negative'}">${formatUSD(cumulative)}</td>
+                        <td>
+                            <button class="btn btn-danger btn-small" onclick="deleteData(${d.id})">
+                                <i class="fas fa-trash"></i> Hapus
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Delete Data
+        function deleteData(id) {
+            if (confirm('Yakin ingin menghapus data ini?')) {
+                tradingData = tradingData.filter(d => d.id !== id);
+                saveData();
+                updateDashboard();
+            }
+        }
+
+        // Reset All Data
+        function resetAllData() {
+            if (confirm('PERINGATAN: Semua data akan dihapus permanen! Yakin?')) {
+                tradingData = [];
+                saveData();
+                updateDashboard();
+                alert('Semua data telah direset.');
+            }
+        }
+
+        // Export Data
+        function exportData() {
+            if (tradingData.length === 0) {
+                alert('Tidak ada data untuk diexport!');
+                return;
+            }
+            
+            const csv = [
+                ['Tanggal', 'PnL (USD)', 'Volume (USD)', 'Transfer (USD)'],
+                ...tradingData.map(d => [d.date, d.pnl, d.volume, d.transfer])
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'trading_data_' + new Date().toISOString().split('T')[0] + '.csv';
+            a.click();
+        }
+
+        // Navigation
+        function showSection(section) {
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('input-section').style.display = 'none';
+            document.getElementById('history-section').style.display = 'none';
+            
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            
+            if (section === 'dashboard') {
+                document.getElementById('dashboard-section').style.display = 'block';
+                document.querySelectorAll('.nav-item')[0].classList.add('active');
+                updateChart();
+            } else if (section === 'input') {
+                document.getElementById('input-section').style.display = 'block';
+                document.querySelectorAll('.nav-item')[1].classList.add('active');
+            } else if (section === 'history') {
+                document.getElementById('history-section').style.display = 'block';
+                document.querySelectorAll('.nav-item')[2].classList.add('active');
+                updateHistoryTable();
+            }
+        }
+
+        // Utilities
+        function formatUSD(num) {
+            return (num >= 0 ? '+' : '') + num.toFixed(2) + ' USD';
+        }
+        
+        function formatNumber(num) {
+            return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' });
         }
     </script>
 </body>
